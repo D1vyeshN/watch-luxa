@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import { env } from "@config/env";
 
-export type UserRole = "user" | "admin";
+export type UserRole = "user" | "admin" | "superadmin";
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
@@ -50,7 +50,7 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["user", "admin", "superadmin"],
       default: "user",
       index: true,
     },

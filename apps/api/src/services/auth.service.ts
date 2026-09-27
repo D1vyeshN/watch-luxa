@@ -10,7 +10,6 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from '@utils/AppError';
-import { env } from '@config/env';
 
 const REFRESH_TOKEN_DAYS = 7;
 

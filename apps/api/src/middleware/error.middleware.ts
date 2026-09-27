@@ -13,6 +13,13 @@ export const errorHandler = (
   let message = err.message || 'Internal Server Error';
   let errors = err.errors || null;
 
+  // Handle AppError subclasses
+  if (err.isOperational) {
+    statusCode = err.statusCode;
+    message = err.message;
+    errors = err.errors;
+  }
+
   if (err.name === 'ValidationError') {
     statusCode = 422;
     message = 'Validation failed';

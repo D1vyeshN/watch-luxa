@@ -6,3 +6,5 @@ export * from './auth';
 export * from './string';
 export * from './sku';
 export * from './imageProcessing';
+export * from './cache';
+export * from './storefrontFilters';

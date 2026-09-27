@@ -17,6 +17,8 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().default("http://localhost:3000"),
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   BCRYPT_ROUNDS: z.coerce.number().default(12),
+  SUPER_ADMIN_EMAIL: z.string().email().optional(),
+  SUPER_ADMIN_PASSWORD: z.string().min(8).optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -33,4 +35,5 @@ export const env = {
   isProd: parsed.data.NODE_ENV === "production",
   isTest: parsed.data.NODE_ENV === "test",
   corsOrigins: parsed.data.CORS_ORIGINS.split(",").map((s) => s.trim()),
+  hasSuperAdmin: !!(parsed.data.SUPER_ADMIN_EMAIL && parsed.data.SUPER_ADMIN_PASSWORD),
 };

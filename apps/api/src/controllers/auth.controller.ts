@@ -25,7 +25,7 @@ export const authController: Record<string, RequestHandler> = {
 
   logout: asyncHandler(async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
-    await authService.logout(refreshToken);
+    await authService.logout(refreshToken || null);
     return sendSuccess(res, null, 'Logout successful');
   }),
 

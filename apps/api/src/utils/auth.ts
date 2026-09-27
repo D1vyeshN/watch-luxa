@@ -5,6 +5,8 @@ import { env } from '@config/env';
 export interface TokenPayload {
   userId: string;
   role: string;
+  email?: string;
+  name?: string;
 }
 
 export const generateAccessToken = (payload: TokenPayload): string => {

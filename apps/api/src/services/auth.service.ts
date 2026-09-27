@@ -10,6 +10,7 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from '@utils/AppError';
+import { env } from '@config/env';
 
 const REFRESH_TOKEN_DAYS = 7;
 
@@ -23,6 +24,25 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
+    // Check if this is the super admin from env
+    if (env.hasSuperAdmin && email === env.SUPER_ADMIN_EMAIL && password === env.SUPER_ADMIN_PASSWORD) {
+      // Create a virtual super admin user with consistent ID
+      const superAdminUser = {
+        _id: 'superadmin',
+        email: env.SUPER_ADMIN_EMAIL,
+        name: 'Super Admin',
+        role: 'superadmin',
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Super admin doesn't get refresh tokens - just access token
+      const accessToken = generateAccessToken({ userId: 'superadmin', role: 'superadmin' });
+      return { user: superAdminUser, accessToken, refreshToken: null };
+    }
+
+    // Regular user login flow
     const user = await userRepository.findByEmail(email, true);
     if (!user) throw new UnauthorizedError('Invalid credentials');
     if (!user.isActive) throw new UnauthorizedError('Account disabled');
@@ -54,10 +74,27 @@ export class AuthService {
   }
 
   async logout(refreshToken: string) {
-    await tokenRepository.deleteByHash(hashToken(refreshToken));
+    // Only cleanup refresh tokens for regular users
+    // Super admin doesn't use refresh tokens, so no cleanup needed
+    if (refreshToken) {
+      await tokenRepository.deleteByHash(hashToken(refreshToken));
+    }
   }
 
   async getMe(userId: string) {
+    // Check if this is the super admin
+    if (env.hasSuperAdmin && userId === 'superadmin') {
+      return {
+        _id: 'superadmin',
+        email: env.SUPER_ADMIN_EMAIL,
+        name: 'Super Admin',
+        role: 'superadmin',
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    }
+
     const user = await userRepository.findById(userId);
     if (!user) throw new NotFoundError('User not found');
     return user;
@@ -70,6 +107,7 @@ export class AuthService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_DAYS);
 
+    // Store tokens in DB (including super admin with special userId)
     await tokenRepository.create({
       userId,
       tokenHash: hashToken(refreshToken),

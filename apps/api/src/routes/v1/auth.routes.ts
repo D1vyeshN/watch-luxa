@@ -7,6 +7,7 @@ import {
   registerSchema,
   loginSchema,
   refreshSchema,
+  logoutSchema,
 } from '@validators/auth.validator';
 
 const router: Router = Router();
@@ -33,7 +34,7 @@ router.post(
 
 router.post(
   '/logout',
-  validate(refreshSchema),
+  validate(logoutSchema),
   authController.logout
 );
 

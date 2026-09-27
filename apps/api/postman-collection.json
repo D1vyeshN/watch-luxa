@@ -39,6 +39,16 @@
       "key": "categoryId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "variantId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -589,6 +599,476 @@
               ]
             },
             "description": "Restore an archived category"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "createdAt"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional: search by name, description, tags"
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Optional: draft, active, or archived"
+                },
+                {
+                  "key": "category",
+                  "value": "",
+                  "description": "Optional: category slug"
+                },
+                {
+                  "key": "brandId",
+                  "value": "",
+                  "description": "Optional: brand ID"
+                },
+                {
+                  "key": "gender",
+                  "value": "",
+                  "description": "Optional: men, women, or unisex"
+                },
+                {
+                  "key": "featured",
+                  "value": "",
+                  "description": "Optional: true or false"
+                },
+                {
+                  "key": "isLimitedEdition",
+                  "value": "",
+                  "description": "Optional: true or false"
+                },
+                {
+                  "key": "minPrice",
+                  "value": "",
+                  "description": "Optional: minimum base price"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "",
+                  "description": "Optional: maximum base price"
+                }
+              ]
+            },
+            "description": "List all products with pagination, filters, and search"
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Submariner Date\",\n  \"brandId\": \"{{brandId}}\",\n  \"category\": \"dive-watches\",\n  \"gender\": \"men\",\n  \"shortDescription\": \"The archetypal divers watch\",\n  \"fullDescription\": \"A legendary dive watch with exceptional water resistance and timeless design.\",\n  \"basePrice\": 850000,\n  \"heroImage\": \"https://images.example.com/sub-hero.jpg\",\n  \"specs\": {\n    \"referenceNumber\": \"126610LN\",\n    \"movementType\": \"Automatic\",\n    \"movementCaliber\": \"Cal. 3235\",\n    \"powerReserve\": 70,\n    \"jewels\": 31,\n    \"caseDiameter\": 41,\n    \"caseThickness\": 12.4,\n    \"lugWidth\": 21,\n    \"caseMaterial\": \"Oystersteel\",\n    \"crystalType\": \"Sapphire\",\n    \"waterResistance\": 300,\n    \"warranty\": \"5 years international\",\n    \"boxAndPapers\": true\n  },\n  \"variants\": [\n    {\n      \"dialColor\": \"Black\",\n      \"caseMaterial\": \"Oystersteel\",\n      \"caseSize\": 41,\n      \"strapType\": \"Oyster Bracelet\",\n      \"strapColor\": \"Steel\",\n      \"movement\": \"automatic\",\n      \"complications\": [\"Date\"],\n      \"price\": 850000,\n      \"stock\": 5\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products"]
+            },
+            "description": "Create a new product with variants"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.collectionVariables.set('productId', jsonData.data._id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Get a specific product by ID with all variants"
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Submariner Date Updated\",\n  \"shortDescription\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Update product details"
+          }
+        },
+        {
+          "name": "Archive Product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Archive a product"
+          }
+        },
+        {
+          "name": "Restore Product",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "restore"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Restore an archived product"
+          }
+        },
+        {
+          "name": "Publish Product",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/publish",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "publish"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Publish a product (requires active variants)"
+          }
+        },
+        {
+          "name": "Get Inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/inventory",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", "inventory"]
+            },
+            "description": "Get flat inventory list of all SKUs with stock status"
+          }
+        },
+        {
+          "name": "Add Variant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dialColor\": \"Blue\",\n  \"caseMaterial\": \"Oystersteel\",\n  \"caseSize\": 41,\n  \"strapType\": \"Rubber\",\n  \"strapColor\": \"Black\",\n  \"movement\": \"automatic\",\n  \"complications\": [\"Date\"],\n  \"price\": 850000,\n  \"stock\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/variants",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "variants"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Add a single variant to a product"
+          }
+        },
+        {
+          "name": "Update Variant",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 900000,\n  \"stock\": 15\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/variants/:variantId",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "variants", ":variantId"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "variantId",
+                  "value": "{{variantId}}"
+                }
+              ]
+            },
+            "description": "Update a specific variant"
+          }
+        },
+        {
+          "name": "Remove Variant",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/variants/:variantId",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "variants", ":variantId"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "variantId",
+                  "value": "{{variantId}}"
+                }
+              ]
+            },
+            "description": "Remove a variant from a product"
+          }
+        },
+        {
+          "name": "Adjust Stock",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"adjustment\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/variants/:variantId/stock/adjust",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "variants", ":variantId", "stock", "adjust"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "variantId",
+                  "value": "{{variantId}}"
+                }
+              ]
+            },
+            "description": "Adjust variant stock by a positive or negative amount"
+          }
+        },
+        {
+          "name": "Set Stock",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stock\": 20\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/variants/:variantId/stock",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "variants", ":variantId", "stock"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                },
+                {
+                  "key": "variantId",
+                  "value": "{{variantId}}"
+                }
+              ]
+            },
+            "description": "Set variant stock to a specific value"
+          }
+        },
+        {
+          "name": "Generate Variant Matrix",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dialColors\": [\"Black\", \"Blue\", \"Green\"],\n  \"caseMaterials\": [\"Oystersteel\", \"Yellow Gold\"],\n  \"strapTypes\": [\"Oyster Bracelet\", \"Rubber\"],\n  \"caseSizes\": [41],\n  \"defaultPrice\": 850000,\n  \"defaultStock\": 0,\n  \"movement\": \"automatic\",\n  \"complications\": [\"Date\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/admin/products/:id/variants/generate",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "admin", "products", ":id", "variants", "generate"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{productId}}"
+                }
+              ]
+            },
+            "description": "Bulk generate variants from color/material/strap/size combinations"
           }
         }
       ]

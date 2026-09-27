@@ -2,10 +2,12 @@ import { createApp } from './app';
 import { env } from '@config/env';
 import { logger } from '@config/logger';
 import { connectDB, disconnectDB } from '@config/database';
+import { seedSystemCategories } from '@config/seedCategories';
 
 const startServer = async () => {
   try {
     await connectDB();
+    await seedSystemCategories();
 
     const app = createApp();
     const server = app.listen(env.PORT, () => {

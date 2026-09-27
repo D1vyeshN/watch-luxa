@@ -1,3 +1,4 @@
 export * from './user.repository';
 export * from './token.repository';
-export * from './brand.repository';
+export { brandRepository } from './brand.repository';
+export { categoryRepository } from './category.repository';

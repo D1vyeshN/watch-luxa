@@ -5,3 +5,4 @@ export * from './AppError';
 export * from './auth';
 export * from './string';
 export * from './sku';
+export * from './imageProcessing';

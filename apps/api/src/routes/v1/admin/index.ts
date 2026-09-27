@@ -6,6 +6,7 @@ import brandRoutes from './brand.routes';
 import categoryRoutes from './category.routes';
 import productRoutes from './product.routes';
 import collectionRoutes from './collection.routes';
+import uploadRoutes from './upload.routes';
 
 const router: RouterType = Router();
 
@@ -17,5 +18,6 @@ router.use('/brands', brandRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/products', productRoutes);
 router.use('/collections', collectionRoutes);
+router.use('/uploads', uploadRoutes);
 
 export default router;

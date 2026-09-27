@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '@config/logger';
 import { env } from '@config/env';
+import multer from 'multer';
 
 export const errorHandler = (
   err: any,
@@ -40,6 +41,22 @@ export const errorHandler = (
   if (err.name === 'TokenExpiredError') {
     statusCode = 401;
     message = 'Token expired';
+  }
+
+  // Multer errors
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      statusCode = 400;
+      message = 'File too large (max 10 MB)';
+    } else if (err.code === 'LIMIT_FILE_COUNT') {
+      statusCode = 400;
+      message = 'Too many files (max 10)';
+    } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      statusCode = 400;
+      message = `Unexpected field: ${err.field}`;
+    } else {
+      statusCode = 400;
+    }
   }
 
   if (!err.isOperational) {

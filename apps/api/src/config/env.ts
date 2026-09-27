@@ -19,6 +19,8 @@ const envSchema = z.object({
   BCRYPT_ROUNDS: z.coerce.number().default(12),
   SUPER_ADMIN_EMAIL: z.string().email().optional(),
   SUPER_ADMIN_PASSWORD: z.string().min(8).optional(),
+  SUPABASE_URL: z.string().url().optional(),
+  SUPABASE_SERVICE_KEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

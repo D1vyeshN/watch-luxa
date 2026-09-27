@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import { adminCollectionController } from '@controllers/admin/collection.controller';
 import { validate } from '@middleware/validate.middleware';
 import {
@@ -9,7 +9,7 @@ import {
   removeProductsSchema,
 } from '@validators/collection.validator';
 
-const router = Router();
+const router: RouterType = Router();
 
 // ─── Collection CRUD ───
 router.get(

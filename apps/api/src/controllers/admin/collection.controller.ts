@@ -4,7 +4,7 @@ import { sendSuccess, sendPaginated } from '@utils/response';
 import { asyncHandler } from '@utils/asyncHandler';
 import { getPagination, buildFilters } from '@utils/pagination';
 
-export const adminCollectionController = {
+const adminCollectionController: any = {
   /**
    * GET /api/v1/admin/collections
    * List collections with pagination, filtering, and sorting
@@ -111,3 +111,5 @@ export const adminCollectionController = {
     return sendSuccess(res, collection, 'Products removed from collection');
   }),
 };
+
+export { adminCollectionController };

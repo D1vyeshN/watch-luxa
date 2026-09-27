@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@exortek/express-mongo-sanitize':
+        specifier: ^3.0.1
+        version: 3.0.1(express@5.2.1)
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -23,9 +26,6 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
-      express-mongo-sanitize:
-        specifier: ^2.2.0
-        version: 2.2.0
       express-rate-limit:
         specifier: ^8.7.0
         version: 8.7.0(express@5.2.1)
@@ -302,6 +302,16 @@ packages:
   '@eslint/plugin-kit@0.7.3':
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@exortek/express-mongo-sanitize@3.0.1':
+    resolution: {integrity: sha512-2bRWLz70U0JiUHDuC/EyLZ9Yc34mTgGnZVnZ+afwi6HawIL0IqVzQiBiCtNzrJNzBDwd6A8FCVYsVBvbJzkFNA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      express: '>=4.0.0'
+
+  '@exortek/nosql-sanitize-core@3.0.1':
+    resolution: {integrity: sha512-cyOXRnCIuMQFY7oTLgETHqfkZyKVL+zA8MVt1MsDzoIN3eEx0mMhgDFjMrb0Gbo/YSCTvXP0Ojp6B6EBZu5j2A==}
+    engines: {node: '>=18.0.0'}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -1021,10 +1031,6 @@ packages:
   expect-type@1.4.0:
     resolution: {integrity: sha512-KfYbmpRm0VbLjEvVa9yGwCi9GI34xvi7A/HXYWQO65CSD2u3MczUJSuwXKFIxlGsgBQizV9q5J9NHj4VG0n+pA==}
     engines: {node: '>=12.0.0'}
-
-  express-mongo-sanitize@2.2.0:
-    resolution: {integrity: sha512-PZBs5nwhD6ek9ZuP+W2xmpvcrHwXZxD5GdieX2dsjPbAbH4azOkrHbycBud2QRU+YQF1CT+pki/lZGedHgo/dQ==}
-    engines: {node: '>=10'}
 
   express-rate-limit@8.7.0:
     resolution: {integrity: sha512-hOwV7WOxXfjRpAM1DSJWZDXx3GhplwD8IfwuwvogD8i1Qnkgosw/H45s4ZnFAUHDAhPjlY9hLBvJhKmGMyY26g==}
@@ -1995,6 +2001,13 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
+  '@exortek/express-mongo-sanitize@3.0.1(express@5.2.1)':
+    dependencies:
+      '@exortek/nosql-sanitize-core': 3.0.1
+      express: 5.2.1
+
+  '@exortek/nosql-sanitize-core@3.0.1': {}
+
   '@humanfs/core@0.19.2':
     dependencies:
       '@humanfs/types': 0.15.0
@@ -2651,8 +2664,6 @@ snapshots:
   etag@1.8.1: {}
 
   expect-type@1.4.0: {}
-
-  express-mongo-sanitize@2.2.0: {}
 
   express-rate-limit@8.7.0(express@5.2.1):
     dependencies:

@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
-import mongoSanitize from 'express-mongo-sanitize';
+import mongoSanitize from '@exortek/express-mongo-sanitize';
 import hpp from 'hpp';
 import pinoHttp from 'pino-http';
 

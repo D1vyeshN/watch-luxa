@@ -3,11 +3,13 @@ import { env } from '@config/env';
 import { logger } from '@config/logger';
 import { connectDB, disconnectDB } from '@config/database';
 import { seedSystemCategories } from '@config/seedCategories';
+import { seedSystemCollections } from '@config/seedCollections';
 
 const startServer = async () => {
   try {
     await connectDB();
     await seedSystemCategories();
+    await seedSystemCollections();   // ← add this
 
     const app = createApp();
     const server = app.listen(env.PORT, () => {

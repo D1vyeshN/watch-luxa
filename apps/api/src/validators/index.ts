@@ -11,3 +11,10 @@ export {
   setStockSchema,
   generateMatrixSchema,
 } from './product.validator';
+export {
+  createCollectionSchema,
+  updateCollectionSchema,
+  listCollectionsSchema,
+  addProductsSchema,
+  removeProductsSchema,
+} from './collection.validator';

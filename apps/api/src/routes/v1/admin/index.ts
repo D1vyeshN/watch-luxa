@@ -5,6 +5,7 @@ import { authorize } from '@middleware/role.middleware';
 import brandRoutes from './brand.routes';
 import categoryRoutes from './category.routes';
 import productRoutes from './product.routes';
+import collectionRoutes from './collection.routes';
 
 const router: RouterType = Router();
 
@@ -15,5 +16,6 @@ router.use(authorize('admin', 'superadmin'));
 router.use('/brands', brandRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/products', productRoutes);
+router.use('/collections', collectionRoutes);
 
 export default router;

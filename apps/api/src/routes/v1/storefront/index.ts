@@ -7,6 +7,8 @@ import { storefrontCategoryController } from '@controllers/storefront/category.c
 import { storefrontCollectionController } from '@controllers/storefront/collection.controller';
 import { storefrontHomeController } from '@controllers/storefront/home.controller';
 import { storefrontSearchController } from '@controllers/storefront/search.controller';
+import cartRoutes from './cart.routes';
+import wishlistRoutes from './wishlist.routes';
 
 // ─── Products Router ───
 const productRouter = Router();
@@ -54,5 +56,7 @@ storefrontRouter.use('/categories', categoryRouter);
 storefrontRouter.use('/collections', collectionRouter);
 storefrontRouter.use('/search', searchRouter);
 storefrontRouter.use('/home', homeRouter);
+storefrontRouter.use('/cart', cartRoutes);
+storefrontRouter.use('/wishlist', wishlistRoutes);
 
 export default storefrontRouter;

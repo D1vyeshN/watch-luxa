@@ -4,3 +4,5 @@ export * from './category.service';
 export * from './product.service';
 export * from './collection.service';
 export * from './storage.service';
+export { cartService } from './cart.service';
+export { wishlistService } from './wishlist.service';

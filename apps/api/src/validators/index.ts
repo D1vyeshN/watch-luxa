@@ -18,3 +18,5 @@ export {
   addProductsSchema,
   removeProductsSchema,
 } from './collection.validator';
+export { addCartItemSchema, updateCartItemSchema, mergeCartSchema } from './cart.validator';
+export { wishlistProductSchema } from './wishlist.validator';

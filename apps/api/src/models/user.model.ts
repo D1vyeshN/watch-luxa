@@ -1,8 +1,22 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import { env } from "@config/env";
 
 export type UserRole = "user" | "admin" | "superadmin";
+
+export interface ISavedAddress {
+  _id: Types.ObjectId;
+  label: string;
+  fullName: string;
+  phone: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  isDefault: boolean;
+}
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;
@@ -14,10 +28,27 @@ export interface IUser extends Document {
   isActive: boolean;
   isEmailVerified: boolean;
   lastLoginAt?: Date;
+  addresses: ISavedAddress[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;
 }
+
+const SavedAddressSchema = new Schema<ISavedAddress>(
+  {
+    label: { type: String, required: true, trim: true, maxlength: 30 },
+    fullName: { type: String, required: true, trim: true },
+    phone: { type: String, required: true, trim: true },
+    line1: { type: String, required: true, trim: true },
+    line2: { type: String, trim: true },
+    city: { type: String, required: true, trim: true },
+    state: { type: String, required: true, trim: true },
+    postalCode: { type: String, required: true, trim: true },
+    country: { type: String, required: true, trim: true, default: 'India' },
+    isDefault: { type: Boolean, default: false },
+  },
+  { _id: true }
+);
 
 const UserSchema = new Schema<IUser>(
   {
@@ -64,6 +95,7 @@ const UserSchema = new Schema<IUser>(
       default: false,
     },
     lastLoginAt: Date,
+    addresses: { type: [SavedAddressSchema], default: [] },
   },
   {
     timestamps: true,

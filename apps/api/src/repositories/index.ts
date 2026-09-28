@@ -5,3 +5,4 @@ export { categoryRepository } from './category.repository';
 export { productRepository } from './product.repository';
 export { cartRepository } from './cart.repository';
 export { wishlistRepository } from './wishlist.repository';
+export { orderRepository } from './order.repository';

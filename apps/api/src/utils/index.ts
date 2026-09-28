@@ -8,3 +8,5 @@ export * from './sku';
 export * from './imageProcessing';
 export * from './cache';
 export * from './storefrontFilters';
+export * from './orderNumber';
+export * from './checkoutCalculator';

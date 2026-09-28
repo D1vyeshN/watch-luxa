@@ -9,6 +9,9 @@ import { storefrontHomeController } from '@controllers/storefront/home.controlle
 import { storefrontSearchController } from '@controllers/storefront/search.controller';
 import cartRoutes from './cart.routes';
 import wishlistRoutes from './wishlist.routes';
+import checkoutRoutes from './checkout.routes';
+import orderRoutes from './order.routes';
+import addressRoutes from './address.routes';
 
 // ─── Products Router ───
 const productRouter = Router();
@@ -58,5 +61,8 @@ storefrontRouter.use('/search', searchRouter);
 storefrontRouter.use('/home', homeRouter);
 storefrontRouter.use('/cart', cartRoutes);
 storefrontRouter.use('/wishlist', wishlistRoutes);
+storefrontRouter.use('/checkout', checkoutRoutes);
+storefrontRouter.use('/orders', orderRoutes);
+storefrontRouter.use('/addresses', addressRoutes);
 
 export default storefrontRouter;

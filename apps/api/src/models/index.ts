@@ -6,3 +6,4 @@ export * from './product.model';
 export * from './collection.model';
 export * from './cart.model';
 export * from './wishlist.model';
+export * from './order.model';

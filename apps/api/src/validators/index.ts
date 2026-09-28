@@ -20,3 +20,12 @@ export {
 } from './collection.validator';
 export { addCartItemSchema, updateCartItemSchema, mergeCartSchema } from './cart.validator';
 export { wishlistProductSchema } from './wishlist.validator';
+export {
+  checkoutSchema,
+  trackOrderSchema,
+  updateOrderStatusSchema,
+  updateTrackingSchema,
+  listOrdersSchema,
+  addAddressSchema,
+  updateAddressSchema,
+} from './order.validator';

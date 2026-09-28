@@ -12,6 +12,7 @@ import wishlistRoutes from './wishlist.routes';
 import checkoutRoutes from './checkout.routes';
 import orderRoutes from './order.routes';
 import addressRoutes from './address.routes';
+import reviewRoutes from './review.routes';
 
 // ─── Products Router ───
 const productRouter = Router();
@@ -64,5 +65,6 @@ storefrontRouter.use('/wishlist', wishlistRoutes);
 storefrontRouter.use('/checkout', checkoutRoutes);
 storefrontRouter.use('/orders', orderRoutes);
 storefrontRouter.use('/addresses', addressRoutes);
+storefrontRouter.use('/reviews', reviewRoutes);
 
 export default storefrontRouter;

@@ -9,6 +9,7 @@ import collectionRoutes from './collection.routes';
 import uploadRoutes from './upload.routes';
 import csvImportRoutes from './csvImport.routes';
 import orderRoutes from './order.routes';
+import reviewRoutes from './review.routes';
 
 const router: RouterType = Router();
 
@@ -23,5 +24,6 @@ router.use('/collections', collectionRoutes);
 router.use('/uploads', uploadRoutes);
 router.use('/csv', csvImportRoutes);
 router.use('/orders', orderRoutes);
+router.use('/reviews', reviewRoutes);
 
 export default router;

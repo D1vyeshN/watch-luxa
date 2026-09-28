@@ -24,8 +24,18 @@ export const createApp = (): Application => {
   app.use(mongoSanitize());
   app.use(hpp());
 
-  // Body parsing
-  app.use(express.json({ limit: '10kb' }));
+  // Body parsing - skip JSON parsing for webhook routes to allow raw body reading
+  app.use((req, res, next) => {
+    // Skip JSON parsing for webhook routes
+    if (
+      req.originalUrl.includes('/payments/stripe/webhook') ||
+      req.originalUrl.includes('/payments/razorpay/webhook')
+    ) {
+      return next();
+    }
+    express.json({ limit: '10kb' })(req, res, next);
+  });
+
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
   // Compression

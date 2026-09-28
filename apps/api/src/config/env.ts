@@ -21,6 +21,14 @@ const envSchema = z.object({
   SUPER_ADMIN_PASSWORD: z.string().min(8).optional(),
   SUPABASE_URL: z.string().url().optional(),
   SUPABASE_SERVICE_KEY: z.string().optional(),
+  // ─── Stripe ───
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  // ─── Razorpay ───
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -39,3 +47,11 @@ export const env = {
   corsOrigins: parsed.data.CORS_ORIGINS.split(",").map((s) => s.trim()),
   hasSuperAdmin: !!(parsed.data.SUPER_ADMIN_EMAIL && parsed.data.SUPER_ADMIN_PASSWORD),
 };
+
+export const hasStripe = Boolean(
+  parsed.data.STRIPE_SECRET_KEY && parsed.data.STRIPE_WEBHOOK_SECRET
+);
+
+export const hasRazorpay = Boolean(
+  parsed.data.RAZORPAY_KEY_ID && parsed.data.RAZORPAY_KEY_SECRET
+);

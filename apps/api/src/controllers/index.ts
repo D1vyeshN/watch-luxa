@@ -10,3 +10,4 @@ export { wishlistController } from './wishlist.controller';
 export { checkoutController } from './checkout.controller';
 export { orderController } from './order.controller';
 export { addressController } from './address.controller';
+export { paymentController } from './payment.controller';

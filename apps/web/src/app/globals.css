@@ -1,26 +1,249 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─────────────────────────────────────────────────────────────
+   LUXE DESIGN TOKENS
+   ───────────────────────────────────────────────────────────── */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --background: #f9f6ef;              /* cream-100 */
+  --foreground: #0f2320;              /* forest-900 */
+  --card: #fdfcfa;
+  --card-foreground: #0f2320;
+  --popover: #fdfcfa;
+  --popover-foreground: #0f2320;
+
+  /* Primary (forest green) */
+  --primary: #0f2320;
+  --primary-foreground: #f9f6ef;
+
+  /* Secondary (cream) */
+  --secondary: #f3ede0;
+  --secondary-foreground: #0f2320;
+
+  /* Muted */
+  --muted: #f3ede0;
+  --muted-foreground: #8a8a8a;
+
+  /* Accent (champagne gold) */
+  --accent: #c9a961;
+  --accent-foreground: #0f2320;
+
+  /* Destructive */
+  --destructive: #b91c1c;
+  --destructive-foreground: #fdfcfa;
+
+  /* Borders + inputs */
+  --border: rgba(15, 35, 32, 0.1);
+  --input: rgba(15, 35, 32, 0.1);
+  --ring: #c9a961;
+
+  /* Radius */
+  --radius: 0.125rem;
+
+  /* Sidebar (for admin compatibility) */
+  --sidebar: #f9f6ef;
+  --sidebar-foreground: #0f2320;
+  --sidebar-primary: #0f2320;
+  --sidebar-primary-foreground: #f9f6ef;
+  --sidebar-accent: #f3ede0;
+  --sidebar-accent-foreground: #0f2320;
+  --sidebar-border: rgba(15, 35, 32, 0.1);
+  --sidebar-ring: #c9a961;
 }
 
 @theme inline {
+  /* ─── LUXE Forest Palette ─── */
+  --color-forest-50: #f3f6f5;
+  --color-forest-100: #e0e8e6;
+  --color-forest-200: #c1d1cd;
+  --color-forest-300: #94b0a9;
+  --color-forest-400: #5f8a80;
+  --color-forest-500: #3d6b61;
+  --color-forest-600: #1f4a41;
+  --color-forest-700: #1a3d36;
+  --color-forest-800: #16302b;
+  --color-forest-900: #0f2320;
+  --color-forest-950: #08130f;
+
+  /* ─── LUXE Cream Palette ─── */
+  --color-cream-50: #fdfcfa;
+  --color-cream-100: #f9f6ef;
+  --color-cream-200: #f3ede0;
+  --color-cream-300: #eae0cb;
+  --color-cream-400: #dfcfae;
+  --color-cream-500: #d4be92;
+  --color-cream-600: #c9a961;
+  --color-cream-700: #a68a44;
+  --color-cream-800: #7a6532;
+  --color-cream-900: #4e4020;
+
+  /* ─── Ink (text) ─── */
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #4a4a4a;
+  --color-ink-muted: #8a8a8a;
+  --color-ink-light: #c4c4c4;
+
+  /* ─── shadcn tokens ─── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ─── Radius ─── */
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* ─── Fonts ─── */
+  --font-serif: var(--font-cormorant), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  /* ─── Custom transitions ─── */
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─────────────────────────────────────────────────────────────
+   BASE STYLES
+   ───────────────────────────────────────────────────────────── */
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  ::selection {
+    background-color: #c9a961;
+    color: #0f2320;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f3ede0;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c9a961;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a68a44;
+  }
+
+  /* Focus ring */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─────────────────────────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .container-luxe {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1440px;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-luxe {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-luxe {
+      padding-inline: 4rem;
+    }
+  }
+
+  .heading-luxe {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+
+  .label-luxe {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-forest-700);
+  }
+
+  /* Animation utilities */
+  .animate-fade-up {
+    animation: fadeUp 0.6s var(--ease-luxe) both;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 }

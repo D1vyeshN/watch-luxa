@@ -145,7 +145,7 @@ If you want to launch faster, here's the **minimum path**:
 ## 📋 Progress Tracking
 
 - **Step 0** ✅ — Project setup complete (2026-09-29)
-- **Step 1** ⏳ — Ready to begin
+- **Step 1** ✅ — Design system complete (2026-09-29)
 - **Step 2** ⏳ — Pending
 - **Step 3** ⏳ — Pending
 - **Step 4** ⏳ — Pending

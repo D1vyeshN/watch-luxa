@@ -28,6 +28,7 @@ export const checkoutController: any = {
       owner: getOwner(req),
       shippingAddress: req.body.shippingAddress,
       billingAddress: req.body.billingAddress,
+      couponCode: req.body.couponCode,
       customerNote: req.body.customerNote,
     });
 

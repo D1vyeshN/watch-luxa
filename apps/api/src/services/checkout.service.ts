@@ -2,7 +2,7 @@ import mongoose, { Types } from 'mongoose';
 import { cartRepository } from '@repositories/cart.repository';
 import { orderRepository } from '@repositories/order.repository';
 import { Product } from '@models/product.model';
-// import { Coupon } from '@models/coupon.model'; // will build later — see note
+import { Coupon } from '@models/coupon.model';
 import { IOrder, IOrderItem, IShippingAddress } from '@models/order.model';
 import {
   calculateTotals,
@@ -19,7 +19,7 @@ interface CheckoutInput {
   owner: { userId?: string; sessionId?: string };
   shippingAddress: IShippingAddress;
   billingAddress?: IShippingAddress;
-  // couponCode?: string; // TODO: Uncomment when coupon module is built
+  couponCode?: string;
   customerNote?: string;
 }
 
@@ -32,7 +32,7 @@ export class CheckoutService {
    * 4. Clear cart
    */
   async createOrder(input: CheckoutInput): Promise<IOrder> {
-    const { owner, shippingAddress, billingAddress, customerNote } = input;
+    const { owner, shippingAddress, billingAddress, customerNote, couponCode } = input;
 
     // 1. Load cart
     const cart = await cartRepository.findByOwner(owner);
@@ -91,13 +91,61 @@ export class CheckoutService {
     }
 
     // 4. Validate coupon (if provided)
-    // NOTE: Coupon module not built yet - ignoring coupon codes for now
     let appliedCoupon: {
       type: 'percentage' | 'fixed';
       value: number;
       maxDiscount?: number;
       code: string;
     } | null = null;
+
+    if (couponCode) {
+      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase().trim() });
+      if (!coupon) {
+        throw new BadRequestError('Invalid coupon code');
+      }
+
+      if (!coupon.isActive) {
+        throw new BadRequestError('This coupon is no longer active');
+      }
+
+      const now = new Date();
+      if (coupon.startsAt && new Date(coupon.startsAt) > now) {
+        throw new BadRequestError('This coupon is not yet valid');
+      }
+      if (coupon.expiresAt && new Date(coupon.expiresAt) < now) {
+        throw new BadRequestError('This coupon has expired');
+      }
+
+      if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
+        throw new BadRequestError('This coupon has reached its usage limit');
+      }
+
+      if (coupon.maxUsesPerUser && owner.userId) {
+        const userUsed = coupon.usedBy.some(
+          (id) => id.toString() === owner.userId
+        );
+        if (userUsed && coupon.maxUsesPerUser <= 1) {
+          throw new BadRequestError('You have already used this coupon');
+        }
+      }
+
+      const subtotal = cartLines.reduce(
+        (sum, line) => sum + line.price * line.quantity,
+        0
+      );
+
+      if (coupon.minOrder && subtotal < coupon.minOrder) {
+        const formatted = (coupon.minOrder / 100).toLocaleString('en-IN');
+        throw new BadRequestError(`Minimum order of ₹${formatted} required`);
+      }
+
+      appliedCoupon = {
+        type: coupon.type,
+        value: coupon.value,
+        maxDiscount: coupon.maxDiscount,
+        code: coupon.code,
+      };
+    }
 
     // 5. Calculate totals
     const totals = calculateTotals(cartLines, appliedCoupon || undefined);
@@ -144,7 +192,7 @@ export class CheckoutService {
         shippingFee: totals.shippingFee,
         total: totals.total,
         currency: 'INR',
-        // couponCode: appliedCoupon?.code, // TODO: Uncomment when coupon module is built
+        couponCode: appliedCoupon?.code,
         paymentStatus: 'pending',
         orderStatus: 'pending',
         customerNote,
@@ -155,12 +203,16 @@ export class CheckoutService {
 
       // 7c. Increment coupon usage
       if (appliedCoupon) {
-        // TODO: Uncomment when Coupon model is built
-        // await Coupon.updateOne(
-        //   { code: appliedCoupon.code },
-        //   { $inc: { usedCount: 1 } },
-        //   { session }
-        // );
+        await Coupon.updateOne(
+          { code: appliedCoupon.code },
+          {
+            $inc: { usedCount: 1 },
+            ...(owner.userId && {
+              $addToSet: { usedBy: new Types.ObjectId(owner.userId) },
+            }),
+          },
+          { session }
+        );
       }
 
       // 7d. Clear cart

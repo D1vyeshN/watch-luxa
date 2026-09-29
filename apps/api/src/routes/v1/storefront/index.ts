@@ -14,6 +14,7 @@ import orderRoutes from './order.routes';
 import addressRoutes from './address.routes';
 import reviewRoutes from './review.routes';
 import returnRoutes from './return.routes';
+import couponRoutes from './coupon.routes';
 
 // ─── Products Router ───
 const productRouter = Router();
@@ -68,5 +69,6 @@ storefrontRouter.use('/orders', orderRoutes);
 storefrontRouter.use('/addresses', addressRoutes);
 storefrontRouter.use('/reviews', reviewRoutes);
 storefrontRouter.use('/returns', returnRoutes);
+storefrontRouter.use('/coupons', couponRoutes);
 
 export default storefrontRouter;

@@ -16,7 +16,7 @@ export const checkoutSchema = z.object({
   body: z.object({
     shippingAddress: addressSchema,
     billingAddress: addressSchema.optional(),
-    // couponCode: z.string().max(30).optional(), // TODO: Uncomment when coupon module is built
+    couponCode: z.string().max(30).optional(),
     customerNote: z.string().max(500).optional(),
   }),
 });

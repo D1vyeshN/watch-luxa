@@ -13,6 +13,7 @@ import checkoutRoutes from './checkout.routes';
 import orderRoutes from './order.routes';
 import addressRoutes from './address.routes';
 import reviewRoutes from './review.routes';
+import returnRoutes from './return.routes';
 
 // ─── Products Router ───
 const productRouter = Router();
@@ -66,5 +67,6 @@ storefrontRouter.use('/checkout', checkoutRoutes);
 storefrontRouter.use('/orders', orderRoutes);
 storefrontRouter.use('/addresses', addressRoutes);
 storefrontRouter.use('/reviews', reviewRoutes);
+storefrontRouter.use('/returns', returnRoutes);
 
 export default storefrontRouter;

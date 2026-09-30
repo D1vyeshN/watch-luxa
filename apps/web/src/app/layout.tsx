@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Inter } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
 import { StoreProvider } from '@/store/StoreProvider';
+import { SessionInit } from '@/components/providers/session-init';
 import { env } from '@/config/env';
 import './globals.css';
 
@@ -58,6 +59,7 @@ export default function RootLayout({
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
         <StoreProvider>
+          <SessionInit />
           {children}
           <Toaster position="top-right" />
         </StoreProvider>

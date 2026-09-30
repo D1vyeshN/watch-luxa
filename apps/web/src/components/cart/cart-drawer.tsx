@@ -13,8 +13,9 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CartItem } from './cart-item';
-import { formatPrice } from '@/lib/format';
+import { formatPrice } from '@/lib/format/price';
 import { ROUTES } from '@/constants/routes';
+import { CONFIG } from '@/constants/config';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeCartDrawer } from '@/store/slices/uiSlice';
 import {
@@ -107,28 +108,65 @@ export function CartDrawer() {
             <div className="border-t border-forest-900/10 bg-cream-50 px-6 py-5">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-ink-soft">
-                  <span>Subtotal</span>
+                  <span>Subtotal ({cart.itemCount} {cart.itemCount === 1 ? 'item' : 'items'})</span>
                   <span className="font-medium text-forest-900">
                     {formatPrice(cart.subtotal)}
                   </span>
                 </div>
-                <p className="text-xs text-ink-muted">
-                  Shipping and taxes calculated at checkout
-                </p>
+
+                <div className="flex justify-between text-ink-soft">
+                  <span>Shipping</span>
+                  <span className="font-medium text-forest-900">
+                    {cart.subtotal >= CONFIG.freeShippingThreshold
+                      ? 'Free'
+                      : formatPrice(CONFIG.flatShippingFee)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between text-ink-soft">
+                  <span>Estimated GST ({(CONFIG.taxRate * 100).toFixed(0)}%)</span>
+                  <span className="font-medium text-forest-900">
+                    {formatPrice(Math.round(cart.subtotal * CONFIG.taxRate))}
+                  </span>
+                </div>
               </div>
 
               <Separator className="my-4 bg-forest-900/10" />
 
+              <div className="flex items-baseline justify-between">
+                <span className="text-xs uppercase tracking-[0.18em] text-forest-900">
+                  Total
+                </span>
+                <span className="font-serif text-xl font-medium text-forest-900">
+                  {formatPrice(
+                    cart.subtotal +
+                      (cart.subtotal >= CONFIG.freeShippingThreshold
+                        ? 0
+                        : CONFIG.flatShippingFee) +
+                      Math.round(cart.subtotal * CONFIG.taxRate)
+                  )}
+                </span>
+              </div>
+
               <Button
                 onClick={goToCheckout}
-                className="h-12 w-full rounded-sm bg-forest-900 text-xs uppercase tracking-[0.18em] text-cream-100 hover:bg-forest-800"
+                disabled={cart.hasIssues}
+                className="mt-4 h-12 w-full rounded-sm bg-forest-900 text-xs uppercase tracking-[0.18em] text-cream-100 hover:bg-forest-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Proceed to Checkout
               </Button>
 
+              <Link
+                href={ROUTES.cart}
+                onClick={close}
+                className="mt-3 block w-full text-center text-xs uppercase tracking-[0.18em] text-ink-muted transition-colors hover:text-forest-900"
+              >
+                View Cart
+              </Link>
+
               <button
                 onClick={close}
-                className="mt-3 w-full text-center text-xs uppercase tracking-[0.18em] text-ink-muted transition-colors hover:text-forest-900"
+                className="mt-2 w-full text-center text-xs uppercase tracking-[0.18em] text-ink-muted transition-colors hover:text-forest-900"
               >
                 Continue Shopping
               </button>

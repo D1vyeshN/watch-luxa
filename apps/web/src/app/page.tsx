@@ -1,106 +1,92 @@
 'use client';
 
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
-  openCartDrawer,
-  closeCartDrawer,
-  toggleCartDrawer,
-} from '@/store/slices/uiSlice';
-import { setUser, logout } from '@/store/slices/authSlice';
+  useGetHomeDataQuery,
+  useGetProductsQuery,
+  useGetCategoriesQuery,
+} from '@/store/api/endpoints';
+import { formatPrice } from '@/lib/utils';
 
-export default function Step2TestPage() {
-  const dispatch = useAppDispatch();
-
-  const isCartOpen = useAppSelector((s) => s.ui.isCartDrawerOpen);
-  const user = useAppSelector((s) => s.auth.user);
-  const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
-
-  const handleMockLogin = () => {
-    dispatch(
-      setUser({
-        _id: '123',
-        email: 'test@luxe.com',
-        name: 'Test User',
-        role: 'user',
-        isActive: true,
-        isEmailVerified: true,
-        createdAt: new Date().toISOString(),
-      })
-    );
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+export default function Step3TestPage() {
+  const home = useGetHomeDataQuery();
+  const products = useGetProductsQuery({ limit: 4 });
+  const categories = useGetCategoriesQuery();
 
   return (
-    <div className="container-luxe py-20">
-      <p className="label-luxe">Step 2 — Redux Store</p>
-      <h1 className="heading-luxe mt-4 text-5xl">Store is alive.</h1>
+    <div className="container-luxe py-16">
+      <p className="label-luxe">Step 3 — RTK Query Endpoints</p>
+      <h1 className="heading-luxe mt-3 text-5xl">Connected to backend.</h1>
 
-      <div className="mt-10 space-y-6 max-w-xl">
-        {/* UI Slice */}
-        <div className="rounded-sm border border-forest-900/10 bg-white p-6">
-          <h2 className="heading-luxe text-xl">UI Slice</h2>
-          <p className="mt-2 text-sm text-ink-soft">
-            Cart drawer is{' '}
-            <span className="font-medium text-forest-900">
-              {isCartOpen ? 'OPEN' : 'CLOSED'}
-            </span>
+      {/* Home aggregate */}
+      <section className="mt-12">
+        <h2 className="heading-luxe text-2xl">Home Data</h2>
+        {home.isLoading && <p className="text-sm text-ink-muted">Loading…</p>}
+        {home.error && (
+          <p className="text-sm text-red-600">
+            Error: is the backend running at port 5000?
           </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <button
-              onClick={() => dispatch(openCartDrawer())}
-              className="rounded-sm bg-forest-900 px-4 py-2 text-xs uppercase tracking-widest text-cream-100"
-            >
-              Open Cart
-            </button>
-            <button
-              onClick={() => dispatch(closeCartDrawer())}
-              className="rounded-sm border border-forest-900/20 px-4 py-2 text-xs uppercase tracking-widest text-forest-900"
-            >
-              Close Cart
-            </button>
-            <button
-              onClick={() => dispatch(toggleCartDrawer())}
-              className="rounded-sm border border-forest-900/20 px-4 py-2 text-xs uppercase tracking-widest text-forest-900"
-            >
-              Toggle
-            </button>
-          </div>
-        </div>
+        )}
+        {home.data && (
+          <ul className="mt-3 space-y-1 text-sm text-ink-soft">
+            <li>Featured products: {home.data.data.featured.length}</li>
+            <li>New arrivals: {home.data.data.newArrivals.length}</li>
+            <li>Trending: {home.data.data.trending.length}</li>
+            <li>Categories: {home.data.data.categories.length}</li>
+            <li>Brands: {home.data.data.brands.length}</li>
+            <li>Collections: {home.data.data.collections.length}</li>
+          </ul>
+        )}
+      </section>
 
-        {/* Auth Slice */}
-        <div className="rounded-sm border border-forest-900/10 bg-white p-6">
-          <h2 className="heading-luxe text-xl">Auth Slice</h2>
-          <p className="mt-2 text-sm text-ink-soft">
-            {isAuthenticated ? (
-              <>
-                Signed in as{' '}
-                <span className="font-medium text-forest-900">
-                  {user?.name} ({user?.email})
-                </span>
-              </>
-            ) : (
-              'Not signed in'
-            )}
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <button
-              onClick={handleMockLogin}
-              className="rounded-sm bg-forest-900 px-4 py-2 text-xs uppercase tracking-widest text-cream-100"
-            >
-              Mock Login
-            </button>
-            <button
-              onClick={handleLogout}
-              className="rounded-sm border border-forest-900/20 px-4 py-2 text-xs uppercase tracking-widest text-forest-900"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Products */}
+      <section className="mt-12">
+        <h2 className="heading-luxe text-2xl">Products</h2>
+        {products.isLoading && <p className="text-sm text-ink-muted">Loading…</p>}
+        {products.error && (
+          <p className="text-sm text-red-600">Could not fetch products.</p>
+        )}
+        {products.data && (
+          <>
+            <p className="mt-2 text-sm text-ink-muted">
+              Total: {products.data.pagination.total}
+            </p>
+            <ul className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {products.data.data.map((p) => (
+                <li
+                  key={p.id}
+                  className="rounded-sm border border-forest-900/10 bg-white p-4"
+                >
+                  <p className="text-xs uppercase tracking-widest text-ink-muted">
+                    {p.brand?.name ?? 'Unknown brand'}
+                  </p>
+                  <p className="heading-luxe mt-1 text-lg">{p.name}</p>
+                  <p className="mt-2 text-sm text-forest-900">
+                    {formatPrice(p.priceRange.min)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+
+      {/* Categories */}
+      <section className="mt-12">
+        <h2 className="heading-luxe text-2xl">Categories</h2>
+        {categories.isLoading && <p className="text-sm text-ink-muted">Loading…</p>}
+        {categories.data && (
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {categories.data.data.map((c) => (
+              <li
+                key={c.id}
+                className="rounded-sm border border-forest-900/20 px-3 py-1 text-xs uppercase tracking-widest text-forest-900"
+              >
+                {c.name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

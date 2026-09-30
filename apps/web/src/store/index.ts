@@ -4,6 +4,18 @@ import { api } from './api/api';
 import uiReducer from './slices/uiSlice';
 import authReducer from './slices/authSlice';
 
+// Force-inject all endpoint slices at import time.
+// Do NOT remove these — they register the endpoints with the root API.
+import './api/endpoints/home';
+import './api/endpoints/products';
+import './api/endpoints/brands';
+import './api/endpoints/categories';
+import './api/endpoints/collections';
+import './api/endpoints/search';
+import './api/endpoints/cart';
+import './api/endpoints/auth';
+import './api/endpoints/wishlist';
+
 export const makeStore = () => {
   const store = configureStore({
     reducer: {

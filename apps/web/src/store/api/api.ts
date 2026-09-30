@@ -19,7 +19,7 @@ export const api = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
   tagTypes: TAG_TYPES,
-  // Endpoints are injected per domain via `api.injectEndpoints` 
+  // Endpoints are injected per domain via `api.injectEndpoints`
   endpoints: () => ({}),
 });
 

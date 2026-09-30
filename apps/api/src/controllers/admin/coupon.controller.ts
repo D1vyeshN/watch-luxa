@@ -6,10 +6,10 @@ import { asyncHandler } from '@utils/asyncHandler';
 import { getPagination } from '@utils/pagination';
 import { UnauthorizedError } from '@utils/AppError';
 
-const requireAdminId = (req: Request): string => {
-  if (!req.user?.userId) throw new UnauthorizedError('Authentication required');
-  return req.user.userId;
-};
+// const requireAdminId = (req: Request): string => {
+//   if (!req.user?.userId) throw new UnauthorizedError('Authentication required');
+//   return req.user.userId;
+// };
 
 const requireAdminObjectId = (req: Request): Types.ObjectId | string => {
   if (!req.user?.userId) throw new UnauthorizedError('Authentication required');

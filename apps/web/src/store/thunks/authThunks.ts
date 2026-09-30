@@ -2,22 +2,25 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { api } from '../api/api';
 import { authApi } from '../api/endpoints/auth';
 import { cartApi } from '../api/endpoints/cart';
+import { wishlistApi } from '../api/endpoints/wishlist';
 import {
   setCredentials,
   setUser,
   markHydrated,
   logout as logoutAction,
 } from '../slices/authSlice';
+import { clearGuestCart } from '../slices/guestCartSlice';
+import { clearGuestWishlist } from '../slices/guestWishlistSlice';
 import { tokenStorage } from '@/lib/storage/tokenStorage';
-import { getSessionId, clearSessionId } from '@/lib/storage/sessionStorage';
 import type { AuthUser } from '@/types/auth';
+import type { RootState } from '../index';
 
 // ─── LOGIN ───
 export const loginUser = createAsyncThunk<
   AuthUser,
   { email: string; password: string },
   { rejectValue: string }
->('auth/loginUser', async ({ email, password }, { dispatch, rejectWithValue }) => {
+>('auth/loginUser', async ({ email, password }, { dispatch, getState, rejectWithValue }) => {
   try {
     const result = await dispatch(
       authApi.endpoints.login.initiate({ email, password })
@@ -29,20 +32,44 @@ export const loginUser = createAsyncThunk<
     tokenStorage.setTokens(accessToken, refreshToken);
 
     // 2. Merge guest cart if exists
-    const sessionId = getSessionId();
-    if (sessionId) {
+    const guestCart = (getState() as RootState).guestCart.items;
+    if (guestCart && guestCart.length > 0) {
       try {
-        await dispatch(
-          cartApi.endpoints.mergeCart.initiate({ sessionId })
-        ).unwrap();
-        clearSessionId();
+        for (const item of guestCart) {
+          await dispatch(
+            cartApi.endpoints.addToCart.initiate({
+              productId: item.productId,
+              variantId: item.variantId,
+              quantity: item.quantity,
+            })
+          ).unwrap();
+        }
       } catch (err) {
         // Non-fatal — user still logged in
         console.warn('[auth] Cart merge failed:', err);
       }
     }
 
-    // 3. Set user in slice
+    // 3. Merge guest wishlist if exists
+    const guestWishlist = (getState() as RootState).guestWishlist.productIds;
+    if (guestWishlist && guestWishlist.length > 0) {
+      try {
+        for (const productId of guestWishlist) {
+          await dispatch(
+            wishlistApi.endpoints.toggleWishlist.initiate({ productId })
+          ).unwrap();
+        }
+      } catch (err) {
+        // Non-fatal — user still logged in
+        console.warn('[auth] Wishlist merge failed:', err);
+      }
+    }
+
+    // 4. Clear guest cart and wishlist after sync
+    dispatch(clearGuestCart());
+    dispatch(clearGuestWishlist());
+
+    // 5. Set user in slice
     dispatch(setCredentials({ user }));
     dispatch(markHydrated());
 
@@ -62,7 +89,7 @@ export const registerUser = createAsyncThunk<
   { rejectValue: string }
 >(
   'auth/registerUser',
-  async ({ name, email, password }, { dispatch, rejectWithValue }) => {
+  async ({ name, email, password }, { dispatch, getState, rejectWithValue }) => {
     try {
       const result = await dispatch(
         authApi.endpoints.register.initiate({ name, email, password })
@@ -73,18 +100,44 @@ export const registerUser = createAsyncThunk<
       tokenStorage.setTokens(accessToken, refreshToken);
 
       // Merge guest cart if any
-      const sessionId = getSessionId();
-      if (sessionId) {
+      const guestCart = (getState() as RootState).guestCart.items;
+      if (guestCart && guestCart.length > 0) {
         try {
-          await dispatch(
-            cartApi.endpoints.mergeCart.initiate({ sessionId })
-          ).unwrap();
-          clearSessionId();
-        } catch {
+          for (const item of guestCart) {
+            await dispatch(
+              cartApi.endpoints.addToCart.initiate({
+                productId: item.productId,
+                variantId: item.variantId,
+                quantity: item.quantity,
+              })
+            ).unwrap();
+          }
+        } catch (err) {
           // Non-fatal
+          console.warn('[auth] Cart merge failed:', err);
         }
       }
 
+      // Merge guest wishlist if exists
+      const guestWishlist = (getState() as RootState).guestWishlist.productIds;
+      if (guestWishlist && guestWishlist.length > 0) {
+        try {
+          for (const productId of guestWishlist) {
+            await dispatch(
+              wishlistApi.endpoints.toggleWishlist.initiate({ productId })
+            ).unwrap();
+          }
+        } catch (err) {
+          // Non-fatal
+          console.warn('[auth] Wishlist merge failed:', err);
+        }
+      }
+
+      // Clear guest cart and wishlist after sync
+      dispatch(clearGuestCart());
+      dispatch(clearGuestWishlist());
+
+      // 5. Set user in slice
       dispatch(setCredentials({ user }));
       dispatch(markHydrated());
 
@@ -115,9 +168,10 @@ export const logoutUser = createAsyncThunk<void, void, { rejectValue: string }>(
     }
 
     tokenStorage.clear();
-    clearSessionId();
     dispatch(logoutAction());
     dispatch(api.util.resetApiState());
+    dispatch(clearGuestCart());
+    dispatch(clearGuestWishlist());
   }
 );
 

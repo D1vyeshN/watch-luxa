@@ -9,12 +9,14 @@ import { formatPrice } from '@/lib/format/price';
 import { CONFIG } from '@/constants/config';
 import { ROUTES } from '@/constants/routes';
 import type { Cart } from '@/types/cart';
+import { useAuth } from '@/hooks/useAuth';
 
 interface CartSummaryProps {
   cart: Cart;
   showCheckoutButton?: boolean;
   showCoupon?: boolean;
   className?: string;
+  isGuest?: boolean;
 }
 
 export function CartSummary({
@@ -22,14 +24,18 @@ export function CartSummary({
   showCheckoutButton = true,
   showCoupon = true,
   className,
+  isGuest = false,
 }: CartSummaryProps) {
+  const { isAuthenticated } = useAuth();
+
+  // Use pre-calculated values if available (guest cart), otherwise calculate
   const subtotal = cart.subtotal;
   const freeShipping = subtotal >= CONFIG.freeShippingThreshold;
-  const shippingFee = freeShipping ? 0 : CONFIG.flatShippingFee;
-  const estimatedTax = Math.round((subtotal * CONFIG.taxRate));
-  const total = subtotal + shippingFee + estimatedTax;
+  const shippingFee = cart.shippingFee ?? (freeShipping ? 0 : CONFIG.flatShippingFee);
+  const estimatedTax = cart.tax ?? Math.round((subtotal * CONFIG.taxRate));
+  const total = cart.total ?? (subtotal + shippingFee + estimatedTax);
 
-  const freeShippingRemaining = CONFIG.freeShippingThreshold - subtotal;
+  const freeShippingRemaining = freeShipping ? 0 : CONFIG.freeShippingThreshold - subtotal;
 
   return (
     <div
@@ -116,8 +122,11 @@ export function CartSummary({
           disabled={cart.hasIssues}
           className="mt-6 h-14 w-full rounded-sm bg-forest-900 text-xs uppercase tracking-[0.18em] text-cream-100 hover:bg-forest-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Link href={ROUTES.checkout} className="flex items-center justify-center gap-2">
-            Proceed to Checkout
+          <Link
+            href={isGuest || !isAuthenticated ? ROUTES.login : ROUTES.checkout}
+            className="flex items-center justify-center gap-2"
+          >
+            {isGuest || !isAuthenticated ? 'Sign In to Checkout' : 'Proceed to Checkout'}
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </Button>

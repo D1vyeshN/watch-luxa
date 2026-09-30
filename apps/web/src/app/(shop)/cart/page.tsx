@@ -11,25 +11,24 @@ import {
 } from '@/components/cart';
 import { toast } from '@/hooks/useToast';
 import { ROUTES } from '@/constants/routes';
-import {
-  useGetCartQuery,
-  useUpdateCartItemMutation,
-  useRemoveCartItemMutation,
-  useClearCartMutation,
-} from '@/store/api/endpoints/cart';
+import { useCart } from '@/hooks/useCart';
 
 export default function CartPage() {
-  const { data, isLoading, isFetching } = useGetCartQuery();
-  const [updateQuantity] = useUpdateCartItemMutation();
-  const [removeItem] = useRemoveCartItemMutation();
-  const [clearCart, { isLoading: isClearing }] = useClearCartMutation();
-
-  const cart = data?.data;
+  const {
+    items,
+    isLoading,
+    updateCartItem,
+    removeCartItem,
+    clearCart,
+    getCartTotal,
+    getCartCount,
+    isGuest,
+  } = useCart();
 
   const handleUpdateQuantity = async (itemId: string, quantity: number) => {
     if (quantity < 1) return;
     try {
-      await updateQuantity({ itemId, quantity }).unwrap();
+      await updateCartItem(itemId, quantity);
     } catch (err: unknown) {
       const message =
         (err as { data?: { message?: string } })?.data?.message ||
@@ -40,7 +39,7 @@ export default function CartPage() {
 
   const handleRemove = async (itemId: string) => {
     try {
-      await removeItem(itemId).unwrap();
+      await removeCartItem(itemId);
       toast.removedFromCart();
     } catch {
       toast.error('Could not remove item');
@@ -50,11 +49,32 @@ export default function CartPage() {
   const handleClearCart = async () => {
     if (!confirm('Remove all items from your cart?')) return;
     try {
-      await clearCart().unwrap();
+      await clearCart();
       toast.success('Cart cleared');
     } catch {
       toast.error('Could not clear cart');
     }
+  };
+
+  // Calculate cart totals for guest users
+  const subtotal = getCartTotal();
+  const itemCount = getCartCount();
+  const taxRate = 0.18;
+  const tax = subtotal * taxRate;
+  const total = subtotal + tax;
+  const shippingFee = subtotal >= 500000 ? 0 : 50000; // Free shipping above ₹5,000
+
+  const cart = {
+    id: 'guest-cart',
+    items,
+    subtotal,
+    tax,
+    taxRate,
+    shippingFee,
+    total,
+    itemCount,
+    hasIssues: false, // Guest cart doesn't have stock validation
+    currency: 'INR',
   };
 
   return (
@@ -92,11 +112,22 @@ export default function CartPage() {
 
         {/* Has items */}
         {!isLoading && cart && cart.items.length > 0 && (
-          <div
-            className={
-              isFetching ? 'opacity-60 transition-opacity' : ''
-            }
-          >
+          <div>
+            {/* Guest notice */}
+            {isGuest && (
+              <div className="mb-6 border border-forest-900/10 bg-cream-100 p-4">
+                <p className="text-sm text-forest-900">
+                  <Link
+                    href={ROUTES.login}
+                    className="font-medium underline underline-offset-4"
+                  >
+                    Sign in
+                  </Link>{' '}
+                  to sync your cart across devices and access your order history.
+                </p>
+              </div>
+            )}
+
             <div className="grid gap-10 lg:grid-cols-[1fr_400px] lg:gap-14">
               {/* Left: Items */}
               <div>
@@ -109,10 +140,9 @@ export default function CartPage() {
 
                   <button
                     onClick={handleClearCart}
-                    disabled={isClearing}
-                    className="text-[10px] uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900 disabled:opacity-50"
+                    className="text-[10px] uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900"
                   >
-                    {isClearing ? 'Clearing…' : 'Clear cart'}
+                    Clear cart
                   </button>
                 </div>
 
@@ -124,7 +154,7 @@ export default function CartPage() {
                       item={item}
                       onUpdateQuantity={handleUpdateQuantity}
                       onRemove={handleRemove}
-                      isUpdating={isFetching}
+                      isUpdating={false}
                     />
                   ))}
                 </div>
@@ -139,7 +169,7 @@ export default function CartPage() {
 
               {/* Right: Summary */}
               <div className="lg:sticky lg:top-24 lg:self-start">
-                <CartSummary cart={cart} />
+                <CartSummary cart={cart} isGuest={isGuest} />
               </div>
             </div>
           </div>

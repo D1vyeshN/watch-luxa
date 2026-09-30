@@ -1,15 +1,9 @@
 'use client';
 
 import { Heart } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/useToast';
-import { useAppSelector } from '@/store/hooks';
-import {
-  useToggleWishlistMutation,
-  useCheckWishlistQuery,
-} from '@/store/api/endpoints/wishlist';
-import { ROUTES } from '@/constants/routes';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface WishlistButtonProps {
   productId: string;
@@ -24,32 +18,22 @@ export function WishlistButton({
   className,
   variant = 'floating',
 }: WishlistButtonProps) {
-  const router = useRouter();
-  const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const { data, isLoading } = useCheckWishlistQuery(productId, {
-    skip: !isAuthenticated,
-  });
-  const [toggle, { isLoading: isToggling }] = useToggleWishlistMutation();
-
-  const isWishlisted = data?.data.inWishlist ?? false;
+  const isWishlisted = isInWishlist(productId);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!isAuthenticated) {
-      toast.info('Please sign in to save items', 'Sign in to save your favorite watches');
-      router.push(ROUTES.login);
-      return;
-    }
+    const wasWishlisted = isWishlisted;
 
     try {
-      const result = await toggle({ productId }).unwrap();
-      if (result.data.added) {
-        toast.addedToWishlist();
-      } else {
+      await toggleWishlist(productId);
+      if (wasWishlisted) {
         toast.removedFromWishlist();
+      } else {
+        toast.addedToWishlist();
       }
     } catch (err: unknown) {
       const message =
@@ -72,7 +56,6 @@ export function WishlistButton({
   return (
     <button
       onClick={handleClick}
-      disabled={isLoading || isToggling}
       aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
       className={baseClasses}
     >

@@ -11,6 +11,14 @@ export const buildPublicProductFilter = (
     'variants.isActive': true,
   };
 
+  // ─── Filter by specific IDs (for wishlist, etc.) ───
+  if (query.ids) {
+    const ids = String(query.ids).split(',').map((s) => s.trim()).filter(Boolean);
+    if (ids.length > 0) {
+      filter._id = { $in: ids };
+    }
+  }
+
   // ─── Direct product-level filters ───
   if (query.category) filter.category = query.category;
   if (query.brandId) filter.brandId = query.brandId;

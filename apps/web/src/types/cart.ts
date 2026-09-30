@@ -26,4 +26,7 @@ export interface Cart {
   couponCode?: string;
   currency: string;
   hasIssues: boolean;
+  tax?: number;
+  taxRate?: number;
+  shippingFee?: number;
 }

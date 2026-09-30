@@ -45,6 +45,7 @@ export function MobileMenu() {
             {[
               { label: 'New Arrivals', href: ROUTES.newArrivals },
               { label: 'Shop All', href: ROUTES.shop },
+              { label: 'Wishlist', href: ROUTES.wishlist },
               { label: 'Collections', href: ROUTES.collections },
               { label: 'Journal', href: ROUTES.journal },
             ].map((link) => (

@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Search, ShoppingBag, User, Menu } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, Heart } from 'lucide-react';
 import { Container } from '@/components/shared/container';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { openCartDrawer, openMobileMenu } from '@/store/slices/uiSlice';
-import { useGetCartQuery } from '@/store/api/endpoints/cart';
+import { useCart } from '@/hooks/useCart';
+import { useWishlist } from '@/hooks/useWishlist';
 import { ROUTES } from '@/constants/routes';
 
 const NAV_LINKS = [
@@ -21,9 +21,10 @@ const NAV_LINKS = [
 export function SiteHeader() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
-  const { data: cartResponse } = useGetCartQuery();
+  const { getCartCount } = useCart();
+  const { count: wishlistCount } = useWishlist();
 
-  const itemCount = cartResponse?.data?.itemCount ?? 0;
+  const itemCount = getCartCount();
 
   return (
     <header className="sticky top-0 z-40 border-b border-forest-900/10 bg-cream-100/95 backdrop-blur-sm">
@@ -69,6 +70,19 @@ export function SiteHeader() {
           </Link>
 
           <Link
+            href={ROUTES.wishlist}
+            aria-label="Wishlist"
+            className="relative transition-colors hover:text-cream-600"
+          >
+            <Heart className="h-5 w-5 text-forest-900" />
+            {wishlistCount > 0 && (
+              <Badge className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-cream-600 p-0 text-[10px] font-medium text-forest-900 hover:bg-cream-600">
+                {wishlistCount > 99 ? '99+' : wishlistCount}
+              </Badge>
+            )}
+          </Link>
+
+          <Link
             href={isAuthenticated ? ROUTES.account : ROUTES.login}
             aria-label="Account"
             className="hidden transition-colors hover:text-cream-600 sm:block"
@@ -76,12 +90,10 @@ export function SiteHeader() {
             <User className="h-5 w-5 text-forest-900" />
           </Link>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="relative"
+          <button
             onClick={() => dispatch(openCartDrawer())}
             aria-label="Open cart"
+            className="relative cursor-pointer transition-colors hover:text-cream-600"
           >
             <ShoppingBag className="h-5 w-5 text-forest-900" />
             {itemCount > 0 && (
@@ -89,7 +101,7 @@ export function SiteHeader() {
                 {itemCount > 99 ? '99+' : itemCount}
               </Badge>
             )}
-          </Button>
+          </button>
         </div>
       </Container>
     </header>

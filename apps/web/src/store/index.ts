@@ -3,6 +3,8 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { api } from './api/api';
 import uiReducer from './slices/uiSlice';
 import authReducer from './slices/authSlice';
+import guestCartReducer from './slices/guestCartSlice';
+import guestWishlistReducer from './slices/guestWishlistSlice';
 import { errorMiddleware } from './middleware/errorMiddleware';
 
 // Force-inject all endpoint slices at import time.
@@ -19,6 +21,8 @@ import './api/endpoints/wishlist';
 import './api/endpoints/checkout';
 import './api/endpoints/payments';
 import './api/endpoints/orders';
+import './api/endpoints/addresses';
+import './api/endpoints/returns';
 
 export const makeStore = () => {
   const store = configureStore({
@@ -26,6 +30,8 @@ export const makeStore = () => {
       [api.reducerPath]: api.reducer,
       ui: uiReducer,
       auth: authReducer,
+      guestCart: guestCartReducer,
+      guestWishlist: guestWishlistReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

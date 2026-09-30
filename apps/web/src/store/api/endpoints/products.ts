@@ -59,6 +59,10 @@ export const productsApi = api.injectEndpoints({
     compareProducts: builder.query<ApiResponse<Product[]>, string[]>({
       query: (ids) => `/products/compare?ids=${ids.join(',')}`,
     }),
+
+    getProductsByIds: builder.query<ApiResponse<Product[]>, string[]>({
+      query: (ids) => `/products?ids=${ids.join(',')}`,
+    }),
   }),
 });
 
@@ -70,4 +74,5 @@ export const {
   useGetFeaturedProductsQuery,
   useGetTrendingProductsQuery,
   useCompareProductsQuery,
+  useGetProductsByIdsQuery,
 } = productsApi;

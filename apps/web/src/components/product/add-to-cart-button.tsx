@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/useToast';
 import { useAppDispatch } from '@/store/hooks';
 import { openCartDrawer } from '@/store/slices/uiSlice';
-import { useAddToCartMutation } from '@/store/api/endpoints/cart';
+import { useCart } from '@/hooks/useCart';
 import type { Product, ProductVariant } from '@/types/catalog';
 
 interface AddToCartButtonProps {
@@ -19,11 +19,12 @@ interface AddToCartButtonProps {
 export function AddToCartButton({ product, variant }: AddToCartButtonProps) {
   const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
-  const [addToCart, { isLoading }] = useAddToCartMutation();
+  const { addToCart, isLoading } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
   const inStock = Boolean(variant?.inStock);
   const maxQuantity = variant?.stock ?? 10;
+  const isAdding = isLoading;
 
   const handleAdd = async () => {
     if (!variant) {
@@ -37,11 +38,16 @@ export function AddToCartButton({ product, variant }: AddToCartButtonProps) {
     }
 
     try {
-      await addToCart({
-        productId: product.id,
-        variantId: variant.id,
-        quantity,
-      }).unwrap();
+      await addToCart(product.id, variant.id, quantity, {
+        price: variant.price,
+        name: product.name,
+        slug: product.slug,
+        variantLabel: `${variant.dialColor} ${variant.caseMaterial}`,
+        image: variant.images[0] || product.images[0],
+        sku: variant.sku,
+        stock: variant.stock,
+        inStock: variant.inStock,
+      });
 
       toast.addedToCart();
       dispatch(openCartDrawer());
@@ -84,7 +90,7 @@ export function AddToCartButton({ product, variant }: AddToCartButtonProps) {
 
         <Button
           onClick={handleAdd}
-          disabled={isLoading || !variant}
+          disabled={isAdding || !variant}
           className={cn(
             'h-12 flex-1 rounded-sm text-xs uppercase tracking-[0.18em] transition-all duration-300',
             justAdded
@@ -92,7 +98,7 @@ export function AddToCartButton({ product, variant }: AddToCartButtonProps) {
               : 'bg-forest-900 text-cream-100 hover:bg-forest-800'
           )}
         >
-          {isLoading ? (
+          {isAdding ? (
             'Adding…'
           ) : justAdded ? (
             <>

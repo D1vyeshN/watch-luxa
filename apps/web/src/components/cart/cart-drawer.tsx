@@ -18,36 +18,48 @@ import { ROUTES } from '@/constants/routes';
 import { CONFIG } from '@/constants/config';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeCartDrawer } from '@/store/slices/uiSlice';
-import {
-  useGetCartQuery,
-  useUpdateCartItemMutation,
-  useRemoveCartItemMutation,
-} from '@/store/api/endpoints/cart';
+import { useCart } from '@/hooks/useCart';
 
 export function CartDrawer() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const isOpen = useAppSelector((s) => s.ui.isCartDrawerOpen);
 
-  const { data, isLoading } = useGetCartQuery();
-  const [updateQuantity] = useUpdateCartItemMutation();
-  const [removeItem] = useRemoveCartItemMutation();
-
-  const cart = data?.data;
+  const { items, isLoading, updateCartItem, removeCartItem, getCartTotal, getCartCount, isGuest } = useCart();
   const close = () => dispatch(closeCartDrawer());
 
-  const handleUpdateQuantity = (itemId: string, quantity: number) => {
+  const handleUpdateQuantity = async (itemId: string, quantity: number) => {
     if (quantity < 1) return;
-    updateQuantity({ itemId, quantity });
+    await updateCartItem(itemId, quantity);
   };
 
-  const handleRemove = (itemId: string) => {
-    removeItem(itemId);
+  const handleRemove = async (itemId: string) => {
+    await removeCartItem(itemId);
   };
 
   const goToCheckout = () => {
     close();
-    router.push(ROUTES.checkout);
+    router.push(isGuest ? ROUTES.login : ROUTES.checkout);
+  };
+
+  // Calculate cart totals for guest users
+  const subtotal = getCartTotal();
+  const itemCount = getCartCount();
+  const taxRate = CONFIG.taxRate;
+  const tax = subtotal * taxRate;
+  const shippingFee = subtotal >= CONFIG.freeShippingThreshold ? 0 : CONFIG.flatShippingFee;
+  const total = subtotal + tax + shippingFee;
+  const hasIssues = false; // Guest cart doesn't have stock validation
+
+  const cart = {
+    items,
+    subtotal,
+    tax,
+    taxRate,
+    shippingFee,
+    total,
+    itemCount,
+    hasIssues,
   };
 
   return (
@@ -56,7 +68,7 @@ export function CartDrawer() {
         <SheetHeader className="border-b border-forest-900/10 px-6 py-5">
           <SheetTitle className="flex items-center gap-2 font-serif text-xl tracking-wide text-forest-900">
             <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
-            Your Cart {cart && cart.itemCount > 0 && `(${cart.itemCount})`}
+            Your Cart {cart.itemCount > 0 && `(${cart.itemCount})`}
           </SheetTitle>
         </SheetHeader>
 
@@ -70,7 +82,7 @@ export function CartDrawer() {
         )}
 
         {/* Empty state */}
-        {!isLoading && (!cart || cart.items.length === 0) && (
+        {!isLoading && cart.items.length === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-10 text-center">
             <ShoppingBag className="h-12 w-12 text-ink-light" strokeWidth={1} />
             <div>
@@ -90,7 +102,7 @@ export function CartDrawer() {
         )}
 
         {/* Items + summary */}
-        {!isLoading && cart && cart.items.length > 0 && (
+        {!isLoading && cart.items.length > 0 && (
           <>
             <div className="flex-1 overflow-y-auto px-6">
               {cart.items.map((item) => (
@@ -153,7 +165,7 @@ export function CartDrawer() {
                 disabled={cart.hasIssues}
                 className="mt-4 h-12 w-full rounded-sm bg-forest-900 text-xs uppercase tracking-[0.18em] text-cream-100 hover:bg-forest-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Proceed to Checkout
+                {isGuest ? 'Sign In to Checkout' : 'Proceed to Checkout'}
               </Button>
 
               <Link

@@ -32,6 +32,9 @@ export const ROUTES = {
   accountAddresses: '/account/addresses',
   accountReturns: '/account/returns',
 
+  // ─── Guest (accessible without login) ───
+  wishlist: '/wishlist',
+
   // ─── Content ───
   journal: '/journal',
   journalPost: (slug: string) => `/journal/${slug}`,

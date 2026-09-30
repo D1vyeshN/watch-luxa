@@ -24,17 +24,27 @@ import {
   useVerifyRazorpayPaymentMutation,
   useCreateStripeIntentMutation,
 } from '@/store/api/endpoints/payments';
+import { useGetAddressesQuery } from '@/store/api/endpoints/addresses';
 import { useAppSelector } from '@/store/hooks';
 import type { AddressFormValues } from '@/lib/validation/checkout';
 import type { PaymentMethod } from '@/components/checkout/payment-method-selector';
+import type { SavedAddress } from '@/store/api/endpoints/addresses';
 export default function CheckoutPage() {
   const router = useRouter();
   const user = useAppSelector((s) => s.auth.user);
+  const isAuthenticated = useAppSelector((s) => s.auth.isAuthenticated);
 
   const { data: cartResponse, isLoading: isLoadingCart } = useGetCartQuery();
   const cart = cartResponse?.data;
 
+  const { data: addressesResponse } = useGetAddressesQuery(undefined, {
+    skip: !isAuthenticated,
+  });
+  const savedAddresses = addressesResponse?.data ?? [];
+
   const [address, setAddress] = useState<AddressFormValues | null>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('razorpay');
 
   const handlePaymentMethodChange = (method: PaymentMethod) => {
@@ -55,6 +65,25 @@ export default function CheckoutPage() {
   const [createRazorpayOrder] = useCreateRazorpayOrderMutation();
   const [verifyRazorpay] = useVerifyRazorpayPaymentMutation();
   const [createStripeIntent] = useCreateStripeIntentMutation();
+
+  // Handle saved address selection
+  const handleSelectAddress = (savedAddress: SavedAddress) => {
+    const addressFormValues: AddressFormValues = {
+      fullName: savedAddress.fullName,
+      phone: savedAddress.phone,
+      email: user?.email || '',
+      line1: savedAddress.line1,
+      line2: savedAddress.line2 || '',
+      city: savedAddress.city,
+      state: savedAddress.state,
+      postalCode: savedAddress.postalCode,
+      country: savedAddress.country,
+    };
+    setAddress(addressFormValues);
+    setSelectedAddressId(savedAddress._id);
+    setShowNewAddressForm(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Determine step from state
   const currentStep: 1 | 2 = address ? 2 : 1;
@@ -123,6 +152,7 @@ export default function CheckoutPage() {
   // ─── Address submit (step 1 → 2) ───
   const handleAddressSubmit = (data: AddressFormValues) => {
     setAddress(data);
+    setSelectedAddressId(null); // Clear selected address when using new address
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -278,17 +308,90 @@ export default function CheckoutPage() {
                   Shipping Information
                 </h2>
 
-                <AddressForm
-                  formId="address-form"
-                  onSubmit={handleAddressSubmit}
-                  customerEmail={user?.email}
-                />
+                {/* Saved Addresses */}
+                {isAuthenticated && savedAddresses.length > 0 && !showNewAddressForm && (
+                  <div className="mb-6 space-y-3">
+                    <p className="text-xs uppercase tracking-[0.14em] text-ink-muted">
+                      Saved Addresses
+                    </p>
+                    {savedAddresses.map((savedAddress: SavedAddress) => (
+                      <button
+                        key={savedAddress._id}
+                        onClick={() => handleSelectAddress(savedAddress)}
+                        className={`w-full rounded-sm border p-4 text-left transition-colors ${
+                          selectedAddressId === savedAddress._id
+                            ? 'border-forest-900 bg-cream-200'
+                            : 'border-forest-900/10 bg-cream-50 hover:border-forest-900/30'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            {savedAddress.label && (
+                              <p className="mb-2 text-xs font-medium text-forest-900">
+                                {savedAddress.label}
+                                {savedAddress.isDefault && (
+                                  <span className="ml-2 text-[10px] uppercase tracking-[0.14em] text-ink-muted">
+                                    (Default)
+                                  </span>
+                                )}
+                              </p>
+                            )}
+                            <p className="text-sm text-forest-900">{savedAddress.fullName}</p>
+                            <p className="mt-1 text-sm text-ink-soft">
+                              {savedAddress.line1}
+                              {savedAddress.line2 && `, ${savedAddress.line2}`}
+                            </p>
+                            <p className="text-sm text-ink-soft">
+                              {savedAddress.city}, {savedAddress.state} {savedAddress.postalCode}
+                            </p>
+                            <p className="text-sm text-ink-soft">{savedAddress.country}</p>
+                            <p className="mt-2 text-sm text-ink-soft">{savedAddress.phone}</p>
+                          </div>
+                          {selectedAddressId === savedAddress._id && (
+                            <div className="h-5 w-5 rounded-full bg-forest-900 text-cream-100 flex items-center justify-center">
+                              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+
+                    <button
+                      onClick={() => setShowNewAddressForm(true)}
+                      className="w-full rounded-sm border border-dashed border-forest-900/30 bg-cream-50 p-4 text-center text-xs uppercase tracking-[0.14em] text-forest-900 transition-colors hover:border-forest-900 hover:bg-cream-100"
+                    >
+                      + Add New Address
+                    </button>
+                  </div>
+                )}
+
+                {/* New Address Form */}
+                {(!isAuthenticated || savedAddresses.length === 0 || showNewAddressForm) && (
+                  <>
+                    {isAuthenticated && savedAddresses.length > 0 && (
+                      <button
+                        onClick={() => setShowNewAddressForm(false)}
+                        className="mb-4 text-xs uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900"
+                      >
+                        ← Back to saved addresses
+                      </button>
+                    )}
+                    <AddressForm
+                      formId="address-form"
+                      onSubmit={handleAddressSubmit}
+                      customerEmail={user?.email}
+                    />
+                  </>
+                )}
 
                 <div className="mt-8">
                   <Button
                     type="submit"
                     form="address-form"
-                    className="h-14 w-full rounded-sm bg-forest-900 text-xs uppercase tracking-[0.18em] text-cream-100 hover:bg-forest-800"
+                    disabled={!address}
+                    className="h-14 w-full rounded-sm bg-forest-900 text-xs uppercase tracking-[0.18em] text-cream-100 hover:bg-forest-800 disabled:opacity-50"
                   >
                     Continue to Payment
                   </Button>

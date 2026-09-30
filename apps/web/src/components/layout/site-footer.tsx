@@ -15,6 +15,7 @@ const FOOTER_LINKS = {
     { label: 'FAQ', href: ROUTES.faq },
     { label: 'Warranty & Care', href: ROUTES.warranty },
     { label: 'Returns', href: ROUTES.returns },
+    { label: 'Private Viewing', href: ROUTES.privateViewing },
   ],
   company: [
     { label: 'Our Story', href: ROUTES.about },

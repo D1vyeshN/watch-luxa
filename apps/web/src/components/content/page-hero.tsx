@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Container } from '@/components/shared/container';
-import { ROUTES } from '@/constants/routes';
 
 interface PageHeroProps {
   overline?: string;

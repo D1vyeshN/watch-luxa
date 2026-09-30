@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { Container } from '@/components/shared/container';
 import { ProductDetailContent } from '@/components/product/product-detail-content';
 import { RelatedProducts } from '@/components/product/related-products';
+import { JsonLd, buildProductJsonLd, buildBreadcrumbJsonLd } from '@/components/seo/json-ld';
 import { serverFetch } from '@/lib/api/server-fetch';
 import { buildProductMetadata } from '@/lib/seo/metadata';
+import { env } from '@/config/env';
 import type { ApiResponse, Paginated } from '@/types/api';
 import type { Product } from '@/types/catalog';
 
@@ -62,8 +63,30 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const productJsonLd = buildProductJsonLd({
+    name: product.name,
+    description: product.shortDescription,
+    image: [product.heroImage, ...(product.images ?? [])].slice(0, 4),
+    slug: product.slug,
+    sku: product.specs?.referenceNumber ?? product.slug,
+    brandName: product.brand?.name ?? 'LUXE',
+    price: product.basePrice,
+    currency: 'INR',
+    inStock: product.inStock,
+    siteUrl: env.NEXT_PUBLIC_SITE_URL,
+  });
+
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', url: env.NEXT_PUBLIC_SITE_URL },
+    { name: 'Shop', url: `${env.NEXT_PUBLIC_SITE_URL}/shop` },
+    { name: product.brand?.name ?? 'Brand', url: `${env.NEXT_PUBLIC_SITE_URL}/shop` },
+    { name: product.name, url: `${env.NEXT_PUBLIC_SITE_URL}/product/${product.slug}` },
+  ]);
+
   return (
     <>
+      <JsonLd data={productJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ProductDetailContent product={product} />
       <RelatedProducts products={related} />
     </>

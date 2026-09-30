@@ -4,7 +4,6 @@ import {
   ProseSection,
   ProseHeading,
   ProseParagraph,
-  ProseList,
 } from '@/components/content';
 
 export const metadata: Metadata = {

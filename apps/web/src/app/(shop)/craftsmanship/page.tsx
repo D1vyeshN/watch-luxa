@@ -92,7 +92,7 @@ export default function CraftsmanshipPage() {
           more valuable with time.
         </ProseParagraph>
         <ProseParagraph>
-          That is what we mean when we say "made to outlast."
+          That is what we mean when we say &ldquo;made to outlast.&rdquo;
         </ProseParagraph>
       </ProseSection>
     </>

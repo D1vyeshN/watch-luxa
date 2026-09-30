@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { StoreProvider } from '@/store/StoreProvider';
 import { SessionInit } from '@/components/providers/session-init';
 import { AuthHydrator } from '@/components/auth/auth-hydrator';
+import { JsonLd, buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/components/seo/json-ld';
 import { env } from '@/config/env';
 import './globals.css';
 
@@ -59,6 +60,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
+        <JsonLd
+          data={buildOrganizationJsonLd(
+            env.NEXT_PUBLIC_SITE_URL,
+            env.NEXT_PUBLIC_SITE_NAME
+          )}
+        />
+        <JsonLd
+          data={buildWebsiteJsonLd(
+            env.NEXT_PUBLIC_SITE_URL,
+            env.NEXT_PUBLIC_SITE_NAME
+          )}
+        />
         <StoreProvider>
           <AuthHydrator>
             <SessionInit />

@@ -46,7 +46,7 @@ export default function ReturnsPage() {
         <ProseHeading>How to start a return</ProseHeading>
         <ProseParagraph>
           Sign in to your account, go to the order you wish to return, and
-          select "Request Return". You will need to provide a reason and
+          select &ldquo;Request Return&rdquo;. You will need to provide a reason and
           upload photos of the piece.
         </ProseParagraph>
 

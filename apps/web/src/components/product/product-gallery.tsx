@@ -30,9 +30,9 @@ export function ProductGallery({
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Reset to first image when variant changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setActiveIndex(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentVariant?.id]);
 
   const activeImage = allImages[activeIndex] ?? heroImage;

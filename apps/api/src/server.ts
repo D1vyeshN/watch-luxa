@@ -4,12 +4,16 @@ import { logger } from '@config/logger';
 import { connectDB, disconnectDB } from '@config/database';
 import { seedSystemCategories } from '@config/seedCategories';
 import { seedSystemCollections } from '@config/seedCollections';
+import { seedSystemBrands } from '@config/seedBrands';
+import { seedSystemProducts } from '@config/seedProducts';
 
 const startServer = async () => {
   try {
     await connectDB();
     await seedSystemCategories();
-    await seedSystemCollections();   // ← add this
+    await seedSystemCollections();
+    await seedSystemBrands();
+    await seedSystemProducts();
 
     const app = createApp();
     const server = app.listen(env.PORT, () => {

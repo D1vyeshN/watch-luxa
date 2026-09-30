@@ -16,6 +16,9 @@ import './api/endpoints/search';
 import './api/endpoints/cart';
 import './api/endpoints/auth';
 import './api/endpoints/wishlist';
+import './api/endpoints/checkout';
+import './api/endpoints/payments';
+import './api/endpoints/orders';
 
 export const makeStore = () => {
   const store = configureStore({

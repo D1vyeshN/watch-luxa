@@ -7,3 +7,6 @@ export * from './search';
 export * from './cart';
 export * from './auth';
 export * from './wishlist';
+export * from './checkout';
+export * from './payments';
+export * from './orders';

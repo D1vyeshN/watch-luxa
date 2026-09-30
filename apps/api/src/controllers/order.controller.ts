@@ -55,4 +55,27 @@ export const orderController: any = {
 
     return sendSuccess(res, order, 'Order fetched');
   }),
+
+  /**
+   * GET /api/v1/orders/:orderId/status
+   * Public endpoint for polling order status during checkout.
+   * Used by frontend to wait for webhook confirmation.
+   */
+  getOrderStatus: asyncHandler(async (req: Request, res: Response) => {
+    const { Order } = await import('@models/order.model');
+    const order = await Order.findById(req.params.orderId);
+
+    if (!order) {
+      return sendSuccess(res, { paymentStatus: 'not_found', orderStatus: 'not_found' }, 'Order not found');
+    }
+
+    return sendSuccess(
+      res,
+      {
+        paymentStatus: order.paymentStatus,
+        orderStatus: order.orderStatus,
+      },
+      'Order status'
+    );
+  }),
 };

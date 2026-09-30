@@ -10,7 +10,7 @@ export const getRazorpay = (): any => {
   }
 
   if (!razorpay) {
-    razorpay = Razorpay({
+    razorpay = new Razorpay({
       key_id: env.RAZORPAY_KEY_ID!,
       key_secret: env.RAZORPAY_KEY_SECRET!,
     });

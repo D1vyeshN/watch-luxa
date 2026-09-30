@@ -13,7 +13,7 @@ export const addressSchema = z.object({
     .trim(),
   email: z.string().email('Please enter a valid email address'),
   line1: z.string().min(5, 'Address is too short').max(200).trim(),
-  line2: z.string().max(200).trim().optional().or(z.literal('')),
+  line2: z.string().max(200).trim().optional(),
   city: z.string().min(2, 'City is required').max(50).trim(),
   state: z.string().min(2, 'State is required').max(50).trim(),
   postalCode: z
@@ -21,13 +21,13 @@ export const addressSchema = z.object({
     .min(4, 'Postal code is too short')
     .max(10, 'Postal code is too long')
     .trim(),
-  country: z.string().min(2).max(50).default('India'),
+  country: z.string().min(2).max(50),
 });
 
 export const checkoutSchema = z.object({
   shippingAddress: addressSchema,
-  customerNote: z.string().max(500).optional().or(z.literal('')),
-  couponCode: z.string().max(30).optional().or(z.literal('')),
+  customerNote: z.string().max(500).optional(),
+  couponCode: z.string().max(30).optional(),
 });
 
 export type AddressFormValues = z.infer<typeof addressSchema>;

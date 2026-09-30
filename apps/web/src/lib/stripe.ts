@@ -19,30 +19,19 @@ export interface StripePaymentParams {
 
 export async function confirmStripePayment(params: StripePaymentParams): Promise<void> {
   const stripe = await getStripe(params.publishableKey);
-  
+
   if (!stripe) {
     throw new Error('Failed to load Stripe');
   }
 
-  const { error, paymentIntent } = await stripe.confirmCardPayment(params.clientSecret, {
-    payment_method: {
-      card: {
-        // Stripe Elements would handle the card details
-        // For now, we'll use a simplified approach
-        // In production, you'd use Stripe Elements for card input
-      },
-    },
-  });
+  // Placeholder: In production, you'd pass a Stripe Element here
+  // const { error, paymentIntent } = await stripe.confirmCardPayment(params.clientSecret, {
+  //   payment_method: {
+  //     card: cardElement, // Stripe Element from UI
+  //   },
+  // });
 
-  if (error) {
-    const errorObj = new Error(error.message || 'Payment failed');
-    params.onError(errorObj);
-    throw errorObj;
-  }
-
-  if (paymentIntent?.status === 'succeeded') {
-    params.onSuccess();
-  } else {
-    throw new Error('Payment not successful');
-  }
+  // For now, this is a stub - the actual payment flow would be implemented
+  // when Stripe Elements are integrated
+  throw new Error('Stripe payment not yet implemented - requires Stripe Elements integration');
 }

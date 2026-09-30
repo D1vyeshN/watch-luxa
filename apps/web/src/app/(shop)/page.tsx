@@ -1,60 +1,152 @@
-'use client';
-
 import { Container } from '@/components/shared/container';
+import { Section } from '@/components/shared/section';
 import { ProductGrid } from '@/components/product';
-import { useGetProductsQuery } from '@/store/api/endpoints/products';
+import {
+  Hero,
+  CategoryStrip,
+  EditorialBanner,
+  HeritageBlock,
+  NewsletterCTA,
+} from '@/components/home';
+import { serverFetch } from '@/lib/api/server-fetch';
+import { ROUTES } from '@/constants/routes';
+import type { ApiResponse } from '@/types/api';
+import type { HomeData } from '@/types/home';
 
-export default function Step7TestPage() {
-  const { data, isLoading, error, refetch } = useGetProductsQuery({ limit: 8 });
+export const revalidate = 300; // 5 minutes ISR
+
+async function getHomeData(): Promise<HomeData | null> {
+  const response = await serverFetch<ApiResponse<HomeData>>('/home', {
+    revalidate: 300,
+    tags: ['homepage'],
+  });
+
+  return response?.data ?? null;
+}
+
+export default async function HomePage() {
+  const data = await getHomeData();
+
+  if (!data) {
+    return (
+      <Container className="py-32">
+        <div className="text-center">
+          <p className="label-luxe">Connection error</p>
+          <h1 className="heading-luxe mt-4 text-4xl">
+            Unable to reach the store
+          </h1>
+          <p className="mt-4 text-sm text-ink-soft">
+            Please make sure the API is running and try again.
+          </p>
+        </div>
+      </Container>
+    );
+  }
 
   return (
-    <Container className="py-16">
-      <p className="label-luxe">Step 7 — Product Components</p>
-      <h1 className="heading-luxe mt-3 text-5xl">Product grid ready.</h1>
+    <>
+      {/* 1. Hero */}
+      <Hero />
 
-      <div className="mt-12">
-        {error && (
-          <div className="rounded-sm border border-red-200 bg-red-50 p-6">
-            <p className="text-sm text-red-700">
-              Could not load products. Is the backend running?
-            </p>
-            <button
-              onClick={refetch}
-              className="mt-3 text-xs uppercase tracking-widest text-red-700 underline"
-            >
-              Retry
-            </button>
-          </div>
-        )}
+      {/* 2. Category strip */}
+      <CategoryStrip categories={data.categories} />
 
-        {data && (
-          <>
-            <div className="mb-8 flex items-baseline justify-between">
-              <h2 className="heading-luxe text-2xl">
-                All Watches
-              </h2>
-              <p className="text-xs uppercase tracking-widest text-ink-muted">
-                {data.pagination.total} pieces
-              </p>
+      {/* 3. Featured Watches */}
+      {data.featured.length > 0 && (
+        <Section spacing="lg" background="default">
+          <Container>
+            <div className="mb-10 flex items-end justify-between">
+              <div>
+                <p className="label-luxe">Curated selection</p>
+                <h2 className="heading-luxe mt-2 text-3xl md:text-4xl">
+                  Featured Watches
+                </h2>
+              </div>
+              <a
+                href={`${ROUTES.shop}?featured=true`}
+                className="hidden text-xs uppercase tracking-[0.18em] text-forest-900 underline-offset-4 hover:underline md:block"
+              >
+                View all
+              </a>
             </div>
 
-            <ProductGrid
-              products={data.data}
-              isLoading={isLoading}
-              columns={4}
-            />
-          </>
-        )}
+            <ProductGrid products={data.featured} columns={4} />
+          </Container>
+        </Section>
+      )}
 
-        {isLoading && (
-          <>
-            <div className="mb-8">
-              <h2 className="heading-luxe text-2xl">All Watches</h2>
+      {/* 4. Editorial banner */}
+      <EditorialBanner
+        overline="The Standard"
+        headline="The New Standard of Time"
+        body="A collection that honours the golden age of horology while embracing the precision of modern manufacturing. Each piece is designed to outlast trend, season, and generation."
+        imageUrl="https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=1200&q=80"
+        cta={{ label: 'Discover the collection', href: ROUTES.shop }}
+      />
+
+      {/* 5. Heritage block */}
+      <HeritageBlock />
+
+      {/* 6. New arrivals */}
+      {data.newArrivals.length > 0 && (
+        <Section spacing="lg" background="default">
+          <Container>
+            <div className="mb-10 flex items-end justify-between">
+              <div>
+                <p className="label-luxe">Just arrived</p>
+                <h2 className="heading-luxe mt-2 text-3xl md:text-4xl">
+                  New Arrivals
+                </h2>
+              </div>
+              <a
+                href={ROUTES.newArrivals}
+                className="hidden text-xs uppercase tracking-[0.18em] text-forest-900 underline-offset-4 hover:underline md:block"
+              >
+                View all
+              </a>
             </div>
-            <ProductGrid products={[]} isLoading columns={4} />
-          </>
-        )}
-      </div>
-    </Container>
+
+            <ProductGrid products={data.newArrivals} columns={4} />
+          </Container>
+        </Section>
+      )}
+
+      {/* 7. Trending */}
+      {data.trending.length > 0 && (
+        <Section spacing="lg" background="cream">
+          <Container>
+            <div className="mb-10 flex items-end justify-between">
+              <div>
+                <p className="label-luxe">Most desired</p>
+                <h2 className="heading-luxe mt-2 text-3xl md:text-4xl">
+                  Trending Now
+                </h2>
+              </div>
+              <a
+                href={`${ROUTES.shop}?sortBy=soldCount`}
+                className="hidden text-xs uppercase tracking-[0.18em] text-forest-900 underline-offset-4 hover:underline md:block"
+              >
+                View all
+              </a>
+            </div>
+
+            <ProductGrid products={data.trending} columns={4} />
+          </Container>
+        </Section>
+      )}
+
+      {/* 8. Editorial banner (reversed) */}
+      <EditorialBanner
+        overline="Sovereign Atelier"
+        headline="Heritage Élan"
+        body="A tribute to the maison's earliest commission. Hand-finished bridges, mirror-polished cases, and dials that catch light the way water catches the sun."
+        imageUrl="https://images.unsplash.com/photo-1539874754764-5a96559165b0?w=1200&q=80"
+        cta={{ label: 'Explore heritage', href: ROUTES.about }}
+        reverse
+      />
+
+      {/* 9. Newsletter */}
+      <NewsletterCTA />
+    </>
   );
 }

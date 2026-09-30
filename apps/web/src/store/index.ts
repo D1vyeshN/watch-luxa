@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { api } from './api/api';
 import uiReducer from './slices/uiSlice';
 import authReducer from './slices/authSlice';
+import { errorMiddleware } from './middleware/errorMiddleware';
 
 // Force-inject all endpoint slices at import time.
 // Do NOT remove these — they register the endpoints with the root API.
@@ -32,7 +33,9 @@ export const makeStore = () => {
             'persist/REHYDRATE',
           ],
         },
-      }).concat(api.middleware),
+      })
+        .concat(api.middleware)
+        .concat(errorMiddleware),
     devTools: process.env.NODE_ENV !== 'production',
   });
 

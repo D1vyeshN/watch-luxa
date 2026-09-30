@@ -148,7 +148,7 @@ If you want to launch faster, here's the **minimum path**:
 - **Step 1** ✅ — Design system complete (2026-09-29)
 - **Step 2** ✅ — Redux store complete (2026-09-30)
 - **Step 3** ✅ — API layer complete (2026-09-30)
-- **Step 4** ⏳ — Pending
+- **Step 4** ✅ — Utilities complete (2026-09-30)
 - **Step 5** ⏳ — Pending
 - **Step 6** ⏳ — Pending
 - **Step 7** ⏳ — Pending

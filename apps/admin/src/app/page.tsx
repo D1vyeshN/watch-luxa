@@ -1,54 +1,115 @@
 'use client';
 
-import { Button, Card, Space, Typography } from 'antd';
-import { CheckCircleOutlined } from '@ant-design/icons';
+import { useList } from '@refinedev/core';
+import { Card, Table, Tag, Typography, Space, Alert, Button } from 'antd';
+import { LogoutOutlined } from '@ant-design/icons';
+import { useLogout } from '@refinedev/core';
 
-export default function Step0VerificationPage() {
+interface ProductRow {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  basePrice: number;
+  brand?: { name: string };
+  category?: string;
+}
+
+export default function DashboardPage() {
+  const { mutate: logout } = useLogout();
+  const { data, isLoading, isError, error } = useList<ProductRow>({
+    resource: 'products',
+    pagination: { currentPage: 1, pageSize: 5 },
+    sorters: [{ field: 'createdAt', order: 'desc' }],
+  });
+
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-      }}
-    >
-      <Card style={{ maxWidth: 560, width: '100%' }}>
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <Typography.Title level={3} style={{ marginBottom: 8 }}>
-              <CheckCircleOutlined style={{ color: '#059669', marginRight: 8 }} />
-              Step 0 — Foundation Ready
+              LUXE Admin Dashboard
             </Typography.Title>
             <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-              Next.js 16, Refine v5, and Ant Design v5 are wired up. Custom
-              providers come in Steps 1-3.
+              Products from your Express backend via Refine's dataProvider
             </Typography.Paragraph>
           </div>
+          <Button icon={<LogoutOutlined />} onClick={() => logout()}>
+            Logout
+          </Button>
+        </div>
 
-          <Space wrap>
-            <Button type="primary">Primary</Button>
-            <Button>Default</Button>
-            <Button type="dashed">Dashed</Button>
-            <Button danger>Danger</Button>
-          </Space>
+        {isError && (
+          <Alert
+            type="error"
+            showIcon
+            message="Failed to fetch products"
+            description={
+              error?.message ??
+              'Is the backend running on port 5000?'
+            }
+          />
+        )}
 
-          <Card size="small" title="Verification Checklist">
-            <ul style={{ paddingLeft: 20, margin: 0, lineHeight: 1.8 }}>
-              <li>Ant Design theme applied (forest primary, gray canvas)</li>
-              <li>Inter font loaded</li>
-              <li>AntdRegistry mounted (no FOUC)</li>
-              <li>Folder structure created</li>
-              <li>Performance tuning applied</li>
-            </ul>
-          </Card>
+        <Card
+          title={
+            <Space>
+              <span>Products</span>
+              {data && (
+                <Tag color="blue">Total: {data.total}</Tag>
+              )}
+            </Space>
+          }
+          loading={isLoading}
+        >
+          <Table<ProductRow>
+            dataSource={data?.data ?? []}
+            rowKey="id"
+            pagination={false}
+            size="small"
+            columns={[
+              {
+                title: 'Name',
+                dataIndex: 'name',
+                key: 'name',
+              },
+              {
+                title: 'Brand',
+                key: 'brand',
+                render: (_, row) => row.brand?.name ?? '—',
+              },
+              {
+                title: 'Category',
+                dataIndex: 'category',
+                key: 'category',
+                render: (v) => v ?? '—',
+              },
+              {
+                title: 'Price',
+                dataIndex: 'basePrice',
+                key: 'basePrice',
+                render: (v: number) =>
+                  `₹${(v / 100).toLocaleString('en-IN')}`,
+              },
+              {
+                title: 'Status',
+                dataIndex: 'status',
+                key: 'status',
+                render: (v: string) => (
+                  <Tag color={v === 'active' ? 'green' : 'default'}>
+                    {v}
+                  </Tag>
+                ),
+              },
+            ]}
+          />
+        </Card>
 
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-            If this renders correctly, say "Step 1" to build the dataProvider.
-          </Typography.Text>
-        </Space>
-      </Card>
+        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+          Auth and dataProvider working. Step 2 complete.
+        </Typography.Text>
+      </Space>
     </div>
   );
 }

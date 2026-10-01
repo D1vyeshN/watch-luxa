@@ -1,53 +1,83 @@
 import type { AccessControlProvider } from '@refinedev/core';
 import { tokenStorage } from '@/lib/storage/tokenStorage';
 
+// ─── Resources that only superadmin can touch ───
+const SUPERADMIN_ONLY_RESOURCES = new Set([
+  'team',
+  'audit-logs',
+  'settings',
+  'system',
+]);
+
+// ─── Actions that only superadmin can perform ───
+const SUPERADMIN_ONLY_ACTIONS = new Set(['delete']);
+
+// ─── Resources regular admins can fully manage ───
+const ADMIN_RESOURCES = new Set([
+  'products',
+  'categories',
+  'brands',
+  'collections',
+  'inventory',
+  'orders',
+  'customers',
+  'coupons',
+  'returns',
+  'reviews',
+  'uploads',
+  'csv-import',
+  'analytics',
+]);
+
 export const accessControlProvider: AccessControlProvider = {
-  can: async ({ resource, action, params }) => {
+  can: async ({ resource, action }) => {
     const user = tokenStorage.getUser();
+
+    // Not logged in → no access
     if (!user) {
-      return {
-        can: false,
-      };
+      return { can: false };
     }
 
-    // Superadmin has access to everything
-    if (user.role === 'superadmin') {
-      return {
-        can: true,
-      };
+    const { role } = user;
+
+    // Superadmin can do anything
+    if (role === 'superadmin') {
+      return { can: true };
     }
 
-    // Role-based access rules for regular admins
-    const roleRules: Record<string, Record<string, string[]>> = {
-      admin: {
-        products: ['list', 'show', 'create', 'update'],
-        categories: ['list', 'show'],
-        brands: ['list', 'show'],
-        collections: ['list', 'show'],
-        orders: ['list', 'show', 'update'],
-        customers: ['list', 'show'],
-        coupons: ['list', 'show'],
-        returns: ['list', 'show', 'update'],
-        reviews: ['list', 'update'],
-        inventory: ['list', 'update'],
-        settings: ['list', 'show'],
-      },
-    };
+    // Regular admin rules
+    if (role === 'admin') {
+      // Admin cannot touch superadmin-only resources
+      if (resource && SUPERADMIN_ONLY_RESOURCES.has(resource)) {
+        return {
+          can: false,
+          reason: 'Only superadmins can access this section.',
+        };
+      }
 
-    const allowedActions = roleRules[user.role]?.[resource] ?? [];
+      // Admin cannot perform superadmin-only actions (e.g., hard delete)
+      if (
+        action &&
+        SUPERADMIN_ONLY_ACTIONS.has(action) &&
+        resource &&
+        !ADMIN_RESOURCES.has(resource)
+      ) {
+        return {
+          can: false,
+          reason: 'Only superadmins can perform this action.',
+        };
+      }
 
-    if (allowedActions.includes(action)) {
-      return {
-        can: true,
-      };
+      // Admin can manage the resources they own
+      if (resource && ADMIN_RESOURCES.has(resource)) {
+        return { can: true };
+      }
+
+      // Default deny for unknown resources
+      return { can: false, reason: 'Access denied.' };
     }
 
-    return {
-      can: false,
-    };
-  },
-  options: {
-    buttons: true,
-    input: true,
+    // Any other role → deny
+    return { can: false, reason: 'Access denied.' };
   },
 };

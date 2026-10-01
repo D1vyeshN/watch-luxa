@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
+import { App as AntdApp } from 'antd';
 import { RefineProvider } from '@/components/refine-provider';
 import { luxeAdminTheme } from '@/theme/antd-theme';
+
 import './globals.css';
 
 const inter = Inter({
@@ -35,7 +37,9 @@ export default function RootLayout({
       <body style={{ margin: 0 }}>
         <AntdRegistry>
           <ConfigProvider theme={luxeAdminTheme}>
-            <RefineProvider>{children}</RefineProvider>
+            <AntdApp>
+              <RefineProvider>{children}</RefineProvider>
+            </AntdApp>
           </ConfigProvider>
         </AntdRegistry>
       </body>

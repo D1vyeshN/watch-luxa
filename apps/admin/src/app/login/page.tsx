@@ -1,157 +1,206 @@
 'use client';
 
-import { useState } from 'react';
-import { useLogin } from '@refinedev/core';
-import { Button, Card, Form, Input, Typography, Alert, Space } from 'antd';
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
-
-interface LoginFormValues {
-  email: string;
-  password: string;
-}
+import { useEffect, useState } from 'react';
 
 export const dynamic = 'force-dynamic';
+import { useRouter } from 'next/navigation';
+import { useLogin, useIsAuthenticated } from '@refinedev/core';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+import { loginSchema, type LoginFormValues } from '@/lib/validation/auth';
 
 export default function LoginPage() {
-  const { mutate: login, isPending, error } = useLogin<LoginFormValues>();
-  const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
+  const { data: auth, isLoading: isCheckingAuth } = useIsAuthenticated();
+  const { mutate: login, data, error, isPending } = useLogin<LoginFormValues>();
 
-  const onFinish = (values: LoginFormValues) => {
-    setFormError(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!isCheckingAuth && auth?.authenticated) {
+      router.replace('/dashboard');
+    }
+  }, [auth, isCheckingAuth, router]);
+
+  const onSubmit = (values: LoginFormValues) => {
     login(values);
   };
 
-  // Extract error message from Refine's error shape
-  const errorMessage =
-    formError ||
-    (error as { message?: string } | null)?.message ||
-    null;
+  // Extract error message
+  const errorMessage = (() => {
+    if (!error) return null;
+    if (typeof error === 'string') return error;
+    if (typeof error === 'object' && 'message' in error) {
+      return (error as { message?: string }).message ?? 'Login failed';
+    }
+    return 'Login failed. Please try again.';
+  })();
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        background: '#0f2320',
-      }}
-    >
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: 420,
-          boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-        }}
-        styles={{ body: { padding: 40 } }}
-      >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          {/* Brand */}
-          <div style={{ textAlign: 'center' }}>
-            <Typography.Title
-              level={2}
-              style={{
-                fontFamily: 'Georgia, serif',
-                letterSpacing: '0.25em',
-                marginBottom: 8,
-                color: '#0f2320',
-              }}
-            >
+    <div className="flex min-h-screen bg-forest-900">
+      {/* Left side — brand panel (hidden on mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-forest-950 via-forest-900 to-forest-800" />
+
+        <div className="relative z-10 max-w-md">
+          <div className="font-serif text-5xl tracking-[0.3em] text-cream-100">
+            LUXE
+          </div>
+          <p className="mt-8 text-lg leading-relaxed text-cream-200/70">
+            Timepieces for those who measure moments, not minutes.
+          </p>
+          <div className="mt-12 h-px w-16 bg-cream-600" />
+          <p className="mt-6 text-xs uppercase tracking-[0.18em] text-cream-200/50">
+            Operations Cockpit
+          </p>
+        </div>
+      </div>
+
+      {/* Right side — login form */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center bg-cream-100 p-6">
+        <div className="w-full max-w-sm">
+          {/* Mobile logo */}
+          <div className="mb-10 text-center lg:hidden">
+            <div className="font-serif text-3xl tracking-[0.25em] text-forest-900">
               LUXE
-            </Typography.Title>
-            <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            </div>
+            <p className="mt-2 text-xs uppercase tracking-[0.14em] text-muted-foreground">
               Admin Portal
-            </Typography.Text>
+            </p>
           </div>
 
-          {/* Divider */}
-          <div
-            style={{
-              borderTop: '1px solid #e5e7eb',
-              marginTop: 8,
-            }}
-          />
-
-          {/* Heading */}
-          <div>
-            <Typography.Title level={4} style={{ marginBottom: 4 }}>
-              Sign in
-            </Typography.Title>
-            <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-              Enter your admin credentials to continue.
-            </Typography.Text>
+          {/* Desktop heading */}
+          <div className="mb-8 hidden lg:block">
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Welcome back
+            </p>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-forest-900">
+              Sign in to continue.
+            </h1>
           </div>
 
           {/* Error alert */}
           {errorMessage && (
-            <Alert
-              type="error"
-              showIcon
-              message={errorMessage}
-              closable
-              onClose={() => setFormError(null)}
-            />
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
           )}
 
           {/* Form */}
-          <Form<LoginFormValues>
-            layout="vertical"
-            onFinish={onFinish}
-            requiredMark={false}
-            size="large"
-            autoComplete="off"
-          >
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                { required: true, message: 'Email is required' },
-                { type: 'email', message: 'Enter a valid email' },
-              ]}
-            >
-              <Input
-                prefix={<MailOutlined style={{ color: '#9ca3af' }} />}
-                placeholder="admin@luxe.com"
-                autoComplete="email"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              {/* Email */}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-medium uppercase tracking-[0.14em] text-forest-900">
+                      Email
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="admin@luxe.com"
+                          autoComplete="email"
+                          autoFocus
+                          disabled={isPending}
+                          className="h-11 pl-10"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </Form.Item>
 
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[{ required: true, message: 'Password is required' }]}
-            >
-              <Input.Password
-                prefix={<LockOutlined style={{ color: '#9ca3af' }} />}
-                placeholder="••••••••"
-                autoComplete="current-password"
+              {/* Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-medium uppercase tracking-[0.14em] text-forest-900">
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                          {...field}
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="••••••••"
+                          autoComplete="current-password"
+                          disabled={isPending}
+                          className="h-11 pl-10 pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                          aria-label={
+                            showPassword ? 'Hide password' : 'Show password'
+                          }
+                          tabIndex={-1}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </Form.Item>
 
-            <Form.Item style={{ marginBottom: 0, marginTop: 24 }}>
+              {/* Submit */}
               <Button
-                type="primary"
-                htmlType="submit"
-                loading={isPending}
-                block
-                size="large"
-                style={{ height: 44 }}
+                type="submit"
+                disabled={isPending}
+                className="h-11 w-full bg-forest-900 text-cream-100 hover:bg-forest-800"
               >
-                Sign In
+                {isPending ? 'Signing in…' : 'Sign In'}
               </Button>
-            </Form.Item>
+            </form>
           </Form>
 
           {/* Footer */}
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: 11, textAlign: 'center', display: 'block' }}
-          >
+          <p className="mt-8 text-center text-xs text-muted-foreground">
             Restricted area. Access is monitored and logged.
-          </Typography.Text>
-        </Space>
-      </Card>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

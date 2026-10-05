@@ -1,12 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { ConfigProvider } from 'antd';
-import { App as AntdApp } from 'antd';
-import { RefineProvider } from '@/components/refine-provider';
-import { luxeAdminTheme } from '@/theme/antd-theme';
-
+import { Providers } from './providers';
 import './globals.css';
+
+export const dynamic = 'force-dynamic';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,15 +30,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body style={{ margin: 0 }}>
-        <AntdRegistry>
-          <ConfigProvider theme={luxeAdminTheme}>
-            <AntdApp>
-              <RefineProvider>{children}</RefineProvider>
-            </AntdApp>
-          </ConfigProvider>
-        </AntdRegistry>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -4,23 +4,18 @@ const nextConfig: NextConfig = {
   // ─── Allow browser preview for development ───
   allowedDevOrigins: ['127.0.0.1'],
 
-  // ─── Transpile Refine + Ant Design for edge compatibility ───
+  // ─── Transpile Refine for edge compatibility ───
   transpilePackages: [
     '@refinedev/core',
-    '@refinedev/antd',
     '@refinedev/nextjs-router',
-    '@ant-design/icons',
-    'antd',
   ],
 
-  // ─── Tree-shake Ant Design + Refine imports ───
+  // ─── Tree-shake Refine imports ───
   experimental: {
     optimizePackageImports: [
       '@refinedev/core',
-      '@refinedev/antd',
       '@refinedev/nextjs-router',
-      '@ant-design/icons',
-      'antd',
+      'lucide-react',
     ],
   },
 

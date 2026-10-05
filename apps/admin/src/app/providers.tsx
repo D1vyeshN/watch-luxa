@@ -10,6 +10,7 @@ import { dataProvider } from '@/providers/data-provider';
 import { authProvider } from '@/providers/auth-provider';
 import { accessControlProvider } from '@/providers/access-control';
 import { notificationProvider } from '@/providers/notification-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import { RESOURCES } from '@/constants/resources';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -28,27 +29,29 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Refine
-        routerProvider={routerProvider}
-        dataProvider={dataProvider}
-        authProvider={authProvider}
-        accessControlProvider={accessControlProvider}
-        notificationProvider={notificationProvider}
-        resources={RESOURCES}
-        options={{
-          syncWithLocation: true,
-          warnWhenUnsavedChanges: false,
-          projectId: 'luxe-admin',
-          disableTelemetry: true,
-          title: {
-            icon: <span className="text-xl">✦</span>,
-            text: 'LUXE Admin',
-          },
-        }}
-      >
-        {children}
-        <Toaster position="top-right" richColors closeButton />
-      </Refine>
+      <ThemeProvider>
+        <Refine
+          routerProvider={routerProvider}
+          dataProvider={dataProvider}
+          authProvider={authProvider}
+          accessControlProvider={accessControlProvider}
+          notificationProvider={notificationProvider}
+          resources={RESOURCES}
+          options={{
+            syncWithLocation: true,
+            warnWhenUnsavedChanges: false,
+            projectId: 'luxe-admin',
+            disableTelemetry: true,
+            title: {
+              icon: <span className="text-xl">✦</span>,
+              text: 'LUXE Admin',
+            },
+          }}
+        >
+          {children}
+          <Toaster position="top-right" richColors closeButton />
+        </Refine>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

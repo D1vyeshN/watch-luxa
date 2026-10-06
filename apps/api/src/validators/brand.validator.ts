@@ -17,6 +17,7 @@ export const createBrandSchema = z.object({
       .optional(),
     heritageStory: z.string().max(5000).optional(),
     featured: z.boolean().optional(),
+    status: z.enum(['active', 'archived']).optional(),
   }),
 });
 

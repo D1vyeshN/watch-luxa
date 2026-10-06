@@ -179,7 +179,7 @@ export function ProductForm({ mode, productId, duplicateFromId }: ProductFormPro
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+      <form noValidate onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-6">
         <Tabs
           value={tab}
           onValueChange={(v) => setTab(v as ProductFormTab)}

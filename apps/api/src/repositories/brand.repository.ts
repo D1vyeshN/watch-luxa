@@ -32,8 +32,10 @@ export class BrandRepository {
   }
 
   async findByName(name: string): Promise<IBrand | null> {
+    // Escape regex metacharacters so names like "A. Lange & Söhne" match literally
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return Brand.findOne({
-      name: { $regex: `^${name}$`, $options: 'i' },
+      name: { $regex: `^${escaped}$`, $options: 'i' },
     }).lean() as unknown as Promise<IBrand | null>;
   }
 

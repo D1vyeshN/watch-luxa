@@ -10,112 +10,99 @@ import { Loader2 } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 
-import { CategoryFormFields } from './category-form-fields';
-import { categorySchema, type CategoryFormSchema } from '@/lib/validation/category';
+import { BrandFormFields } from './brand-form-fields';
+import { brandSchema, type BrandFormSchema } from '@/lib/validation/brand';
 
-interface CategoryFormProps {
+interface BrandFormProps {
   mode: 'create' | 'edit';
-  categoryId?: string;
+  brandId?: string;
 }
 
-const DEFAULT_VALUES: CategoryFormSchema = {
+const DEFAULT_VALUES: BrandFormSchema = {
   name: '',
-  description: '',
-  image: '',
-  icon: '',
-  displayOrder: 100,
+  logo: '',
+  country: '',
+  founded: undefined,
+  heritageStory: '',
+  featured: false,
   status: 'active',
 };
 
-type CategoryRecord = CategoryFormSchema & { isSystem: boolean };
-
-// API record → form shape (nulls → ''), done inside the query so Refine's
-// auto-sync of query data into fields writes valid values. Module-level so
-// `select` is stable across renders.
+// API record → form shape (nulls → '' / undefined), done inside the query so
+// Refine's auto-sync of query data into fields writes valid values.
+// Module-level so `select` is stable across renders.
 const selectFormValues = (res: GetOneResponse<BaseRecord>): GetOneResponse<BaseRecord> => {
   const d = res.data;
-  const record: CategoryRecord = {
+  const values: BrandFormSchema = {
     name: d.name ?? '',
-    description: d.description ?? '',
-    image: d.image ?? '',
-    icon: d.icon ?? '',
-    displayOrder: typeof d.displayOrder === 'number' ? d.displayOrder : 100,
+    logo: d.logo ?? '',
+    country: d.country ?? '',
+    founded: typeof d.founded === 'number' ? d.founded : undefined,
+    heritageStory: d.heritageStory ?? '',
+    featured: d.featured === true,
     status: d.status === 'archived' ? 'archived' : 'active',
-    isSystem: d.isSystem === true,
   };
-  return { ...res, data: record };
+  return { ...res, data: values };
 };
 
 const QUERY_OPTIONS = { select: selectFormValues, refetchOnWindowFocus: false } as const;
 
-const OPTIONAL_TEXT = ['description', 'image', 'icon'] as const;
+const CLEARABLE = ['logo', 'country', 'founded', 'heritageStory'] as const;
 
-function toPayload(values: CategoryFormSchema, mode: 'create' | 'edit', isSystem: boolean) {
+// '' / undefined aren't valid for the API: omit on create, send null on edit
+// so clearing a field actually clears it.
+function toPayload(values: BrandFormSchema, mode: 'create' | 'edit') {
   const payload: Record<string, unknown> = { ...values };
-
-  // '' isn't valid for the API (e.g. image must be a URL): omit on create,
-  // send null on edit so clearing a field actually clears it.
-  for (const key of OPTIONAL_TEXT) {
-    if (payload[key] === '') {
+  for (const key of CLEARABLE) {
+    if (payload[key] === '' || payload[key] === undefined) {
       if (mode === 'edit') payload[key] = null;
       else delete payload[key];
     }
   }
-
-  // Locked on system categories — the API rejects changes to them
-  if (isSystem) {
-    delete payload.name;
-    delete payload.status;
-  }
-
-  return payload as CategoryFormSchema;
+  return payload as BrandFormSchema;
 }
 
-export function CategoryForm({ mode, categoryId }: CategoryFormProps) {
+export function BrandForm({ mode, brandId }: BrandFormProps) {
   const router = useRouter();
   const isEdit = mode === 'edit';
 
   const {
     refineCore: { onFinish, formLoading, query },
     ...form
-  } = useForm<BaseRecord, HttpError, CategoryFormSchema>({
-    resolver: zodResolver(categorySchema),
+  } = useForm<BaseRecord, HttpError, BrandFormSchema>({
+    resolver: zodResolver(brandSchema),
     defaultValues: DEFAULT_VALUES,
     refineCoreProps: {
-      resource: 'categories',
+      resource: 'brands',
       action: mode,
-      id: isEdit ? categoryId : undefined,
+      id: isEdit ? brandId : undefined,
       queryOptions: QUERY_OPTIONS,
       redirect: 'list',
       successNotification: () => ({
         type: 'success',
-        message: isEdit ? 'Category updated' : 'Category created',
+        message: isEdit ? 'Brand updated' : 'Brand created',
       }),
     },
   });
 
-  const record = isEdit ? (query?.data?.data as CategoryRecord | undefined) : undefined;
-  const isSystemCategory = record?.isSystem === true;
+  const record = isEdit ? (query?.data?.data as BrandFormSchema | undefined) : undefined;
 
   // Explicit reset once the record arrives (v5 doesn't populate defaultValues)
   const { reset } = form;
   useEffect(() => {
-    if (!record) return;
-    const { isSystem: _isSystem, ...values } = record;
-    reset(values);
+    if (record) reset(record);
   }, [record, reset]);
 
-  const onSubmit = (values: CategoryFormSchema) =>
-    onFinish(toPayload(values, mode, isSystemCategory));
+  const onSubmit = (values: BrandFormSchema) => onFinish(toPayload(values, mode));
 
   if (isEdit && query?.isError) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-3 text-center">
         <p className="text-sm text-muted-foreground">
-          {query.error?.message ?? 'Could not load this category.'}
+          {query.error?.message ?? 'Could not load this brand.'}
         </p>
-        <Button variant="outline" onClick={() => router.push('/categories')}>
-          Back to categories
+        <Button variant="outline" onClick={() => router.push('/brands')}>
+          Back to brands
         </Button>
       </div>
     );
@@ -133,21 +120,21 @@ export function CategoryForm({ mode, categoryId }: CategoryFormProps) {
     <Form {...form}>
       <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded-md border border-border bg-card p-6">
-          <CategoryFormFields form={form} isSystemCategory={isSystemCategory} />
+          <BrandFormFields form={form} />
         </div>
 
         <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-border bg-background/95 px-6 py-4 backdrop-blur">
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push('/categories')}
+            onClick={() => router.push('/brands')}
             disabled={formLoading}
           >
             Cancel
           </Button>
           <Button type="submit" disabled={formLoading}>
             {formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isEdit ? 'Save Changes' : 'Create Category'}
+            {isEdit ? 'Save Changes' : 'Create Brand'}
           </Button>
         </div>
       </form>

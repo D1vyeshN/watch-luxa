@@ -35,6 +35,8 @@ export const adminBrandController: any = {
       logo: brand.logo,
       country: brand.country,
       founded: brand.founded,
+      // Short preview for the admin table — full story comes from GET /:id
+      heritagePreview: brand.heritageStory?.slice(0, 160) || undefined,
       featured: brand.featured,
       status: brand.status,
       createdAt: brand.createdAt,

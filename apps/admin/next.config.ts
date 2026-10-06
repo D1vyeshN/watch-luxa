@@ -4,6 +4,16 @@ const nextConfig: NextConfig = {
   // ─── Allow browser preview for development ───
   allowedDevOrigins: ['127.0.0.1'],
 
+  // ─── Image domains ───
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+
   // ─── Transpile Refine for edge compatibility ───
   transpilePackages: [
     '@refinedev/core',

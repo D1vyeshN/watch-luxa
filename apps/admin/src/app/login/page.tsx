@@ -196,9 +196,21 @@ export default function LoginPage() {
           </Form>
 
           {/* Footer */}
-          <p className="mt-8 text-center text-xs text-muted-foreground">
-            Restricted area. Access is monitored and logged.
-          </p>
+          <div className="mt-8 flex items-center justify-between text-xs text-muted-foreground">
+            <p>Restricted area. Access is monitored and logged.</p>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-auto p-0 text-muted-foreground hover:text-foreground"
+              onClick={() => {
+                form.setValue('email', 'superadmin@luxe.com');
+                form.setValue('password', 'YourSecurePassword123!');
+              }}
+            >
+              Auto-fill
+            </Button>
+          </div>
         </div>
       </div>
     </div>

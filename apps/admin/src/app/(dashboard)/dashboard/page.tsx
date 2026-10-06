@@ -26,11 +26,7 @@ export default function DashboardPage() {
   const [preset, setPreset] = useState<DateRangePreset>('30d');
 
   // ─── Main dashboard data ───
-  const {
-    data: dashboardResponse,
-    isLoading: isLoadingDashboard,
-    isError: isDashboardError,
-  } = useCustom<DashboardResponse>({
+  const { query: dashboardQuery } = useCustom<DashboardResponse>({
     url: `/admin/analytics/dashboard`,
     method: 'get',
     config: {
@@ -39,44 +35,39 @@ export default function DashboardPage() {
     queryOptions: {
       staleTime: 60 * 1000,
     },
-  }) as any;
+  });
 
   // ─── Top products ───
-  const { data: topProductsResponse } = useCustom({
+  const { query: topProductsQuery } = useCustom<TopProduct[]>({
     url: `/admin/analytics/top-products`,
     method: 'get',
     config: { query: { preset, limit: 5 } },
-    queryOptions: {
-      staleTime: 60 * 1000,
-    },
-  }) as any;
+  });
 
   // ─── Recent orders ───
-  const { data: recentOrdersResponse } = useCustom({
+  const { query: recentOrdersQuery } = useCustom<RecentOrder[]>({
     url: `/admin/analytics/recent-orders`,
     method: 'get',
     config: { query: { limit: 5 } },
-    queryOptions: {
-      staleTime: 60 * 1000,
-    },
-  }) as any;
+  });
 
   // ─── Low stock ───
-  const { data: lowStockResponse } = useCustom({
+  const { query: lowStockQuery } = useCustom<LowStockVariant[]>({
     url: `/admin/analytics/low-stock`,
     method: 'get',
     config: { query: { limit: 5 } },
-    queryOptions: {
-      staleTime: 60 * 1000,
-    },
-  }) as any;
+  });
 
-  const dashboard = dashboardResponse?.data;
-  const topProducts = topProductsResponse?.data ?? [];
-  const recentOrders = recentOrdersResponse?.data ?? [];
-  const lowStock = lowStockResponse?.data ?? [];
+  // ─── Extract payloads ───
+  // query.data is { data: T } because dataProvider.custom returns { data: T }
+  const dashboard = dashboardQuery.data?.data;
+  const topProducts = topProductsQuery.data?.data ?? [];
+  const recentOrders = recentOrdersQuery.data?.data ?? [];
+  const lowStock = lowStockQuery.data?.data ?? [];
 
-  const isInitialLoading = isLoadingDashboard && !dashboard;
+  const isInitialLoading = dashboardQuery.isLoading && !dashboard;
+
+
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -98,7 +89,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ─── Error ─── */}
-      {isDashboardError && (
+      {dashboardQuery.isError && (
         <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
           Failed to load dashboard data. Is the backend running?
         </div>

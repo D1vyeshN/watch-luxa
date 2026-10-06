@@ -12,3 +12,4 @@ export { addressService } from './address.service';
 export { stripeService } from './stripe.service';
 export { razorpayService } from './razorpay.service';
 export { webhookService } from './webhook.service';
+export { analyticsService } from './analytics.service';

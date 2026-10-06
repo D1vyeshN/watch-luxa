@@ -18,7 +18,7 @@ export function TopProducts({ data }: TopProductsProps) {
         <p className="text-xs text-muted-foreground">By revenue in period</p>
       </CardHeader>
       <CardContent>
-        {data.length === 0 ? (
+        {data?.length === 0 ? (
           <div className="flex h-[240px] items-center justify-center text-xs text-muted-foreground">
             No sales data yet
           </div>

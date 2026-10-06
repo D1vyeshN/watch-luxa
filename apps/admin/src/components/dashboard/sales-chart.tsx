@@ -36,18 +36,18 @@ export function SalesChart({ data }: SalesChartProps) {
             <AreaChart data={data} margin={{ top: 10, right: 12, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#0f2320" stopOpacity={0.25} />
-                  <stop offset="100%" stopColor="#0f2320" stopOpacity={0} />
+                  <stop offset="0%" stopColor="var(--foreground)" stopOpacity={0.25} />
+                  <stop offset="100%" stopColor="var(--foreground)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="hsl(var(--border))"
+                stroke="var(--border)"
                 vertical={false}
               />
               <XAxis
                 dataKey="date"
-                stroke="hsl(var(--muted-foreground))"
+                stroke="var(--muted-foreground)"
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -58,7 +58,7 @@ export function SalesChart({ data }: SalesChartProps) {
                 minTickGap={24}
               />
               <YAxis
-                stroke="hsl(var(--muted-foreground))"
+                stroke="var(--muted-foreground)"
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
@@ -67,10 +67,11 @@ export function SalesChart({ data }: SalesChartProps) {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
                   borderRadius: 6,
                   fontSize: 12,
+                  color: 'var(--foreground)',
                 }}
                 labelFormatter={(label) => {
                   const d = new Date(label as string);
@@ -85,7 +86,7 @@ export function SalesChart({ data }: SalesChartProps) {
               <Area
                 type="monotone"
                 dataKey="revenue"
-                stroke="#0f2320"
+                stroke="var(--foreground)"
                 strokeWidth={2}
                 fill="url(#revenueFill)"
               />

@@ -1,8 +1,9 @@
 import rateLimit, { RateLimitRequestHandler } from 'express-rate-limit';
+import { env } from '@config/env';
 
 export const apiLimiter: RateLimitRequestHandler = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: env.NODE_ENV === 'development' ? 1000 : 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

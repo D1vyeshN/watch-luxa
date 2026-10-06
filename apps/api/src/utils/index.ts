@@ -10,3 +10,4 @@ export * from './cache';
 export * from './storefrontFilters';
 export * from './orderNumber';
 export * from './checkoutCalculator';
+export * from './dateRange';

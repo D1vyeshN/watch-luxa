@@ -29,3 +29,4 @@ export {
   addAddressSchema,
   updateAddressSchema,
 } from './order.validator';
+export { analyticsQuerySchema } from './analytics.validator';

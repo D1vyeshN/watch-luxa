@@ -5,6 +5,7 @@ export { adminProductController } from './admin/product.controller';
 export { adminCollectionController } from './admin/collection.controller';
 export { adminUploadController } from './admin/upload.controller';
 export { adminOrderController } from './admin/order.controller';
+export { adminAnalyticsController } from './admin/analytics.controller';
 export { cartController } from './cart.controller';
 export { wishlistController } from './wishlist.controller';
 export { checkoutController } from './checkout.controller';

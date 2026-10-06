@@ -61,7 +61,7 @@ export function OrderStatusChart({ data }: OrderStatusChartProps) {
                 innerRadius={60}
                 outerRadius={90}
                 paddingAngle={2}
-                stroke="hsl(var(--card))"
+                stroke="var(--card)"
                 strokeWidth={2}
               >
                 {chartData.map((entry) => (
@@ -70,10 +70,11 @@ export function OrderStatusChart({ data }: OrderStatusChartProps) {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
+                  backgroundColor: 'var(--card)',
+                  border: '1px solid var(--border)',
                   borderRadius: 6,
                   fontSize: 12,
+                  color: 'var(--foreground)',
                 }}
               />
               <Legend

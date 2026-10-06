@@ -10,4 +10,13 @@ export const RESOURCES: ResourceProps[] = [
       hide: false,
     },
   },
+  {
+    name: 'products',
+    list: '/products',
+    create: '/products/create',
+    edit: '/products/edit/:id',
+    meta: {
+      label: 'Products',
+    },
+  },
 ];

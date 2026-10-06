@@ -2,16 +2,35 @@ import { CONFIG } from '@/constants/config';
 import { tokenStorage } from '@/lib/storage/tokenStorage';
 
 // ─── Error shape ───
+// Also satisfies Refine's HttpError (`statusCode`, `errors`) so server-side
+// validation errors are mapped onto form fields by @refinedev/react-hook-form.
 export class ApiError extends Error {
   status: number;
+  statusCode: number;
   payload: unknown;
+  errors?: Record<string, string>;
 
   constructor(message: string, status: number, payload: unknown = null) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.statusCode = status;
     this.payload = payload;
+    this.errors = toFieldErrors(payload);
   }
+}
+
+// API sends `errors: [{ field: 'body.specs.referenceNumber', message }]`
+function toFieldErrors(payload: unknown): Record<string, string> | undefined {
+  const list = (payload as { errors?: unknown })?.errors;
+  if (!Array.isArray(list)) return undefined;
+
+  const out: Record<string, string> = {};
+  for (const item of list as Array<{ field?: string; message?: string }>) {
+    if (!item?.field || !item.message) continue;
+    out[item.field.replace(/^body\./, '')] = item.message;
+  }
+  return Object.keys(out).length ? out : undefined;
 }
 
 // ─── Refresh mutex (prevents concurrent refresh storms) ───

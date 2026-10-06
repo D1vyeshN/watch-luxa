@@ -44,6 +44,7 @@ const variantSchema = z.object({
 export const createProductSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(150).trim(),
+    slug: z.string().max(160).trim().optional(),
     brandId: z.string().regex(/^[a-f\d]{24}$/i, 'Invalid brand ID'),
     category: z.string().min(1),
     collectionIds: z.array(z.string().regex(/^[a-f\d]{24}$/i)).default([]),
@@ -62,6 +63,10 @@ export const createProductSchema = z.object({
     featured: z.boolean().default(false),
     isLimitedEdition: z.boolean().default(false),
     limitedQuantity: z.number().int().min(1).optional(),
+    metaTitle: z.string().max(60).trim().optional(),
+    metaDescription: z.string().max(160).trim().optional(),
+    ogImage: z.string().url().optional(),
+    internalNotes: z.string().max(1000).optional(),
   }),
 });
 
@@ -85,6 +90,10 @@ export const updateProductSchema = z.object({
     featured: z.boolean().optional(),
     isLimitedEdition: z.boolean().optional(),
     limitedQuantity: z.number().int().min(1).optional().nullable(),
+    metaTitle: z.string().max(60).trim().optional().nullable(),
+    metaDescription: z.string().max(160).trim().optional().nullable(),
+    ogImage: z.string().url().optional().nullable(),
+    internalNotes: z.string().max(1000).optional().nullable(),
   }),
 });
 

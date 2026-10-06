@@ -68,6 +68,10 @@ export interface IProduct extends Document {
   featured: boolean;
   isLimitedEdition: boolean;
   limitedQuantity?: number;
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
+  internalNotes?: string;     // admin-only, never exposed to storefront
   rating: number;
   reviewCount: number;
   soldCount: number;
@@ -210,6 +214,10 @@ const ProductSchema = new Schema<IProduct>(
     featured: { type: Boolean, default: false, index: true },
     isLimitedEdition: { type: Boolean, default: false, index: true },
     limitedQuantity: Number,
+    metaTitle: { type: String, maxlength: 60, trim: true },
+    metaDescription: { type: String, maxlength: 160, trim: true },
+    ogImage: String,
+    internalNotes: { type: String, maxlength: 1000 },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0, min: 0 },
     soldCount: { type: Number, default: 0, min: 0 },

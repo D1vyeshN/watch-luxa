@@ -161,6 +161,11 @@ export const toStorefrontProduct = (product: any, includeVariants = false) => {
     video: product.video,
     images: product.images || [],
     specs: product.specs,
+    seo: {
+      metaTitle: product.metaTitle || product.name,
+      metaDescription: product.metaDescription || product.shortDescription,
+      ogImage: product.ogImage || product.heroImage,
+    },
     variants: activeVariants.map((v: any) => ({
       id: v._id,
       sku: v.sku,

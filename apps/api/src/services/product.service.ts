@@ -40,7 +40,8 @@ export class ProductService {
   }
 
   async create(data: Partial<IProduct>): Promise<IProduct> {
-    const slug = slugify(data.name!);
+    // Custom slug from the admin form wins; otherwise derive from name
+    const slug = slugify(data.slug || data.name!);
     if (!slug) {
       throw new BadRequestError("Product name produces an invalid slug");
     }

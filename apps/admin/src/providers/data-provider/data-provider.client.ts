@@ -6,7 +6,7 @@ import { apiRequest } from '@/lib/api/client';
 interface GetListParams {
   resource: string;
   pagination?: {
-    current?: number;
+    currentPage?: number; // Refine v5 (was `current` in v4)
     pageSize?: number;
   };
   sorters?: Array<{
@@ -97,7 +97,7 @@ function buildListQuery(params: Partial<GetListParams>): string {
   const query: Record<string, string> = {};
 
   // Pagination
-  const page = pagination?.current ?? 1;
+  const page = pagination?.currentPage ?? 1;
   const limit = pagination?.pageSize ?? CONFIG.defaultPageSize;
   query.page = String(page);
   query.limit = String(Math.min(limit, CONFIG.maxPageSize));

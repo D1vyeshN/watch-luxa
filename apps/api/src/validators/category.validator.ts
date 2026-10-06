@@ -11,6 +11,7 @@ export const createCategorySchema = z.object({
     image: z.string().url('Image must be a valid URL').optional(),
     icon: z.string().max(50).optional(),
     displayOrder: z.number().int().min(0).max(1000).optional(),
+    status: z.enum(['active', 'archived']).optional(),
   }),
 });
 

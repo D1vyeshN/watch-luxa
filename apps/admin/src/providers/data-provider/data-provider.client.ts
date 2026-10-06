@@ -245,7 +245,9 @@ export const dataProvider: DataProvider = {
     const response = await apiRequest<SingleResponse<TData> | TData>(
       `${url}${searchParams}`,
       {
-        method: method as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+        // Refine passes lowercase ('patch'); fetch only normalises GET/POST/
+        // PUT/DELETE, so a raw 'patch' would fail CORS. Always uppercase.
+        method: String(method).toUpperCase() as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
         body: payload,
         headers,
       }

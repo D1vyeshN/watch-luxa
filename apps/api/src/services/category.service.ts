@@ -3,6 +3,7 @@ import {
   CategoryFindManyOptions,
 } from '@repositories/category.repository';
 import { ICategory } from '@models/category.model';
+import { Product } from '@models/product.model';
 import {
   ConflictError,
   NotFoundError,
@@ -62,17 +63,34 @@ export class CategoryService {
     const category = await categoryRepository.findById(id);
     if (!category) throw new NotFoundError('Category not found');
 
-    // System categories cannot be renamed or have their slug changed
+    // System categories cannot be renamed, re-slugged or archived
     if (category.isSystem) {
       if (data.name && data.name !== category.name) {
         throw new ForbiddenError('Cannot rename a system category');
       }
+      if (data.status && data.status !== category.status) {
+        throw new ForbiddenError('Cannot change the status of a system category');
+      }
       delete data.slug;
     }
 
+    // Archiving through update goes through the same checks as DELETE
+    if (data.status === 'archived' && category.status !== 'archived') {
+      await this.assertNoActiveProducts(category.slug);
+    }
+
     // If name is changing, regenerate slug
+    const oldSlug = category.slug;
     if (data.name && data.name !== category.name && !category.isSystem) {
+      const existingName = await categoryRepository.findByName(data.name);
+      if (existingName && existingName._id.toString() !== id) {
+        throw new ConflictError('A category with this name already exists');
+      }
+
       const newSlug = slugify(data.name);
+      if (!newSlug) {
+        throw new BadRequestError('Category name produces an invalid slug');
+      }
       const existingSlug = await categoryRepository.findBySlug(newSlug);
 
       if (existingSlug && existingSlug._id.toString() !== id) {
@@ -84,6 +102,12 @@ export class CategoryService {
 
     const updated = await categoryRepository.update(id, data);
     if (!updated) throw new NotFoundError('Category not found');
+
+    // Products reference categories by slug — keep them attached on rename
+    if (data.slug && data.slug !== oldSlug) {
+      await Product.updateMany({ category: oldSlug }, { $set: { category: data.slug } });
+    }
+
     return updated;
   }
 
@@ -99,12 +123,21 @@ export class CategoryService {
       throw new BadRequestError('Category is already archived');
     }
 
-    // TODO: After Product module exists, check if active products reference this category
-    // If yes, block archiving or require product reassignment
+    await this.assertNoActiveProducts(category.slug);
 
     const archived = await categoryRepository.archive(id);
     if (!archived) throw new NotFoundError('Category not found');
     return archived;
+  }
+
+  /** Archiving a category in use would orphan live products on the storefront. */
+  private async assertNoActiveProducts(slug: string): Promise<void> {
+    const count = await Product.countDocuments({ category: slug, status: 'active' });
+    if (count > 0) {
+      throw new ConflictError(
+        `${count} active ${count === 1 ? 'product uses' : 'products use'} this category — move ${count === 1 ? 'it' : 'them'} to another category first`,
+      );
+    }
   }
 
   async restore(id: string): Promise<ICategory> {

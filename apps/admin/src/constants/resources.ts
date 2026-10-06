@@ -19,4 +19,13 @@ export const RESOURCES: ResourceProps[] = [
       label: 'Products',
     },
   },
+  {
+    name: 'categories',
+    list: '/categories',
+    create: '/categories/create',
+    edit: '/categories/edit/:id',
+    meta: {
+      label: 'Categories',
+    },
+  },
 ];

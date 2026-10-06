@@ -32,8 +32,10 @@ export class CategoryRepository {
   }
 
   async findByName(name: string): Promise<ICategory | null> {
+    // Escape regex metacharacters so names like "G.M.T." match literally
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return Category.findOne({
-      name: { $regex: `^${name}$`, $options: 'i' },
+      name: { $regex: `^${escaped}$`, $options: 'i' },
     }).lean() as unknown as Promise<ICategory | null>;
   }
 

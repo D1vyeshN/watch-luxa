@@ -15,6 +15,7 @@ import { Loader2 } from 'lucide-react';
 import { BasicTab } from './basic-tab';
 import { MediaTab } from './media-tab';
 import { SpecsTab } from './specs-tab';
+import { VariantsTab } from './variants-tab';
 import { PricingTab, SeoTab, AdvancedTab } from './other-tabs';
 import { firstTabWithError, toProductPayload } from './utils';
 import { productFormSchema } from '@/lib/validation/product';
@@ -57,6 +58,7 @@ const DEFAULT_VALUES: ProductFormValues = {
     warranty: '5 years international',
     boxAndPapers: true,
   },
+  variants: [],
   basePrice: 0,
   metaTitle: '',
   metaDescription: '',
@@ -107,10 +109,11 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
           onValueChange={(v) => setTab(v as ProductFormTab)}
           className="w-full"
         >
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
             <TabsTrigger value="basic">Basic</TabsTrigger>
             <TabsTrigger value="media">Media</TabsTrigger>
             <TabsTrigger value="specs">Specs</TabsTrigger>
+            <TabsTrigger value="variants">Variants</TabsTrigger>
             <TabsTrigger value="pricing">Pricing</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
             <TabsTrigger value="advanced">Advanced</TabsTrigger>
@@ -125,6 +128,9 @@ export function ProductForm({ mode, productId }: ProductFormProps) {
             </TabsContent>
             <TabsContent value="specs">
               <SpecsTab form={form} />
+            </TabsContent>
+            <TabsContent value="variants">
+              <VariantsTab form={form} />
             </TabsContent>
             <TabsContent value="pricing">
               <PricingTab form={form} />

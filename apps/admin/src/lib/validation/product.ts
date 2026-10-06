@@ -12,6 +12,48 @@ const optionalNumber = (min: number, max: number) =>
 const requiredNumber = (label: string) =>
   z.number({ error: `${label} is required` });
 
+export const MOVEMENTS = ['automatic', 'manual', 'quartz', 'solar'] as const;
+
+// ─── Variant (prices in rupees in the form; converted to paise on submit) ───
+export const variantSchema = z.object({
+  _id: z.string().optional(),
+  sku: optionalText(50), // blank → API auto-generates
+  dialColor: z.string().trim().min(1, 'Dial color is required').max(50),
+  dialFinish: optionalText(50),
+  caseMaterial: z.string().trim().min(1, 'Case material is required').max(50),
+  caseSize: requiredNumber('Case size')
+    .min(10, 'Must be at least 10mm')
+    .max(100, 'Must be at most 100mm'),
+  bezelType: optionalText(50),
+  indicesType: optionalText(50),
+  strapType: z.string().trim().min(1, 'Strap type is required').max(50),
+  strapColor: z.string().trim().min(1, 'Strap color is required').max(50),
+  claspType: optionalText(50),
+  movement: z.enum(MOVEMENTS),
+  complications: z.array(z.string()),
+  price: requiredNumber('Price').min(0, 'Price must be 0 or greater'),
+  compareAtPrice: z.number().min(0).optional(),
+  stock: requiredNumber('Stock').int('Must be a whole number').min(0),
+  lowStockThreshold: z.number().int().min(0),
+  images: z.array(z.url()),
+  isActive: z.boolean(),
+  weight: z.number().min(0).optional(),
+});
+
+// ─── Matrix generator input ───
+export const variantMatrixSchema = z.object({
+  dialColors: z.array(z.string()).min(1, 'Select at least one dial color'),
+  caseMaterials: z.array(z.string()).min(1, 'Select at least one case material'),
+  strapTypes: z.array(z.string()).min(1, 'Select at least one strap type'),
+  caseSizes: z.array(z.number()).min(1, 'Select at least one case size'),
+  defaultPrice: requiredNumber('Default price').min(0, 'Price must be 0 or greater'),
+  defaultStock: requiredNumber('Default stock').int('Must be a whole number').min(0),
+  movement: z.enum(MOVEMENTS),
+});
+
+export type VariantFormValues = z.infer<typeof variantSchema>;
+export type VariantMatrixValues = z.infer<typeof variantMatrixSchema>;
+
 export const productFormSchema = z.object({
   // ─── Basic ───
   name: z
@@ -76,6 +118,9 @@ export const productFormSchema = z.object({
     boxAndPapers: z.boolean(),
   }),
 
+  // ─── Variants ───
+  variants: z.array(variantSchema).min(1, 'At least one variant is required'),
+
   // ─── Pricing (rupees in the form; converted to paise on submit) ───
   basePrice: requiredNumber('Base price').min(0, 'Price must be 0 or greater'),
 
@@ -97,6 +142,23 @@ export const productFormSchema = z.object({
   message: 'Limited quantity is required for limited editions',
   // Run even when other fields are invalid, so all errors show on one submit
   when: () => true,
-});
+}).superRefine((d, ctx) => {
+  // The API rejects duplicate SKUs in one payload — flag them on the field
+  if (!Array.isArray(d.variants)) return;
+  const seen = new Map<string, number>();
+  d.variants.forEach((v, i) => {
+    const sku = v?.sku?.trim().toUpperCase();
+    if (!sku) return;
+    if (seen.has(sku)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['variants', i, 'sku'],
+        message: `Duplicate of variant ${seen.get(sku)! + 1}`,
+      });
+    } else {
+      seen.set(sku, i);
+    }
+  });
+}, { when: () => true });
 
 export type ProductFormSchema = z.infer<typeof productFormSchema>;

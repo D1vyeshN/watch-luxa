@@ -13,7 +13,7 @@ export default function ProductCreatePage() {
           Add Product
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Create a new watch. Variants will be added in the next step.
+          Create a new watch with full variant matrices.
         </p>
       </div>
 

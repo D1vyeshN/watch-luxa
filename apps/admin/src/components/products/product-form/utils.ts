@@ -1,6 +1,10 @@
 import type { ChangeEvent } from 'react';
 import type { FieldErrors } from 'react-hook-form';
-import type { ProductFormTab, ProductFormValues } from '@/types/product-form';
+import type {
+  ProductFormTab,
+  ProductFormValues,
+  ProductFormVariant,
+} from '@/types/product-form';
 
 // ─── Number inputs ───
 // An empty <input type="number"> yields NaN from valueAsNumber; map it to
@@ -29,6 +33,7 @@ const FIELD_TAB: Record<keyof ProductFormValues, ProductFormTab> = {
   images: 'media',
   video: 'media',
   specs: 'specs',
+  variants: 'variants',
   basePrice: 'pricing',
   metaTitle: 'seo',
   metaDescription: 'seo',
@@ -36,7 +41,15 @@ const FIELD_TAB: Record<keyof ProductFormValues, ProductFormTab> = {
   internalNotes: 'advanced',
 };
 
-const TAB_ORDER: ProductFormTab[] = ['basic', 'media', 'specs', 'pricing', 'seo', 'advanced'];
+const TAB_ORDER: ProductFormTab[] = [
+  'basic',
+  'media',
+  'specs',
+  'variants',
+  'pricing',
+  'seo',
+  'advanced',
+];
 
 export function firstTabWithError(
   errors: FieldErrors<ProductFormValues>
@@ -56,13 +69,25 @@ function compact<T extends Record<string, unknown>>(obj: T): Partial<T> {
   ) as Partial<T>;
 }
 
+const toPaise = (rupees: number) => Math.round(rupees * 100);
+
+function toVariantPayload(variant: ProductFormVariant): ProductFormVariant {
+  return {
+    ...compact(variant),
+    price: toPaise(variant.price),
+    compareAtPrice:
+      variant.compareAtPrice === undefined ? undefined : toPaise(variant.compareAtPrice),
+  } as ProductFormVariant;
+}
+
 export function toProductPayload(values: ProductFormValues): ProductFormValues {
-  const { specs, ...rest } = values;
+  const { specs, variants, ...rest } = values;
 
   return {
     ...compact(rest),
     specs: compact(specs),
-    basePrice: Math.round(values.basePrice * 100),
+    variants: variants.map(toVariantPayload),
+    basePrice: toPaise(values.basePrice),
     limitedQuantity: values.isLimitedEdition ? values.limitedQuantity : undefined,
   } as ProductFormValues;
 }

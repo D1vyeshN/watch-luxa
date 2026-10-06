@@ -60,7 +60,7 @@ const SYSTEM_PRODUCTS: ProductSeedData[] = [
   {
     name: 'Submariner Date',
     brand: 'Rolex',
-    category: 'Dive Watches',
+    category: 'dive-watches',
     gender: 'men',
     shortDescription: 'The iconic dive watch with Cerachrom bezel',
     fullDescription: 'The Rolex Submariner is the reference diver\'s watch. Crafted from Oystersteel, this 41mm model features a Cerachrom bezel with a 60-minute graduations, a black dial, and large Chromalight hour markers.',
@@ -116,7 +116,7 @@ const SYSTEM_PRODUCTS: ProductSeedData[] = [
   {
     name: 'Speedmaster Professional',
     brand: 'Omega',
-    category: 'Pilot Watches',
+    category: 'pilot-watches',
     gender: 'men',
     shortDescription: 'The legendary Moonwatch',
     fullDescription: 'The Omega Speedmaster Professional is the first watch worn on the moon. This manual-winding chronograph features a Hesalite crystal, black dial, and the famous tachymetric scale.',
@@ -172,7 +172,7 @@ const SYSTEM_PRODUCTS: ProductSeedData[] = [
   {
     name: 'Monaco Calibre 11',
     brand: 'Tag Heuer',
-    category: 'Racing Watches',
+    category: 'racing-watches',
     gender: 'men',
     shortDescription: 'The square-shaped racing chronograph',
     fullDescription: 'The TAG Heuer Monaco is an icon of motor racing. Its distinctive square case, revolutionary water-resistant square case, and chronograph movement make it a timeless classic.',
@@ -228,7 +228,7 @@ const SYSTEM_PRODUCTS: ProductSeedData[] = [
   {
     name: 'Presage Cocktail Time',
     brand: 'Seiko',
-    category: 'Dress Watches',
+    category: 'dress-watches',
     gender: 'men',
     shortDescription: 'Elegant dial with sunburst finish',
     fullDescription: 'The Seiko Presage Cocktail Time features a stunning sunburst dial inspired by the colors of classic cocktails. This elegant dress watch combines Japanese craftsmanship with timeless design.',
@@ -284,7 +284,7 @@ const SYSTEM_PRODUCTS: ProductSeedData[] = [
   {
     name: 'Tank Louis Cartier',
     brand: 'Cartier',
-    category: 'Dress Watches',
+    category: 'dress-watches',
     gender: 'unisex',
     shortDescription: 'The quintessential rectangular dress watch',
     fullDescription: 'The Cartier Tank Louis Cartier is an icon of Art Deco design. Its rectangular case, Roman numerals, and blue cabochon crown have made it a symbol of elegance since 1917.',
@@ -453,7 +453,7 @@ const SYSTEM_PRODUCTS: ProductSeedData[] = [
   {
     name: 'Navitimer B01',
     brand: 'Breitling',
-    category: 'Pilot Watches',
+    category: 'pilot-watches',
     gender: 'men',
     shortDescription: 'The aviation chronograph with slide rule bezel',
     fullDescription: 'The Breitling Navitimer is the ultimate pilot\'s watch. Its famous slide rule bezel, large case, and chronograph functionality have made it the choice of aviators for over 65 years.',

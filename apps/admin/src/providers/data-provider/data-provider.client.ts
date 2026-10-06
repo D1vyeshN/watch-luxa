@@ -116,9 +116,14 @@ function buildListQuery(params: Partial<GetListParams>): string {
     });
   }
 
-  // Meta (custom params like search, status, etc.)
-  if (meta && typeof meta === 'object') {
-    Object.entries(meta).forEach(([key, value]) => {
+  // Custom params go in `meta.query` only. Refine v5 merges the resource's
+  // meta, every URL query param of the current page (e.g. ?duplicate=…) and
+  // React Query's `queryKey`/`signal` into `meta`, so serialising all of
+  // `meta` leaks those into every API request.
+  //   useList({ resource: 'products', meta: { query: { search: 'rolex' } } })
+  const extra = (meta as { query?: Record<string, unknown> } | undefined)?.query;
+  if (extra && typeof extra === 'object') {
+    Object.entries(extra).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         query[key] = String(value);
       }

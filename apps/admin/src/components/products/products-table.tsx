@@ -53,7 +53,7 @@ export function ProductsTable() {
               </div>
               <div className="min-w-0">
                 <Link
-                  href={`/products/edit/${product._id}`}
+                  href={`/products/edit/${product.id}`}
                   className="block truncate text-sm font-medium hover:underline"
                 >
                   {product.name}
@@ -168,13 +168,13 @@ export function ProductsTable() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href={`/products/edit/${product._id}`}>
+                  <Link href={`/products/edit/${product.id}`}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/products/create?duplicate=${product._id}`}>
+                  <Link href={`/products/create?duplicate=${product.id}`}>
                     <Copy className="mr-2 h-4 w-4" />
                     Duplicate
                   </Link>

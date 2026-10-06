@@ -24,7 +24,11 @@ export const createApp = (): Application => {
   app.use(mongoSanitize());
   app.use(hpp());
 
-  // Body parsing - skip JSON parsing for webhook routes to allow raw body reading
+  // Body parsing - skip JSON parsing for webhook routes to allow raw body reading.
+  // Admin routes (auth-only) get a larger limit: a product with a full
+  // variant matrix easily exceeds 10kb. Public routes stay tight.
+  const jsonDefault = express.json({ limit: '10kb' });
+  const jsonAdmin = express.json({ limit: '1mb' });
   app.use((req, res, next) => {
     // Skip JSON parsing for webhook routes
     if (
@@ -33,7 +37,8 @@ export const createApp = (): Application => {
     ) {
       return next();
     }
-    express.json({ limit: '10kb' })(req, res, next);
+    const isAdmin = req.originalUrl.startsWith(`${env.API_PREFIX}/admin/`);
+    (isAdmin ? jsonAdmin : jsonDefault)(req, res, next);
   });
 
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));

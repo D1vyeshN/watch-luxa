@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { toNumber } from '@/components/products/product-form/utils';
+import { keepValue, toNumber } from '@/components/products/product-form/utils';
 import type { ProductFormValues } from '@/types/product-form';
 
 interface VariantRowProps {
@@ -188,7 +188,7 @@ export function VariantRow({
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-xs">Movement</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={keepValue(field.onChange)} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue />

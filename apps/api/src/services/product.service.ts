@@ -58,41 +58,8 @@ export class ProductService {
       throw new ConflictError("Reference number already in use");
     }
 
-    // Auto-generate SKUs for variants that don't have them
     if (data.variants && data.variants.length > 0) {
-      // Get brand name for SKU generation
-      const brand = await Brand.findById(data.brandId);
-      const brandName = brand?.name || "UNKNOWN";
-
-      for (const variant of data.variants) {
-        if (!variant.sku) {
-          variant.sku = generateSku(brandName, {
-            dialColor: variant.dialColor,
-            caseMaterial: variant.caseMaterial,
-            strapType: variant.strapType,
-            caseSize: variant.caseSize,
-          });
-        }
-      }
-
-      // Validate variant SKUs
-      const skus = data.variants.map((v) => v.sku).filter(Boolean) as string[];
-      const duplicateSkus = skus.filter((s, i) => skus.indexOf(s) !== i);
-      if (duplicateSkus.length > 0) {
-        throw new ConflictError(
-          `Duplicate SKUs in payload: ${duplicateSkus.join(", ")}`,
-        );
-      }
-
-      if (skus.length > 0) {
-        const existingSkus = await productRepository.findSkusIn(skus);
-        if (existingSkus.length > 0) {
-          const conflict = existingSkus[0].variants.find((v) =>
-            skus.includes(v.sku),
-          );
-          throw new ConflictError(`SKU already exists: ${conflict?.sku}`);
-        }
-      }
+      await this.prepareVariantSkus(data.variants, data.brandId!);
     }
 
     const product = await productRepository.create({
@@ -104,11 +71,69 @@ export class ProductService {
     return product;
   }
 
+  /**
+   * Auto-generate missing SKUs (uppercased, like the model stores them) and
+   * reject duplicates — within the payload, and against other products.
+   * `ownProductId` lets an update keep its own existing SKUs.
+   */
+  private async prepareVariantSkus(
+    variants: Partial<IProductVariant>[],
+    brandId: Types.ObjectId | string,
+    ownProductId?: string,
+  ): Promise<void> {
+    const brand = await Brand.findById(brandId);
+    const brandName = brand?.name || "UNKNOWN";
+
+    for (const variant of variants) {
+      variant.sku = (
+        variant.sku ||
+        generateSku(brandName, {
+          dialColor: variant.dialColor!,
+          caseMaterial: variant.caseMaterial!,
+          strapType: variant.strapType!,
+          caseSize: variant.caseSize!,
+        })
+      ).toUpperCase();
+    }
+
+    const skus = variants.map((v) => v.sku!);
+    const duplicateSkus = skus.filter((s, i) => skus.indexOf(s) !== i);
+    if (duplicateSkus.length > 0) {
+      throw new ConflictError(
+        `Duplicate SKUs in payload: ${[...new Set(duplicateSkus)].join(", ")}`,
+      );
+    }
+
+    const owners = await productRepository.findSkusIn(skus);
+    const other = owners.find((p) => p._id.toString() !== ownProductId);
+    if (other) {
+      const conflict = other.variants.find((v) => skus.includes(v.sku));
+      throw new ConflictError(`SKU already exists: ${conflict?.sku}`);
+    }
+  }
+
   async update(id: string, data: Partial<IProduct>): Promise<IProduct> {
     const product = await productRepository.findById(id);
     if (!product) throw new NotFoundError("Product not found");
 
-    if (data.name && data.name !== product.name) {
+    if (data.variants) {
+      await this.prepareVariantSkus(
+        data.variants,
+        data.brandId ?? product.brandId._id ?? product.brandId,
+        id,
+      );
+    }
+
+    // An explicit slug change wins; otherwise a rename re-derives the slug
+    if (data.slug && slugify(data.slug) !== product.slug) {
+      const newSlug = slugify(data.slug);
+      if (!newSlug) throw new BadRequestError("Invalid slug");
+      const existingSlug = await productRepository.findBySlug(newSlug);
+      if (existingSlug && existingSlug._id.toString() !== id) {
+        throw new ConflictError("A product with this URL already exists");
+      }
+      data.slug = newSlug;
+    } else if (data.name && data.name !== product.name) {
       const newSlug = slugify(data.name);
       const existingSlug = await productRepository.findBySlug(newSlug);
       if (existingSlug && existingSlug._id.toString() !== id) {

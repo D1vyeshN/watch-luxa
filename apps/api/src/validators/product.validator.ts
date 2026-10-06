@@ -73,6 +73,7 @@ export const createProductSchema = z.object({
 export const updateProductSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(150).trim().optional(),
+    slug: z.string().max(160).trim().optional(),
     brandId: z.string().regex(/^[a-f\d]{24}$/i).optional(),
     category: z.string().min(1).optional(),
     collectionIds: z.array(z.string().regex(/^[a-f\d]{24}$/i)).optional(),
@@ -85,6 +86,15 @@ export const updateProductSchema = z.object({
     video: z.string().url().optional().nullable(),
     heroImage: z.string().url().optional(),
     specs: specsSchema.partial().optional(),
+    // Full replacement of the variant list (admin edit form). Existing
+    // variants keep their `_id`; new ones omit it.
+    variants: z
+      .array(
+        variantSchema.extend({
+          _id: z.string().regex(/^[a-f\d]{24}$/i).optional(),
+        })
+      )
+      .optional(),
     tags: z.array(z.string()).optional(),
     status: z.enum(['draft', 'active', 'archived']).optional(),
     featured: z.boolean().optional(),

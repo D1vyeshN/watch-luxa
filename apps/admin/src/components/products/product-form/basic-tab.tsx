@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useSelect } from '@refinedev/core';
 import {
   FormControl,
@@ -18,9 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { UseFormReturn } from 'react-hook-form';
+import { useWatch, type UseFormReturn } from 'react-hook-form';
 import type { ProductFormValues } from '@/types/product-form';
-import { toNumber } from './utils';
+import { keepValue, toNumber } from './utils';
 
 interface BasicTabProps {
   form: UseFormReturn<ProductFormValues>;
@@ -40,6 +41,22 @@ export function BasicTab({ form }: BasicTabProps) {
     optionValue: 'slug',
     pagination: { pageSize: 100 },
   });
+
+  // Products store the category *slug* (the storefront filters by it), but
+  // older/seeded records may hold the display name ("Pilot Watches"). Map a
+  // name to its slug so the select shows it and saving repairs the record.
+  const category = useWatch({ control: form.control, name: 'category' });
+  const categoryKnown =
+    !category || categoryOptions.some((o) => String(o.value) === category);
+  useEffect(() => {
+    if (!category || categoryKnown || categoryOptions.length === 0) return;
+    const match = categoryOptions.find(
+      (o) => String(o.label).toLowerCase() === category.toLowerCase()
+    );
+    if (match) {
+      form.setValue('category', String(match.value), { shouldDirty: true });
+    }
+  }, [category, categoryKnown, categoryOptions, form]);
 
   const { options: collectionOptions } = useSelect({
     resource: 'collections',
@@ -73,7 +90,7 @@ export function BasicTab({ form }: BasicTabProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Brand</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={keepValue(field.onChange)} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select brand" />
@@ -98,7 +115,7 @@ export function BasicTab({ form }: BasicTabProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={keepValue(field.onChange)} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
@@ -112,6 +129,12 @@ export function BasicTab({ form }: BasicTabProps) {
                   ))}
                 </SelectContent>
               </Select>
+              {!categoryKnown && categoryOptions.length > 0 && (
+                <p className="text-xs text-amber-600 dark:text-amber-500">
+                  Saved category &ldquo;{category}&rdquo; doesn&rsquo;t match any
+                  category — pick one so the product shows on category pages.
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -163,7 +186,7 @@ export function BasicTab({ form }: BasicTabProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Gender</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={keepValue(field.onChange)} value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue />
@@ -256,7 +279,7 @@ export function BasicTab({ form }: BasicTabProps) {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Status</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={keepValue(field.onChange)} value={field.value}>
               <FormControl>
                 <SelectTrigger>
                   <SelectValue />

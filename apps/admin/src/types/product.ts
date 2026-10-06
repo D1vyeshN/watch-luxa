@@ -17,9 +17,9 @@ export interface ProductVariant {
   isActive: boolean;
 }
 
+// Shape of GET /admin/products list items — the API maps `_id` to `id`
 export interface Product {
   id: string;
-  _id: string;
   name: string;
   slug: string;
   brand?: ProductBrand;

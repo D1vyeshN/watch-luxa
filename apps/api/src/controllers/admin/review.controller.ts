@@ -4,6 +4,7 @@ import { sendSuccess, sendPaginated } from '@utils/response';
 import { asyncHandler } from '@utils/asyncHandler';
 import { getPagination } from '@utils/pagination';
 import { UnauthorizedError } from '@utils/AppError';
+import { escapeRegex } from '@utils/regex';
 
 const requireAdminId = (req: Request): string => {
   if (!req.user?.userId) throw new UnauthorizedError('Authentication required');
@@ -22,9 +23,10 @@ export const adminReviewController: any = {
     if (req.query.productId) filter.productId = req.query.productId;
     if (req.query.rating) filter.rating = Number(req.query.rating);
     if (req.query.search) {
+      const search = escapeRegex(String(req.query.search));
       filter.$or = [
-        { comment: { $regex: String(req.query.search), $options: 'i' } },
-        { title: { $regex: String(req.query.search), $options: 'i' } },
+        { comment: { $regex: search, $options: 'i' } },
+        { title: { $regex: search, $options: 'i' } },
       ];
     }
 

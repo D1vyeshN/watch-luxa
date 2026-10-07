@@ -71,4 +71,11 @@ export const RESOURCES: ResourceProps[] = [
       label: 'Coupons',
     },
   },
+  {
+    name: 'reviews',
+    list: '/reviews',
+    meta: {
+      label: 'Reviews',
+    },
+  },
 ];

@@ -4,7 +4,7 @@ export type ReviewStatus = 'pending' | 'approved' | 'rejected';
 
 export interface IReviewReply {
   text: string;
-  by: Types.ObjectId;    // admin userId
+  by: Types.ObjectId | string;    // admin userId, or 'superadmin' (env account, no User doc)
   at: Date;
 }
 
@@ -31,7 +31,8 @@ export interface IReview extends Document {
 const ReviewReplySchema = new Schema<IReviewReply>(
   {
     text: { type: String, required: true, maxlength: 1000 },
-    by: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    // Mixed, like Coupon.createdBy: ObjectId for admins, 'superadmin' for the env account
+    by: { type: Schema.Types.Mixed, required: true },
     at: { type: Date, default: Date.now },
   },
   { _id: false }

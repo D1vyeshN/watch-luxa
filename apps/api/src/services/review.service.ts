@@ -11,6 +11,8 @@ import {
 } from '@utils/AppError';
 import { logger } from '@config/logger';
 
+const OBJECT_ID = /^[a-f\d]{24}$/i;
+
 export class ReviewService {
   /**
    * Public: list approved reviews for a product.
@@ -243,17 +245,20 @@ export class ReviewService {
     filter: any,
     options: FindManyOptions
   ) {
-    return reviewRepository.findMany(filter, options);
+    return reviewRepository.findMany(filter, options, { forAdmin: true });
   }
 
   async approve(reviewId: string, _adminUserId: string): Promise<IReview> {
     const review = await reviewRepository.findById(reviewId);
     if (!review) throw new NotFoundError('Review not found');
 
-    const updated = await reviewRepository.update(reviewId, {
-      status: 'approved',
-      rejectionReason: undefined,
-    });
+    // $unset — `rejectionReason: undefined` is dropped by Mongoose and the
+    // old reason would stay on the approved review
+    const updated = await Review.findByIdAndUpdate(
+      reviewId,
+      { $set: { status: 'approved' }, $unset: { rejectionReason: 1 } },
+      { new: true }
+    );
 
     if (!updated) throw new NotFoundError('Review not found');
 
@@ -301,7 +306,9 @@ export class ReviewService {
     const updated = await reviewRepository.update(reviewId, {
       reply: {
         text,
-        by: new Types.ObjectId(adminUserId),
+        // The env-configured super admin has no User document — its id is
+        // the literal 'superadmin', which isn't a valid ObjectId
+        by: OBJECT_ID.test(adminUserId) ? new Types.ObjectId(adminUserId) : adminUserId,
         at: new Date(),
       },
     });

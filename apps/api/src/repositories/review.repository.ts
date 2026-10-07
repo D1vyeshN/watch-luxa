@@ -10,15 +10,20 @@ export interface FindManyOptions {
 export class ReviewRepository {
   async findMany(
     filter: any,
-    options: FindManyOptions
+    options: FindManyOptions,
+    // Admin moderation needs the product and the reviewer's email; public
+    // listings only show the reviewer's name
+    { forAdmin = false }: { forAdmin?: boolean } = {}
   ): Promise<{ data: IReview[]; total: number }> {
+    let query = Review.find(filter)
+      .skip(options.skip)
+      .limit(options.limit)
+      .sort(options.sort || { createdAt: -1 })
+      .populate('userId', forAdmin ? 'name email' : 'name');
+    if (forAdmin) query = query.populate('productId', 'name slug heroImage');
+
     const [data, total] = await Promise.all([
-      Review.find(filter)
-        .skip(options.skip)
-        .limit(options.limit)
-        .sort(options.sort || { createdAt: -1 })
-        .populate('userId', 'name')
-        .lean(),
+      query.lean(),
       Review.countDocuments(filter),
     ]);
     return { data: data as unknown as IReview[], total };

@@ -4,6 +4,7 @@ import { sendSuccess, sendPaginated } from '@utils/response';
 import { asyncHandler } from '@utils/asyncHandler';
 import { getPagination, buildFilters } from '@utils/pagination';
 import { BadRequestError } from '@utils/AppError';
+import { escapeRegex } from '@utils/regex';
 
 export const adminProductController: any = {
   list: asyncHandler(async (req: Request, res: Response) => {
@@ -18,8 +19,12 @@ export const adminProductController: any = {
       'isLimitedEdition',
     ]);
 
+    // Partial, case-insensitive match on name or reference number, so admin
+    // search (e.g. the collection product picker) works while typing.
+    // `$text` only matches whole words: "Subm" would find nothing.
     if (req.query.search) {
-      filter.$text = { $search: String(req.query.search) };
+      const pattern = { $regex: escapeRegex(String(req.query.search).trim()), $options: 'i' };
+      (filter as any).$or = [{ name: pattern }, { 'specs.referenceNumber': pattern }];
     }
 
     if (req.query.minPrice || req.query.maxPrice) {

@@ -21,6 +21,7 @@ export const createCollectionSchema = z.object({
       .array(z.string().regex(/^[a-f\d]{24}$/i))
       .default([]),
     autoRule: autoRuleSchema.optional(),
+    status: z.enum(['active', 'archived']).optional(),
   }),
 });
 
@@ -31,6 +32,8 @@ export const updateCollectionSchema = z.object({
     image: z.string().url().optional().nullable(),
     featured: z.boolean().optional(),
     displayOrder: z.number().int().min(0).max(1000).optional(),
+    // Full ordered replacement of the manual product list
+    productIds: z.array(z.string().regex(/^[a-f\d]{24}$/i)).optional(),
     autoRule: autoRuleSchema.optional().nullable(),
     status: z.enum(['active', 'archived']).optional(),
   }),

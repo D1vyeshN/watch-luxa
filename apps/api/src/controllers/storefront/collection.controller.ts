@@ -88,11 +88,22 @@ export const storefrontCollectionController: Record<string, any> = {
       );
     }
 
-    const products = await Product.find(productFilter)
-      .limit(24)
-      .sort({ featured: -1, createdAt: -1 })
-      .populate('brandId', 'name slug logo')
-      .lean();
+    let products;
+    if (collection.autoRule) {
+      products = await Product.find(productFilter)
+        .limit(24)
+        .sort({ featured: -1, createdAt: -1 })
+        .populate('brandId', 'name slug logo')
+        .lean();
+    } else {
+      // Manual collection: the admin's order in `productIds` is the display order
+      const position = new Map(collection.productIds.map((id, i) => [String(id), i]));
+      products = (
+        await Product.find(productFilter).populate('brandId', 'name slug logo').lean()
+      )
+        .sort((a, b) => (position.get(String(a._id)) ?? 0) - (position.get(String(b._id)) ?? 0))
+        .slice(0, 24);
+    }
 
     const result = {
       ...toStorefrontCollection(collection),

@@ -37,4 +37,13 @@ export const RESOURCES: ResourceProps[] = [
       label: 'Brands',
     },
   },
+  {
+    name: 'collections',
+    list: '/collections',
+    create: '/collections/create',
+    edit: '/collections/edit/:id',
+    meta: {
+      label: 'Collections',
+    },
+  },
 ];

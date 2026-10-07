@@ -1,3 +1,4 @@
+import { escapeRegex } from '@utils/regex';
 import { Category, ICategory } from '@models/category.model';
 import { SortOrder } from 'mongoose';
 
@@ -32,10 +33,8 @@ export class CategoryRepository {
   }
 
   async findByName(name: string): Promise<ICategory | null> {
-    // Escape regex metacharacters so names like "G.M.T." match literally
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return Category.findOne({
-      name: { $regex: `^${escaped}$`, $options: 'i' },
+      name: { $regex: `^${escapeRegex(name)}$`, $options: 'i' },
     }).lean() as unknown as Promise<ICategory | null>;
   }
 

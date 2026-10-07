@@ -1,3 +1,4 @@
+import { escapeRegex } from '@utils/regex';
 import { Brand, IBrand } from '@models/brand.model';
 import { SortOrder } from 'mongoose';
 
@@ -32,10 +33,8 @@ export class BrandRepository {
   }
 
   async findByName(name: string): Promise<IBrand | null> {
-    // Escape regex metacharacters so names like "A. Lange & Söhne" match literally
-    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return Brand.findOne({
-      name: { $regex: `^${escaped}$`, $options: 'i' },
+      name: { $regex: `^${escapeRegex(name)}$`, $options: 'i' },
     }).lean() as unknown as Promise<IBrand | null>;
   }
 

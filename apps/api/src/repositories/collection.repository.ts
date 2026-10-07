@@ -1,3 +1,4 @@
+import { escapeRegex } from '@utils/regex';
 import { Collection, ICollection } from '@models/collection.model';
 import { SortOrder } from 'mongoose';
 
@@ -33,7 +34,7 @@ export class CollectionRepository {
 
   async findByName(name: string): Promise<ICollection | null> {
     return Collection.findOne({
-      name: { $regex: `^${name}$`, $options: 'i' },
+      name: { $regex: `^${escapeRegex(name)}$`, $options: 'i' },
     }).lean() as unknown as Promise<ICollection | null>;
   }
 

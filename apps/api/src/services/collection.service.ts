@@ -10,6 +10,11 @@ import {
   BadRequestError,
 } from '@utils/AppError';
 import { slugify } from '@utils/string';
+import {
+  existingProductIds,
+  invalidateCollectionCaches,
+  syncProductsForCollection,
+} from './collectionSync';
 
 export class CollectionService {
   async findMany(filter: any, options: FindManyOptions) {
@@ -49,7 +54,16 @@ export class CollectionService {
       throw new ConflictError('A collection with this URL already exists');
     }
 
-    return collectionRepository.create({ ...data, slug });
+    const productIds = await existingProductIds(data.productIds);
+    const created = await collectionRepository.create({
+      ...data,
+      productIds: productIds as unknown as ICollection['productIds'],
+      slug,
+    });
+
+    await syncProductsForCollection(created._id, [], productIds);
+    await invalidateCollectionCaches();
+    return created;
   }
 
   async update(id: string, data: Partial<ICollection>): Promise<ICollection> {
@@ -57,7 +71,15 @@ export class CollectionService {
     if (!collection) throw new NotFoundError('Collection not found');
 
     if (data.name && data.name !== collection.name) {
+      const existingName = await collectionRepository.findByName(data.name);
+      if (existingName && existingName._id.toString() !== id) {
+        throw new ConflictError('A collection with this name already exists');
+      }
+
       const newSlug = slugify(data.name);
+      if (!newSlug) {
+        throw new BadRequestError('Collection name produces an invalid slug');
+      }
       const existingSlug = await collectionRepository.findBySlug(newSlug);
 
       if (existingSlug && existingSlug._id.toString() !== id) {
@@ -67,8 +89,18 @@ export class CollectionService {
       data.slug = newSlug;
     }
 
+    const productIdsChanged = data.productIds !== undefined;
+    if (productIdsChanged) {
+      data.productIds = (await existingProductIds(data.productIds)) as unknown as ICollection['productIds'];
+    }
+
     const updated = await collectionRepository.update(id, data);
     if (!updated) throw new NotFoundError('Collection not found');
+
+    if (productIdsChanged) {
+      await syncProductsForCollection(id, collection.productIds, data.productIds);
+    }
+    await invalidateCollectionCaches();
     return updated;
   }
 
@@ -82,6 +114,7 @@ export class CollectionService {
 
     const archived = await collectionRepository.archive(id);
     if (!archived) throw new NotFoundError('Collection not found');
+    await invalidateCollectionCaches();
     return archived;
   }
 
@@ -91,6 +124,7 @@ export class CollectionService {
 
     const restored = await collectionRepository.update(id, { status: 'active' });
     if (!restored) throw new NotFoundError('Collection not found');
+    await invalidateCollectionCaches();
     return restored;
   }
 
@@ -102,14 +136,15 @@ export class CollectionService {
     const collection = await collectionRepository.findById(id);
     if (!collection) throw new NotFoundError('Collection not found');
 
-    // Validate ObjectIds
-    const validIds = productIds.filter((pid) => Types.ObjectId.isValid(pid));
+    const validIds = await existingProductIds(productIds);
     if (validIds.length === 0) {
       throw new BadRequestError('No valid product IDs provided');
     }
 
     const updated = await collectionRepository.addProducts(id, validIds);
     if (!updated) throw new NotFoundError('Collection not found');
+    await syncProductsForCollection(id, collection.productIds, updated.productIds);
+    await invalidateCollectionCaches();
     return updated;
   }
 
@@ -124,6 +159,8 @@ export class CollectionService {
 
     const updated = await collectionRepository.removeProducts(id, validIds);
     if (!updated) throw new NotFoundError('Collection not found');
+    await syncProductsForCollection(id, collection.productIds, updated.productIds);
+    await invalidateCollectionCaches();
     return updated;
   }
 }

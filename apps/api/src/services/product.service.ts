@@ -8,6 +8,7 @@ import { Types } from "mongoose";
 import { ConflictError, NotFoundError, BadRequestError } from "@utils/AppError";
 import { slugify } from "@utils/string";
 import { generateSku } from "@utils/sku";
+import { syncCollectionsForProduct } from "./collectionSync";
 
 interface MatrixInput {
   dialColors: string[];
@@ -67,6 +68,9 @@ export class ProductService {
       slug,
       status: data.status || "draft",
     });
+
+    // Keep Collection.productIds in step with the product's collectionIds
+    await syncCollectionsForProduct(product._id, [], data.collectionIds);
 
     return product;
   }
@@ -156,6 +160,11 @@ export class ProductService {
 
     const updated = await productRepository.update(id, data);
     if (!updated) throw new NotFoundError("Product not found");
+
+    // Keep Collection.productIds in step with the product's collectionIds
+    if (data.collectionIds !== undefined) {
+      await syncCollectionsForProduct(id, product.collectionIds, data.collectionIds);
+    }
     return updated;
   }
 

@@ -82,9 +82,13 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const { method = 'GET', body, headers = {}, skipAuth = false } = options;
 
+  // FormData (file uploads) goes as-is — the browser sets the multipart
+  // Content-Type with its boundary, so we must not set one ourselves
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+
   const buildHeaders = (): Record<string, string> => {
     const h: Record<string, string> = {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...headers,
     };
     if (!skipAuth) {
@@ -98,7 +102,7 @@ export async function apiRequest<T>(
     return fetch(`${CONFIG.apiUrl}${path}`, {
       method,
       headers: buildHeaders(),
-      body: body ? JSON.stringify(body) : undefined,
+      body: isFormData ? (body as FormData) : body ? JSON.stringify(body) : undefined,
     });
   };
 

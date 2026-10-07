@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { Product, IProduct, IProductVariant } from '@models/product.model';
 import { Brand } from '@models/brand.model';
 import { Category } from '@models/category.model';
@@ -28,6 +28,7 @@ interface GroupedProduct {
   rowNumbers: number[];
   brandSlug: string;
   categorySlug: string;
+  parseFailed?: boolean;
 }
 
 interface ValidationError {
@@ -68,7 +69,8 @@ export class CsvImportService {
    */
   async preview(buffer: Buffer): Promise<ImportPreview> {
     const { rows } = parseCsvBuffer(buffer);
-    return this.buildPreview(rows);
+    const { preview } = await this.buildPreview(rows);
+    return preview;
   }
 
   /**
@@ -76,7 +78,8 @@ export class CsvImportService {
    */
   async import(buffer: Buffer): Promise<ImportResult> {
     const { rows } = parseCsvBuffer(buffer);
-    const preview = await this.buildPreview(rows);
+    // Groups come back with brandId and generated SKUs already attached
+    const { preview, groups } = await this.buildPreview(rows);
 
     if (preview.errors.length > 0) {
       throw new BadRequestError(
@@ -84,43 +87,24 @@ export class CsvImportService {
       );
     }
 
-    // Persist — grouped products (use the groups from preview which have brandId attached)
-    const groups = await this.groupRows(rows);
-
-    // Re-attach brand IDs (they were attached in buildPreview but we need them here too)
-    const brandSlugs = [...new Set(groups.map((g) => g.brandSlug))];
-    const brands = await Brand.find({ slug: { $in: brandSlugs } }).lean();
-    const brandMap = new Map(brands.map((b) => [b.slug, b]));
-
-    for (const group of groups) {
-      const brand = brandMap.get(group.brandSlug);
-      if (brand) {
-        group.productData.brandId = brand._id as Types.ObjectId;
-
-        // Generate SKUs for variants missing one
-        for (let i = 0; i < group.variants.length; i++) {
-          const variant = group.variants[i];
-          if (!variant.sku) {
-            variant.sku = generateSku(brand.name, {
-              dialColor: variant.dialColor!,
-              caseMaterial: variant.caseMaterial!,
-              strapType: variant.strapType!,
-              caseSize: variant.caseSize!,
-            });
-          }
-        }
-      }
-    }
-
     let importedProducts = 0;
     let importedVariants = 0;
 
-    for (const group of groups) {
-      // Add variants to product data before creating
-      group.productData.variants = group.variants as IProductVariant[];
-      await Product.create(group.productData);
-      importedProducts++;
-      importedVariants += group.variants.length;
+    // All-or-nothing: any failure rolls back every product created so far
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        importedProducts = 0;
+        importedVariants = 0;
+        for (const group of groups) {
+          group.productData.variants = group.variants as IProductVariant[];
+          await Product.create([group.productData], { session });
+          importedProducts++;
+          importedVariants += group.variants.length;
+        }
+      });
+    } finally {
+      await session.endSession();
     }
 
     logger.info(
@@ -139,14 +123,25 @@ export class CsvImportService {
   // GROUPING
   // ─────────────────────────────────────────────────────────
 
-  private async groupRows(rows: ParsedCsvRow[]): Promise<GroupedProduct[]> {
+  private groupRows(rows: ParsedCsvRow[]): {
+    groups: GroupedProduct[];
+    errors: ValidationError[];
+  } {
     const groups = new Map<string, GroupedProduct>();
+    const errors: ValidationError[] = [];
 
     for (const row of rows) {
       const d = row.data;
       const ref = d.referenceNumber?.trim();
 
-      if (!ref) continue;
+      if (!ref) {
+        errors.push({
+          row: row.rowNumber,
+          field: 'referenceNumber',
+          message: 'referenceNumber is required',
+        });
+        continue;
+      }
 
       if (!groups.has(ref)) {
         const brandSlug = d.brandSlug?.trim() ?? '';
@@ -163,30 +158,43 @@ export class CsvImportService {
       }
 
       const group = groups.get(ref)!;
-      group.rowNumbers.push(row.rowNumber);
 
-      // Product-level fields — first row wins
-      if (Object.keys(group.productData).length === 0) {
-        group.productData = this.buildProductData(d, row.rowNumber);
+      // The parse helpers throw on the first bad cell. Collect it as a row
+      // error instead, so the preview can list every problem in the file.
+      try {
+        // Product-level fields — first row wins
+        if (Object.keys(group.productData).length === 0) {
+          group.productData = this.buildProductData(d, row.rowNumber);
+        }
+
+        // Variant — every row
+        group.variants.push(this.buildVariantData(d, row.rowNumber));
+        group.rowNumbers.push(row.rowNumber);
+      } catch (err) {
+        if (!(err instanceof BadRequestError)) throw err;
+        group.parseFailed = true;
+        errors.push({
+          row: row.rowNumber,
+          field: err.message.match(/"(\w+)"/)?.[1] ?? 'row',
+          message: err.message.replace(/^Row \d+: /, ''),
+        });
       }
-
-      // Variant — every row
-      group.variants.push(this.buildVariantData(d, row.rowNumber));
     }
 
-    return Array.from(groups.values());
+    return { groups: Array.from(groups.values()), errors };
   }
 
   // ─────────────────────────────────────────────────────────
   // PREVIEW BUILDER
   // ─────────────────────────────────────────────────────────
 
-  private async buildPreview(rows: ParsedCsvRow[]): Promise<ImportPreview> {
-    const errors: ValidationError[] = [];
+  private async buildPreview(
+    rows: ParsedCsvRow[]
+  ): Promise<{ preview: ImportPreview; groups: GroupedProduct[] }> {
     const warnings: string[] = [];
 
-    // 1. Group by reference number
-    const groups = await this.groupRows(rows);
+    // 1. Group by reference number (collects per-row parse errors)
+    const { groups, errors } = this.groupRows(rows);
 
     // 2. Fetch all brands and categories in one query
     const brandSlugs = [...new Set(groups.map((g) => g.brandSlug))];
@@ -202,7 +210,8 @@ export class CsvImportService {
 
     // 3. Validate each group
     const seenSkus = new Set<string>();
-    const seenRefs = new Set<string>();
+    const skuRows = new Map<string, number>();
+    const seenSlugs = new Set<string>();
 
     for (const group of groups) {
       // 3a. Brand exists?
@@ -227,15 +236,25 @@ export class CsvImportService {
         continue;
       }
 
-      // 3c. Duplicate reference number in CSV?
-      if (seenRefs.has(group.referenceNumber)) {
-        errors.push({
-          row: group.rowNumbers[0],
-          field: 'referenceNumber',
-          message: `Duplicate reference number in CSV: ${group.referenceNumber}`,
-        });
+      // 3c. Slug is unique in the schema — two products with the same name
+      // (in the CSV or already in the DB) would fail mid-import
+      const slug = group.productData.slug;
+      if (slug) {
+        if (seenSlugs.has(slug)) {
+          errors.push({
+            row: group.rowNumbers[0],
+            field: 'productName',
+            message: `Another product in this CSV has the same name (slug "${slug}")`,
+          });
+        } else if (await Product.exists({ slug })) {
+          errors.push({
+            row: group.rowNumbers[0],
+            field: 'productName',
+            message: `A product with slug "${slug}" already exists`,
+          });
+        }
+        seenSlugs.add(slug);
       }
-      seenRefs.add(group.referenceNumber);
 
       // 3d. Reference number already exists in DB?
       const existingRef = await productRepository.findByReferenceNumber(
@@ -275,6 +294,30 @@ export class CsvImportService {
           });
         }
         seenSkus.add(variant.sku!);
+        skuRows.set(variant.sku!, rowNum);
+      }
+
+      // 3g. Run the Mongoose schema validators (enums, required, min/max) now,
+      // so bad values show up here instead of failing the import transaction.
+      // Groups with parse errors are skipped — those rows already have errors.
+      if (!group.parseFailed) {
+        const validationError = new Product({
+          ...group.productData,
+          variants: group.variants,
+        }).validateSync();
+
+        for (const [path, err] of Object.entries(validationError?.errors ?? {})) {
+          // Nested errors are reported on the leaf path too — skip the parent
+          if (err.name !== 'ValidatorError' && err.name !== 'CastError') continue;
+          const variantMatch = path.match(/^variants\.(\d+)\.(.+)$/);
+          errors.push({
+            row: variantMatch
+              ? group.rowNumbers[Number(variantMatch[1])]
+              : group.rowNumbers[0],
+            field: variantMatch ? variantMatch[2] : path.replace(/^specs\./, ''),
+            message: err.message,
+          });
+        }
       }
     }
 
@@ -287,7 +330,7 @@ export class CsvImportService {
         for (const variant of product.variants) {
           if (seenSkus.has(variant.sku)) {
             errors.push({
-              row: 0,
+              row: skuRows.get(variant.sku) ?? 0,
               field: 'sku',
               message: `SKU already exists in database: ${variant.sku}`,
             });
@@ -322,13 +365,18 @@ export class CsvImportService {
       );
     }
 
+    errors.sort((a, b) => a.row - b.row);
+
     return {
-      totalRows: rows.length,
-      totalProducts: groups.length,
-      totalVariants: groups.reduce((sum, g) => sum + g.variants.length, 0),
-      products,
-      errors,
-      warnings,
+      preview: {
+        totalRows: rows.length,
+        totalProducts: groups.length,
+        totalVariants: groups.reduce((sum, g) => sum + g.variants.length, 0),
+        products,
+        errors,
+        warnings,
+      },
+      groups,
     };
   }
 

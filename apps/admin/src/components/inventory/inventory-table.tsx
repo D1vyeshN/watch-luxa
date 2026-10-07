@@ -43,6 +43,7 @@ export function InventoryTable({ filterMode = 'all' }: InventoryTableProps) {
       url: `/admin/products/${item.productId}/variants/${item.variantId}/stock`,
       method: 'patch',
       values: { stock },
+      errorNotification: false, // callers toast their own errors
     });
 
   // Atomic $inc on the backend — safe against concurrent edits
@@ -51,6 +52,7 @@ export function InventoryTable({ filterMode = 'all' }: InventoryTableProps) {
       url: `/admin/products/${item.productId}/variants/${item.variantId}/stock/adjust`,
       method: 'patch',
       values: { adjustment },
+      errorNotification: false,
     });
 
   // ─── Handle inline save ───

@@ -9,6 +9,7 @@ import {
   CartLineForCalc,
 } from '@utils/checkoutCalculator';
 import { generateOrderNumber } from '@utils/orderNumber';
+import { settingsService } from '@services/settings.service';
 import {
   BadRequestError,
   ConflictError,
@@ -148,7 +149,11 @@ export class CheckoutService {
     }
 
     // 5. Calculate totals
-    const totals = calculateTotals(cartLines, appliedCoupon || undefined);
+    const totals = calculateTotals(
+      cartLines,
+      appliedCoupon || undefined,
+      await settingsService.getCheckoutRates()
+    );
 
     // 6. Generate order number
     const orderNumber = generateOrderNumber();
@@ -277,7 +282,7 @@ export class CheckoutService {
 
     return {
       itemCount: cart.items.reduce((s, i) => s + i.quantity, 0),
-      ...calculateTotals(lines),
+      ...calculateTotals(lines, undefined, await settingsService.getCheckoutRates()),
     };
   }
 }

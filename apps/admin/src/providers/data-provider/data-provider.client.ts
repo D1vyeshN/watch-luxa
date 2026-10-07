@@ -152,7 +152,7 @@ const RESOURCE_PATH_MAP: Record<string, string> = {
   'csv-import': '/admin/csv',
   analytics: '/admin/analytics',
   settings: '/admin/settings',
-  team: '/admin/users',
+  team: '/superadmin/admins', // superadmin-only router on the API
   'audit-logs': '/admin/audit-logs',
 };
 

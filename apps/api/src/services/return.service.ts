@@ -11,8 +11,8 @@ import {
 } from '@utils/AppError';
 import { generateReturnNumber } from '@utils/returnNumber';
 import { logger } from '@config/logger';
+import { settingsService } from '@services/settings.service';
 
-const RETURN_WINDOW_DAYS = 14;
 
 const VALID_TRANSITIONS: Record<ReturnStatus, ReturnStatus[]> = {
   pending: ['approved', 'rejected', 'cancelled'],
@@ -97,9 +97,11 @@ export class ReturnService {
       (Date.now() - new Date(deliveredAt).getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    if (daysSinceDelivery > RETURN_WINDOW_DAYS) {
+    // Configurable in admin Settings
+    const { returnWindowDays } = await settingsService.get();
+    if (daysSinceDelivery > returnWindowDays) {
       throw new BadRequestError(
-        `Return window has expired. Returns must be requested within ${RETURN_WINDOW_DAYS} days of delivery.`
+        `Return window has expired. Returns must be requested within ${returnWindowDays} days of delivery.`
       );
     }
 

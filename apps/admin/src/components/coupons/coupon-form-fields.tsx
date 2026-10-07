@@ -19,18 +19,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { keepValue } from '@/components/products/product-form/utils';
+import { inputValue, optionalNumber, requiredNumber } from '@/lib/form/number-input';
 import { useWatch, type UseFormReturn } from 'react-hook-form';
 import type { CouponFormSchema } from '@/lib/validation/coupon';
-
-// react-hook-form shows the default value again when a field becomes
-// undefined, so a cleared input would snap back. Empty required numbers are NaN
-// (zod reports "required"); empty optional ones are null.
-const requiredNumber = (e: React.ChangeEvent<HTMLInputElement>) =>
-  e.target.value === '' ? Number.NaN : e.target.valueAsNumber;
-const optionalNumber = (e: React.ChangeEvent<HTMLInputElement>) =>
-  e.target.value === '' ? null : e.target.valueAsNumber;
-const inputValue = (v: number | null | undefined) =>
-  v == null || Number.isNaN(v) ? '' : v;
 
 interface CouponFormFieldsProps {
   form: UseFormReturn<CouponFormSchema>;

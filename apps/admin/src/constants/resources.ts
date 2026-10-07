@@ -78,4 +78,27 @@ export const RESOURCES: ResourceProps[] = [
       label: 'Reviews',
     },
   },
+  {
+    name: 'settings',
+    list: '/settings',
+    meta: {
+      label: 'Settings',
+    },
+  },
+  {
+    name: 'team',
+    list: '/settings/team',
+    meta: {
+      label: 'Team',
+      parent: 'settings',
+    },
+  },
+  {
+    name: 'audit-logs',
+    list: '/settings/audit-logs',
+    meta: {
+      label: 'Audit Logs',
+      parent: 'settings',
+    },
+  },
 ];

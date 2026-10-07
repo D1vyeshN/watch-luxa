@@ -109,8 +109,19 @@ export class CouponService {
       if (value < 1 || value > 100) {
         throw new BadRequestError('Percentage must be between 1 and 100');
       }
+      // Same rule as create — `null` means the edit form cleared it
+      const maxDiscount = data.maxDiscount === undefined ? coupon.maxDiscount : data.maxDiscount;
+      if (!maxDiscount) {
+        throw new BadRequestError('maxDiscount is required for percentage coupons');
+      }
     } else if (value <= 0) {
       throw new BadRequestError('Fixed amount must be greater than 0');
+    }
+
+    const startsAt = data.startsAt === undefined ? coupon.startsAt : data.startsAt;
+    const expiresAt = data.expiresAt === undefined ? coupon.expiresAt : data.expiresAt;
+    if (startsAt && expiresAt && new Date(expiresAt) <= new Date(startsAt)) {
+      throw new BadRequestError('expiresAt must be after startsAt');
     }
 
     const updated = await couponRepository.update(id, data);

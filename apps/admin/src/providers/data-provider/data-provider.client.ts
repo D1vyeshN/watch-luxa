@@ -184,7 +184,7 @@ export const dataProvider: DataProvider = {
   getOne: async <TData>(params: any) => {
     const { resource, id } = params;
     const path = getResourcePath(resource);
-    const response = await apiRequest<SingleResponse<TData>>(`${path}/${id}`);
+    const response = await apiRequest<SingleResponse<TData>>(`${path}/${encodeURIComponent(String(id))}`);
     return { data: response.data };
   },
 

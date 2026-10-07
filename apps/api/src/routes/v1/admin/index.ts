@@ -13,6 +13,7 @@ import reviewRoutes from './review.routes';
 import returnRoutes from './return.routes';
 import couponRoutes from './coupon.routes';
 import analyticsRoutes from './analytics.routes';
+import customerRoutes from './customer.routes';
 
 const router: RouterType = Router();
 
@@ -31,5 +32,6 @@ router.use('/reviews', reviewRoutes);
 router.use('/returns', returnRoutes);
 router.use('/coupons', couponRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/customers', customerRoutes);
 
 export default router;

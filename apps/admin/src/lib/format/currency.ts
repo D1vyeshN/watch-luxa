@@ -30,3 +30,13 @@ export function formatPercent(value: number): string {
   const sign = value > 0 ? '+' : '';
   return `${sign}${value.toFixed(1)}%`;
 }
+
+export function formatDateTime(date: string | Date): string {
+  return new Intl.DateTimeFormat('en-IN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date));
+}

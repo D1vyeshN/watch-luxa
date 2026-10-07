@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+import { Product } from '@models/product.model';
 import { orderRepository, FindManyOptions } from '@repositories/order.repository';
 import { IOrder, OrderStatus } from '@models/order.model';
 import { NotFoundError, BadRequestError } from '@utils/AppError';
@@ -107,6 +109,9 @@ export class OrderService {
     const updates: Partial<IOrder> = {};
 
     if (newStatus === 'shipped') {
+      if (!additional?.trackingNumber && !order.trackingNumber) {
+        throw new BadRequestError('Tracking number is required to mark as shipped');
+      }
       updates.shippedAt = new Date();
       if (additional?.trackingNumber) {
         updates.trackingNumber = additional.trackingNumber;
@@ -134,9 +139,38 @@ export class OrderService {
       updates.paymentStatus = 'paid';
     }
 
-    const updated = await orderRepository.updateStatus(id, newStatus, updates);
-    if (!updated) throw new NotFoundError('Order not found');
+    // Checkout deducts stock when the order is placed. Put it back when the
+    // goods never left the warehouse: any cancellation (only allowed before
+    // shipping), or a refund issued before shipping. Refunds after shipping
+    // go through returns, which decide whether the item is restockable.
+    const restock =
+      newStatus === 'cancelled' ||
+      (newStatus === 'refunded' &&
+        (order.orderStatus === 'paid' || order.orderStatus === 'processing'));
 
+    let updated: IOrder | null = null;
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        if (restock) {
+          for (const item of order.items) {
+            await Product.updateOne(
+              { _id: item.productId, 'variants._id': item.variantId },
+              { $inc: { 'variants.$.stock': item.quantity } },
+              { session }
+            );
+          }
+        }
+        updated = await orderRepository.updateStatus(id, newStatus, updates, {
+          note: additional?.note || (restock ? 'Stock returned to inventory' : undefined),
+          session,
+        });
+      });
+    } finally {
+      await session.endSession();
+    }
+
+    if (!updated) throw new NotFoundError('Order not found');
     return updated;
   }
 

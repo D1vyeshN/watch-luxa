@@ -1,5 +1,5 @@
 import { Order, IOrder, OrderStatus } from '@models/order.model';
-import { SortOrder } from 'mongoose';
+import { ClientSession, SortOrder } from 'mongoose';
 
 type FilterQuery = any;
 
@@ -64,15 +64,18 @@ export class OrderRepository {
   async updateStatus(
     id: string,
     status: OrderStatus,
-    additional?: Partial<IOrder>
+    additional?: Partial<IOrder>,
+    options: { note?: string; session?: ClientSession } = {}
   ): Promise<IOrder | null> {
     return Order.findByIdAndUpdate(
       id,
       {
         $set: { orderStatus: status, ...additional },
-        $push: { timeline: { status, at: new Date(), by: 'admin' } },
+        $push: {
+          timeline: { status, note: options.note, at: new Date(), by: 'admin' },
+        },
       },
-      { new: true }
+      { new: true, session: options.session }
     );
   }
 }

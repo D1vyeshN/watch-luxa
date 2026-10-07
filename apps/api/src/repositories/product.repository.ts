@@ -172,11 +172,11 @@ export class ProductRepository {
       {
         $project: {
           _id: 0,
-          productId: '$_id',
+          productId: { $toString: '$_id' },
           productName: '$name',
           productSlug: '$slug',
           sku: '$variants.sku',
-          variantId: '$variants._id',
+          variantId: { $toString: '$variants._id' },
           dialColor: '$variants.dialColor',
           caseMaterial: '$variants.caseMaterial',
           caseSize: '$variants.caseSize',

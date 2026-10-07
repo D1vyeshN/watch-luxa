@@ -169,8 +169,39 @@ export const adminProductController: any = {
     return sendSuccess(res, result, `${result.created} variants created`, 201);
   }),
 
-  inventory: asyncHandler(async (_req: Request, res: Response) => {
-    const inventory = await productService.getInventoryFlat();
-    return sendSuccess(res, inventory, 'Inventory fetched');
+  inventory: asyncHandler(async (req: Request, res: Response) => {
+    const inventory = (await productService.getInventoryFlat()) as any[];
+
+    // Filter mode: ?filter=low | out
+    const filterMode = req.query.filter as string | undefined;
+    let rows = inventory;
+
+    if (filterMode === 'low') {
+      rows = inventory.filter((i) => i.isLowStock);
+    } else if (filterMode === 'out') {
+      rows = inventory.filter((i) => i.isOutOfStock);
+    }
+
+    // ?all=true returns the full filtered list (used by CSV export)
+    if (req.query.all === 'true') {
+      return sendSuccess(res, rows, 'Inventory fetched');
+    }
+
+    const { page, limit, skip } = getPagination(req.query);
+    const SORTABLE = ['stock', 'price', 'productName', 'sku'];
+    const sortBy = SORTABLE.includes(String(req.query.sortBy))
+      ? String(req.query.sortBy)
+      : 'stock';
+    const dir = req.query.sortOrder === 'desc' ? -1 : 1;
+
+    rows = [...rows].sort((a, b) => {
+      const av = a[sortBy];
+      const bv = b[sortBy];
+      const cmp =
+        typeof av === 'string' ? av.localeCompare(bv) : (av ?? 0) - (bv ?? 0);
+      return cmp !== 0 ? cmp * dir : String(a.sku).localeCompare(String(b.sku));
+    });
+
+    return sendPaginated(res, rows.slice(skip, skip + limit), rows.length, page, limit);
   }),
 };

@@ -160,12 +160,13 @@ export class ReviewService {
       throw new ForbiddenError('You can only update your own review');
     }
 
-    const updated = await reviewRepository.update(reviewId, {
-      ...data,
-      // Re-enter moderation on edit
-      status: 'pending',
-      rejectionReason: undefined,
-    });
+    // Re-enter moderation on edit. $unset — `rejectionReason: undefined` is
+    // dropped by Mongoose, so the old reason would survive the edit.
+    const updated = await Review.findByIdAndUpdate(
+      reviewId,
+      { $set: { ...data, status: 'pending' }, $unset: { rejectionReason: 1 } },
+      { new: true, runValidators: true }
+    );
 
     if (!updated) throw new NotFoundError('Review not found');
 

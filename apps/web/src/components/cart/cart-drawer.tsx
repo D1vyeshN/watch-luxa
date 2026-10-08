@@ -15,7 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CartItem } from './cart-item';
 import { formatPrice } from '@/lib/format/price';
 import { ROUTES } from '@/constants/routes';
-import { CONFIG } from '@/constants/config';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { estimateTotals, formatTaxRate } from '@/lib/checkout/estimate';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { closeCartDrawer } from '@/store/slices/uiSlice';
 import { useCart } from '@/hooks/useCart';
@@ -27,6 +28,7 @@ export function CartDrawer() {
 
   const { items, isLoading, updateCartItem, removeCartItem, getCartTotal, getCartCount, isGuest } = useCart();
   const close = () => dispatch(closeCartDrawer());
+  const rates = useStoreSettings();
 
   const handleUpdateQuantity = async (itemId: string, quantity: number) => {
     if (quantity < 1) return;
@@ -42,13 +44,10 @@ export function CartDrawer() {
     router.push(isGuest ? ROUTES.login : ROUTES.checkout);
   };
 
-  // Calculate cart totals for guest users
+  // Estimate with the same rules and live rates checkout uses
   const subtotal = getCartTotal();
   const itemCount = getCartCount();
-  const taxRate = CONFIG.taxRate;
-  const tax = subtotal * taxRate;
-  const shippingFee = subtotal >= CONFIG.freeShippingThreshold ? 0 : CONFIG.flatShippingFee;
-  const total = subtotal + tax + shippingFee;
+  const { tax, taxRate, shippingFee, total, freeShipping } = estimateTotals(subtotal, rates);
   const hasIssues = false; // Guest cart doesn't have stock validation
 
   const cart = {
@@ -129,16 +128,14 @@ export function CartDrawer() {
                 <div className="flex justify-between text-ink-soft">
                   <span>Shipping</span>
                   <span className="font-medium text-forest-900">
-                    {cart.subtotal >= CONFIG.freeShippingThreshold
-                      ? 'Free'
-                      : formatPrice(CONFIG.flatShippingFee)}
+                    {freeShipping ? 'Free' : formatPrice(shippingFee)}
                   </span>
                 </div>
 
                 <div className="flex justify-between text-ink-soft">
-                  <span>Estimated GST ({(CONFIG.taxRate * 100).toFixed(0)}%)</span>
+                  <span>Estimated GST ({formatTaxRate(taxRate)})</span>
                   <span className="font-medium text-forest-900">
-                    {formatPrice(Math.round(cart.subtotal * CONFIG.taxRate))}
+                    {formatPrice(tax)}
                   </span>
                 </div>
               </div>
@@ -150,13 +147,7 @@ export function CartDrawer() {
                   Total
                 </span>
                 <span className="font-serif text-xl font-medium text-forest-900">
-                  {formatPrice(
-                    cart.subtotal +
-                      (cart.subtotal >= CONFIG.freeShippingThreshold
-                        ? 0
-                        : CONFIG.flatShippingFee) +
-                      Math.round(cart.subtotal * CONFIG.taxRate)
-                  )}
+                  {formatPrice(total)}
                 </span>
               </div>
 

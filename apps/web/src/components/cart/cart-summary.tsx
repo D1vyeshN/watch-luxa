@@ -6,7 +6,8 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatPrice } from '@/lib/format/price';
-import { CONFIG } from '@/constants/config';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { estimateTotals, formatTaxRate } from '@/lib/checkout/estimate';
 import { ROUTES } from '@/constants/routes';
 import type { Cart } from '@/types/cart';
 import { useAuth } from '@/hooks/useAuth';
@@ -28,14 +29,18 @@ export function CartSummary({
 }: CartSummaryProps) {
   const { isAuthenticated } = useAuth();
 
-  // Use pre-calculated values if available (guest cart), otherwise calculate
+  // Use pre-calculated values if the cart has them, otherwise estimate with
+  // the same rules and live rates checkout uses
+  const rates = useStoreSettings();
   const subtotal = cart.subtotal;
-  const freeShipping = subtotal >= CONFIG.freeShippingThreshold;
-  const shippingFee = cart.shippingFee ?? (freeShipping ? 0 : CONFIG.flatShippingFee);
-  const estimatedTax = cart.tax ?? Math.round((subtotal * CONFIG.taxRate));
-  const total = cart.total ?? (subtotal + shippingFee + estimatedTax);
+  const estimate = estimateTotals(subtotal, rates);
+  const freeShipping = estimate.freeShipping;
+  const shippingFee = cart.shippingFee ?? estimate.shippingFee;
+  const estimatedTax = cart.tax ?? estimate.tax;
+  const total = cart.total ?? subtotal + shippingFee + estimatedTax;
+  const taxRate = cart.taxRate ?? rates.taxRate;
 
-  const freeShippingRemaining = freeShipping ? 0 : CONFIG.freeShippingThreshold - subtotal;
+  const freeShippingRemaining = estimate.freeShippingRemaining;
 
   return (
     <div
@@ -84,7 +89,7 @@ export function CartSummary({
 
         <div className="flex justify-between">
           <dt className="text-ink-soft">
-            Estimated GST ({(CONFIG.taxRate * 100).toFixed(0)}%)
+            Estimated GST ({formatTaxRate(taxRate)})
           </dt>
           <dd className="font-medium text-forest-900">
             {formatPrice(estimatedTax)}

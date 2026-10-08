@@ -6,13 +6,19 @@ import {
   ProseParagraph,
   ProseList,
 } from '@/components/content';
+import { getStoreSettings } from '@/lib/api/store-settings';
+import { formatPrice } from '@/lib/format/price';
 
 export const metadata: Metadata = {
   title: 'Shipping',
   description: 'Shipping rates, timelines, and policies.',
 };
 
-export default function ShippingPage() {
+export default async function ShippingPage() {
+  // Same values checkout charges — editable in admin Settings
+  const { freeShippingThreshold, flatShippingFee } = await getStoreSettings();
+  const threshold = formatPrice(freeShippingThreshold);
+
   return (
     <>
       <PageHero
@@ -25,8 +31,12 @@ export default function ShippingPage() {
         <ProseHeading>Domestic (India)</ProseHeading>
         <ProseList
           items={[
-            'Free insured shipping on orders above ₹50,000',
-            'Flat ₹500 shipping fee on orders below ₹50,000',
+            ...(freeShippingThreshold === 0
+              ? ['Free insured shipping on every order']
+              : [
+                  `Free insured shipping on orders of ${threshold} or more`,
+                  `Flat ${formatPrice(flatShippingFee)} shipping fee on orders below ${threshold}`,
+                ]),
             'Dispatched within 2 business days',
             'Delivered in 3-5 business days',
           ]}

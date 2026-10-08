@@ -20,7 +20,9 @@ export class ReviewRepository {
       .limit(options.limit)
       .sort(options.sort || { createdAt: -1 })
       .populate('userId', forAdmin ? 'name email' : 'name');
-    if (forAdmin) query = query.populate('productId', 'name slug heroImage');
+    if (forAdmin) {
+      query = query.populate('productId', 'name slug heroImage').select('+rejectionReason');
+    }
 
     const [data, total] = await Promise.all([
       query.lean(),

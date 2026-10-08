@@ -168,8 +168,10 @@ export class CheckoutService {
         const result = await Product.updateOne(
           {
             _id: item.productId,
-            'variants._id': item.variantId,
-            'variants.stock': { $gte: item.quantity },
+            // $elemMatch: both conditions must hold for the SAME variant.
+            // Separate 'variants._id' / 'variants.stock' filters can match on
+            // different variants, letting a sold-out variant pass the check.
+            variants: { $elemMatch: { _id: item.variantId, stock: { $gte: item.quantity } } },
           },
           { $inc: { 'variants.$.stock': -item.quantity } },
           { session }

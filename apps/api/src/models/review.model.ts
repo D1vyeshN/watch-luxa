@@ -73,7 +73,9 @@ const ReviewSchema = new Schema<IReview>(
       default: 'pending',
       index: true,
     },
-    rejectionReason: { type: String, maxlength: 500 },
+    // Moderator note — admin only. select:false keeps it out of every query
+    // (storefront, my-reviews, edit responses) unless asked for explicitly.
+    rejectionReason: { type: String, maxlength: 500, select: false },
     helpfulCount: { type: Number, default: 0, min: 0 },
     helpfulUserIds: { type: [Schema.Types.ObjectId], default: [], select: false },
     reportCount: { type: Number, default: 0, min: 0 },

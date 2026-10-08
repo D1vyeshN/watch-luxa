@@ -12,6 +12,8 @@ import {
 import { toast } from '@/hooks/useToast';
 import { ROUTES } from '@/constants/routes';
 import { useCart } from '@/hooks/useCart';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { estimateTotals } from '@/lib/checkout/estimate';
 
 export default function CartPage() {
   const {
@@ -24,6 +26,7 @@ export default function CartPage() {
     getCartCount,
     isGuest,
   } = useCart();
+  const rates = useStoreSettings();
 
   const handleUpdateQuantity = async (itemId: string, quantity: number) => {
     if (quantity < 1) return;
@@ -56,13 +59,10 @@ export default function CartPage() {
     }
   };
 
-  // Calculate cart totals for guest users
+  // Estimate with the same rules and live rates checkout uses
   const subtotal = getCartTotal();
   const itemCount = getCartCount();
-  const taxRate = 0.18;
-  const tax = subtotal * taxRate;
-  const total = subtotal + tax;
-  const shippingFee = subtotal >= 500000 ? 0 : 50000; // Free shipping above ₹5,000
+  const { tax, taxRate, shippingFee, total } = estimateTotals(subtotal, rates);
 
   const cart = {
     id: 'guest-cart',

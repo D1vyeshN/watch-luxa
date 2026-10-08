@@ -6,9 +6,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatPrice, formatDate } from '@/lib/format';
 import { ROUTES } from '@/constants/routes';
 import { useGetMyReturnsQuery } from '@/store/api/endpoints/returns';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 
 export default function MyReturnsPage() {
   const { data, isLoading } = useGetMyReturnsQuery();
+  const { returnWindowDays } = useStoreSettings();
   const returns = data?.data ?? [];
 
   return (
@@ -33,7 +35,7 @@ export default function MyReturnsPage() {
           />
           <h3 className="heading-luxe mt-6 text-xl">No returns yet</h3>
           <p className="mt-3 text-sm text-ink-soft">
-            You can request a return within 14 days of delivery.
+            You can request a return within {returnWindowDays} days of delivery.
           </p>
           <Link
             href={ROUTES.returns}

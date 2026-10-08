@@ -3,7 +3,8 @@
 import { Separator } from '@/components/ui/separator';
 import { CouponInput } from '@/components/cart';
 import { formatPrice } from '@/lib/format';
-import { CONFIG } from '@/constants/config';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { estimateTotals, formatTaxRate } from '@/lib/checkout/estimate';
 import type { Cart } from '@/types/cart';
 
 interface CheckoutSummaryProps {
@@ -25,12 +26,15 @@ export function CheckoutSummary({
   onApplyCoupon,
   onRemoveCoupon,
 }: CheckoutSummaryProps) {
+  const rates = useStoreSettings();
   const subtotal = cart.subtotal;
-  const afterDiscount = subtotal - couponDiscount;
-  const freeShipping = afterDiscount >= CONFIG.freeShippingThreshold;
-  const shippingFee = freeShipping ? 0 : CONFIG.flatShippingFee;
-  const estimatedTax = Math.round(afterDiscount * CONFIG.taxRate);
-  const total = afterDiscount + shippingFee + estimatedTax;
+  const {
+    freeShipping,
+    shippingFee,
+    tax: estimatedTax,
+    taxRate,
+    total,
+  } = estimateTotals(subtotal, rates, couponDiscount);
 
   return (
     <div className="border border-forest-900/10 bg-cream-100 p-6 md:p-8">
@@ -87,7 +91,7 @@ export function CheckoutSummary({
         />
 
         <Row
-          label={`GST (${(CONFIG.taxRate * 100).toFixed(0)}%)`}
+          label={`GST (${formatTaxRate(taxRate)})`}
           value={formatPrice(estimatedTax)}
         />
       </dl>

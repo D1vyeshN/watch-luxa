@@ -7,6 +7,7 @@ import { storefrontCategoryController } from '@controllers/storefront/category.c
 import { storefrontCollectionController } from '@controllers/storefront/collection.controller';
 import { storefrontHomeController } from '@controllers/storefront/home.controller';
 import { storefrontSearchController } from '@controllers/storefront/search.controller';
+import { storefrontSettingsController } from '@controllers/storefront/settings.controller';
 import cartRoutes from './cart.routes';
 import wishlistRoutes from './wishlist.routes';
 import checkoutRoutes from './checkout.routes';
@@ -62,6 +63,7 @@ storefrontRouter.use('/categories', categoryRouter);
 storefrontRouter.use('/collections', collectionRouter);
 storefrontRouter.use('/search', searchRouter);
 storefrontRouter.use('/home', homeRouter);
+storefrontRouter.get('/settings', storefrontSettingsController.get);
 storefrontRouter.use('/cart', cartRoutes);
 storefrontRouter.use('/wishlist', wishlistRoutes);
 storefrontRouter.use('/checkout', checkoutRoutes);

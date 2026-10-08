@@ -4,6 +4,7 @@ import { ProductDetailContent } from '@/components/product/product-detail-conten
 import { RelatedProducts } from '@/components/product/related-products';
 import { JsonLd, buildProductJsonLd, buildBreadcrumbJsonLd } from '@/components/seo/json-ld';
 import { serverFetch } from '@/lib/api/server-fetch';
+import { getStoreSettings } from '@/lib/api/store-settings';
 import { buildProductMetadata } from '@/lib/seo/metadata';
 import { env } from '@/config/env';
 import type { ApiResponse, Paginated } from '@/types/api';
@@ -54,9 +55,10 @@ export async function generateMetadata({
 export default async function ProductDetailPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const [product, related] = await Promise.all([
+  const [product, related, storeSettings] = await Promise.all([
     getProduct(slug),
     getRelated(slug),
+    getStoreSettings(),
   ]);
 
   if (!product) {
@@ -87,7 +89,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     <>
       <JsonLd data={productJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <ProductDetailContent product={product} />
+      <ProductDetailContent product={product} storeSettings={storeSettings} />
       <RelatedProducts products={related} />
     </>
   );

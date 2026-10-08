@@ -8,26 +8,30 @@ import {
   ProseList,
 } from '@/components/content';
 import { ROUTES } from '@/constants/routes';
+import { getStoreSettings } from '@/lib/api/store-settings';
 
 export const metadata: Metadata = {
   title: 'Returns',
   description: 'How to return a piece, and what is covered.',
 };
 
-export default function ReturnsPage() {
+export default async function ReturnsPage() {
+  // Same window the returns API enforces — editable in admin Settings
+  const { returnWindowDays: days } = await getStoreSettings();
+
   return (
     <>
       <PageHero
         overline="Support"
         title="Returns"
-        subtitle="You have 14 days from delivery to return unworn pieces in original packaging."
+        subtitle={`You have ${days} days from delivery to return unworn pieces in original packaging.`}
       />
 
       <ProseSection>
         <ProseHeading>Eligibility</ProseHeading>
         <ProseList
           items={[
-            'Return requested within 14 days of delivery',
+            `Return requested within ${days} days of delivery`,
             'Piece is unworn and in original condition',
             'Original packaging, box, and papers included',
             'Security tags intact (where applicable)',
@@ -39,7 +43,7 @@ export default function ReturnsPage() {
           items={[
             'Custom, engraved, or personalised pieces',
             'Pieces showing signs of wear or damage',
-            'Returns requested after 14 days',
+            `Returns requested after ${days} days`,
           ]}
         />
 

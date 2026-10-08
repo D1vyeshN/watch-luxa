@@ -6,3 +6,4 @@ export * from './useAuth';
 export * from './useVariantSelection';
 export * from './useCart';
 export * from './useWishlist';
+export * from './useStoreSettings';

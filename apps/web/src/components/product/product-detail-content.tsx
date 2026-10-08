@@ -12,16 +12,21 @@ import { VariantSelector } from './variant-selector';
 import { AddToCartButton } from './add-to-cart-button';
 import { SpecsTable } from './specs-table';
 import { useVariantSelection } from '@/hooks/useVariantSelection';
+import { formatPrice } from '@/lib/format/price';
 import { useAppDispatch } from '@/store/hooks';
 import { addRecentlyViewed } from '@/store/slices/uiSlice';
 import type { Product } from '@/types/catalog';
 
 interface ProductDetailContentProps {
   product: Product;
+  // Fetched by the server page (not the client hook) so the server and
+  // client render the same text — no hydration mismatch
+  storeSettings: { freeShippingThreshold: number; returnWindowDays: number };
 }
 
-export function ProductDetailContent({ product }: ProductDetailContentProps) {
+export function ProductDetailContent({ product, storeSettings }: ProductDetailContentProps) {
   const dispatch = useAppDispatch();
+  const { freeShippingThreshold, returnWindowDays } = storeSettings;
 
   const variants = product.variants ?? [];
   const selection = useVariantSelection(variants);
@@ -122,8 +127,13 @@ export function ProductDetailContent({ product }: ProductDetailContentProps) {
           {/* Trust signals */}
           <div className="mt-6 space-y-3 text-xs text-ink-soft">
             <p>✓ Authenticity guaranteed</p>
-            <p>✓ Free insured shipping over ₹50,000</p>
-            <p>✓ 14-day returns on unworn pieces</p>
+            <p>
+              ✓{' '}
+              {freeShippingThreshold === 0
+                ? 'Free insured shipping'
+                : `Free insured shipping over ${formatPrice(freeShippingThreshold)}`}
+            </p>
+            {returnWindowDays > 0 && <p>✓ {returnWindowDays}-day returns on unworn pieces</p>}
           </div>
         </div>
       </div>

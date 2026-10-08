@@ -211,12 +211,13 @@ export function AuditLogsTable() {
           <Input
             value={actor}
             onChange={(e) => setActor(e.target.value)}
+            aria-label="Filter audit logs by actor email"
             placeholder="Filter by actor email…"
             className="h-9 pl-8 text-sm"
           />
         </div>
         <Select value={entity} onValueChange={setEntity}>
-          <SelectTrigger className="h-9 w-44 capitalize">
+          <SelectTrigger aria-label="Filter by area" className="h-9 w-44 capitalize">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

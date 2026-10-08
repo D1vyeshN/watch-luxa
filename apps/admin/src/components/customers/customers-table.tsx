@@ -209,6 +209,7 @@ export function CustomersTable() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search customers by name or email"
             placeholder="Search name or email…"
             className="h-9 pl-8 text-sm"
           />

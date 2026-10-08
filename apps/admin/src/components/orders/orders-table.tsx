@@ -243,6 +243,7 @@ export function OrdersTable() {
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            aria-label="Search orders by order number or email"
             placeholder="Search order number or email…"
             className="h-9 pl-8 text-sm"
           />
@@ -251,7 +252,7 @@ export function OrdersTable() {
           value={status}
           onValueChange={(v) => setStatus(v as OrderStatus | 'all')}
         >
-          <SelectTrigger className="h-9 w-44 capitalize">
+          <SelectTrigger aria-label="Filter by status" className="h-9 w-44 capitalize">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

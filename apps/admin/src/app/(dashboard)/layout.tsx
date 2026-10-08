@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { AppHeader } from '@/components/layout/app-header';
+import { SkipLink } from '@/components/shared/skip-link';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,10 +27,14 @@ function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
       }
     >
       <SidebarProvider>
+        <SkipLink />
         <AppSidebar />
         <SidebarInset>
           <AppHeader />
-          <main className="flex-1 p-6">{children}</main>
+          {/* tabIndex -1: lets the skip link move focus here */}
+          <main id="main-content" tabIndex={-1} className="flex-1 p-6 outline-none">
+            {children}
+          </main>
         </SidebarInset>
       </SidebarProvider>
     </Authenticated>

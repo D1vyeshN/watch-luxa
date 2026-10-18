@@ -11,6 +11,7 @@ const VALID_FOLDERS: UploadFolder[] = [
   'products',
   'variants',
   'avatars',
+  'hero',
 ];
 
 export const adminUploadController: Record<string, RequestHandler> = {
@@ -42,6 +43,24 @@ export const adminUploadController: Record<string, RequestHandler> = {
     );
 
     return sendSuccess(res, result, 'Image uploaded', 201);
+  }),
+
+  /**
+   * POST /api/v1/admin/uploads/video
+   * Upload a single MP4/WebM video (max 50 MB) to the hero folder.
+   *
+   * Form-data:
+   *   file: File (required)
+   *   nameHint: string (optional) — used for filename slug
+   */
+  video: asyncHandler(async (req: Request, res: Response) => {
+    if (!req.file) {
+      throw new BadRequestError('No file uploaded');
+    }
+
+    const result = await storageService.uploadVideo(req.file, 'hero', req.body.nameHint);
+
+    return sendSuccess(res, result, 'Video uploaded', 201);
   }),
 
   /**

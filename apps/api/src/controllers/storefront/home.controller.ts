@@ -12,6 +12,7 @@ import {
   toStorefrontCollection,
 } from '@utils/storefrontFilters';
 import { cacheGet, cacheSet } from '@utils/cache';
+import { homepageService } from '@services/homepage.service';
 
 export const storefrontHomeController: Record<string, any> = {
   /**
@@ -31,6 +32,7 @@ export const storefrontHomeController: Record<string, any> = {
       categories,
       featuredBrands,
       featuredCollections,
+      hero,
     ] = await Promise.all([
       Product.find({
         status: 'active',
@@ -75,9 +77,12 @@ export const storefrontHomeController: Record<string, any> = {
         .sort({ displayOrder: 1 })
         .limit(4)
         .lean(),
+
+      homepageService.getStorefrontHero(),
     ]);
 
     const result = {
+      hero,
       featured: featured.map((p) => toStorefrontProduct(p, false)),
       newArrivals: newArrivals.map((p) => toStorefrontProduct(p, false)),
       trending: trending.map((p) => toStorefrontProduct(p, false)),

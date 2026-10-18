@@ -12,6 +12,7 @@ import {
   Star,
   Upload,
   Settings,
+  LayoutTemplate,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -59,6 +60,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Content',
     items: [
+      { title: 'Homepage', url: '/homepage', icon: LayoutTemplate },
       { title: 'Reviews', url: '/reviews', icon: Star },
       { title: 'CSV Import', url: '/csv-import', icon: Upload },
     ],

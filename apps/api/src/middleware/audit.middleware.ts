@@ -44,7 +44,7 @@ function capSize(value: unknown): unknown {
 function describe(method: string, path: string) {
   const segments = path.split('?')[0].split('/').filter(Boolean);
   const entity = segments[0] ?? 'unknown';
-  const entityId = segments.find((s) => OBJECT_ID.test(s)) ?? (entity === 'settings' ? 'global' : undefined);
+  const entityId = segments.find((s) => OBJECT_ID.test(s)) ?? (entity === 'settings' || entity === 'homepage' ? 'global' : undefined);
   // Last segment that isn't an id names the operation (approve, status, reply…)
   const rest = segments.slice(1).filter((s) => !OBJECT_ID.test(s));
   const verb = rest.length ? rest[rest.length - 1] : VERB_ACTION[method] ?? method.toLowerCase();

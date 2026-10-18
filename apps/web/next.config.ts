@@ -4,6 +4,7 @@ const config: NextConfig = {
   // ─── Image optimization ───
   images: {
     formats: ['image/avif', 'image/webp'],
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       {
         protocol: 'https',

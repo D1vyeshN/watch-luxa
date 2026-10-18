@@ -17,6 +17,7 @@ import couponRoutes from './coupon.routes';
 import analyticsRoutes from './analytics.routes';
 import customerRoutes from './customer.routes';
 import settingsRoutes from './settings.routes';
+import homepageRoutes from './homepage.routes';
 import auditLogRoutes from './auditLog.routes';
 
 const router: RouterType = Router();
@@ -42,6 +43,7 @@ router.use('/coupons', couponRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/customers', customerRoutes);
 router.use('/settings', settingsRoutes);
+router.use('/homepage', homepageRoutes);
 router.use('/audit-logs', auditLogRoutes);
 
 export default router;

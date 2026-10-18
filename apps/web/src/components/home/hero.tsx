@@ -1,70 +1,46 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants/routes';
+import type { HeroConfig, HeroSlide } from '@/types/home';
+import { HeroSlideView } from './hero-slide';
+import { HeroCarousel } from './hero-carousel';
+
+// Shown when the API has no hero (e.g. older API) — matches the admin defaults
+const FALLBACK_SLIDE: HeroSlide = {
+  id: 'default',
+  mediaType: 'image',
+  imageUrl: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=1920&q=80',
+  tagline: 'LUXE Timepieces',
+  headline: 'Time, Refined.',
+  subtext: 'Precision crafted for those who appreciate the extraordinary.',
+  primaryCta: { label: 'Explore Watches', href: ROUTES.shop },
+  secondaryCta: { label: 'Discover Our Story', href: ROUTES.about },
+  textAlign: 'left',
+  overlayOpacity: 75,
+};
+
+const HEIGHTS: Record<HeroConfig['height'], string> = {
+  full: 'h-[88vh] min-h-[640px]',
+  large: 'h-[72vh] min-h-[560px]',
+  medium: 'h-[60vh] min-h-[480px]',
+};
 
 interface HeroProps {
-  tagline?: string;
-  headline?: string;
-  subtext?: string;
-  imageUrl?: string;
-  primaryCta?: { label: string; href: string };
-  secondaryCta?: { label: string; href: string };
+  /** Managed in admin → Homepage */
+  config?: HeroConfig;
 }
 
-export function Hero({
-  tagline = 'LUXE Timepieces',
-  headline = 'Time, Refined.',
-  subtext = 'Precision crafted for those who appreciate the extraordinary.',
-  imageUrl = 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=1920&q=80',
-  primaryCta = { label: 'Explore Watches', href: ROUTES.shop },
-  secondaryCta = { label: 'Discover Our Story', href: ROUTES.about },
-}: HeroProps) {
+export function Hero({ config }: HeroProps) {
+  const slides = config?.slides.length ? config.slides : [FALLBACK_SLIDE];
+  const heightClass = HEIGHTS[config?.height ?? 'full'];
+
+  if (config?.carouselEnabled && slides.length > 1) {
+    return <HeroCarousel config={{ ...config, slides }} heightClass={heightClass} />;
+  }
+
+  // Carousel off: the first active slide only
   return (
-    <section className="relative h-[88vh] min-h-[640px] w-full overflow-hidden bg-forest-900">
-      {/* Background image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-        }}
-      >
-        {/* Gradient overlay for text legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-forest-900/95 via-forest-900/75 to-forest-900/30" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex h-full items-center">
-        <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 lg:px-16">
-          <div className="max-w-2xl animate-fade-up">
-            <p className="label-luxe text-cream-600">{tagline}</p>
-
-            <h1 className="heading-luxe mt-6 text-6xl leading-[1.05] text-cream-100 md:text-7xl lg:text-8xl">
-              {headline}
-            </h1>
-
-            <p className="mt-8 max-w-lg text-base leading-relaxed text-cream-200/80 md:text-lg">
-              {subtext}
-            </p>
-
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Link
-                href={primaryCta.href}
-                className="group inline-flex items-center gap-3 bg-cream-600 px-8 py-4 text-xs font-medium uppercase tracking-[0.18em] text-forest-900 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-cream-500"
-              >
-                {primaryCta.label}
-                <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-
-              <Link
-                href={secondaryCta.href}
-                className="inline-flex items-center border border-cream-100/40 px-8 py-4 text-xs font-medium uppercase tracking-[0.18em] text-cream-100 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-cream-100 hover:text-forest-900"
-              >
-                {secondaryCta.label}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+    <section className={cn('relative w-full overflow-hidden bg-forest-900', heightClass)}>
+      <HeroSlideView slide={slides[0]} isFirst />
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 md:block">

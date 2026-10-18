@@ -54,7 +54,10 @@ export const errorHandler = (
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
       statusCode = 400;
-      message = 'File too large (max 10 MB)';
+      // Video uploads (hero backgrounds) have a larger cap than images
+      message = req.path.endsWith('/uploads/video')
+        ? 'File too large (max 50 MB)'
+        : 'File too large (max 10 MB)';
     } else if (err.code === 'LIMIT_FILE_COUNT') {
       statusCode = 400;
       message = 'Too many files (max 10)';

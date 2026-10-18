@@ -1,6 +1,6 @@
 import { Router, type Router as RouterType } from 'express';
 import { adminUploadController } from '@controllers/admin/upload.controller';
-import { uploadSingle, uploadMultiple } from '@middleware/upload.middleware';
+import { uploadSingle, uploadMultiple, uploadVideo } from '@middleware/upload.middleware';
 import { validate } from '@middleware/validate.middleware';
 import { z } from 'zod';
 
@@ -17,6 +17,13 @@ router.post(
   '/single',
   uploadSingle,
   adminUploadController.single
+);
+
+// POST /api/v1/admin/uploads/video
+router.post(
+  '/video',
+  uploadVideo,
+  adminUploadController.video
 );
 
 // POST /api/v1/admin/uploads/multiple

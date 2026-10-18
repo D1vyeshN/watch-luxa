@@ -29,6 +29,10 @@ const envSchema = z.object({
   RAZORPAY_KEY_ID: z.string().optional(),
   RAZORPAY_KEY_SECRET: z.string().optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+  // ─── Storefront on-demand revalidation (optional) ───
+  // e.g. http://localhost:3000/api/revalidate — must match the web app's REVALIDATE_SECRET
+  WEB_REVALIDATE_URL: z.string().url().optional(),
+  REVALIDATE_SECRET: z.string().min(16).optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

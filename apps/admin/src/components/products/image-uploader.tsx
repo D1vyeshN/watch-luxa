@@ -11,7 +11,7 @@ import { CONFIG } from '@/constants/config';
 interface ImageUploaderProps {
   value: string;
   onChange: (url: string) => void;
-  folder?: 'products' | 'brands' | 'categories' | 'collections';
+  folder?: 'products' | 'brands' | 'categories' | 'collections' | 'hero';
   label?: string;
   aspect?: 'square' | 'wide';
 }
@@ -69,19 +69,46 @@ export function ImageUploader({
       <div className={`relative ${aspectClass} w-full overflow-hidden rounded-md border border-dashed border-border bg-muted/30`}>
         {value ? (
           <>
-            <Image
-              src={value}
-              alt="Preview"
-              fill
-              sizes="300px"
-              className="object-cover"
-            />
+            {/* Clicking the preview picks a replacement — no need to remove first */}
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={isUploading}
+              className="group absolute inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={`Replace ${label}`}
+            >
+              <Image
+                src={value}
+                alt="Preview"
+                fill
+                sizes="300px"
+                className="object-cover"
+              />
+              <span
+                className={`absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 text-white transition-opacity ${
+                  isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
+                }`}
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span className="text-xs">Uploading…</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-5 w-5" />
+                    <span className="text-xs">Click to replace</span>
+                  </>
+                )}
+              </span>
+            </button>
             <Button
               type="button"
               size="icon"
               variant="destructive"
               className="absolute right-2 top-2 h-7 w-7"
               onClick={() => onChange('')}
+              aria-label={`Remove ${label}`}
             >
               <X className="h-3.5 w-3.5" />
             </Button>

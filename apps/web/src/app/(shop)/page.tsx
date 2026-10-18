@@ -46,7 +46,7 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. Hero */}
-      <Hero />
+      <Hero config={data.hero} />
 
       {/* 2. Category strip */}
       <CategoryStrip categories={data.categories} />

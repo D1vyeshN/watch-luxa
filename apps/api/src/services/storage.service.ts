@@ -11,7 +11,16 @@ export type UploadFolder =
   | 'collections'
   | 'products'
   | 'variants'
-  | 'avatars';
+  | 'avatars'
+  | 'hero';
+
+// supabase-js reports network failures as a bare "fetch failed"; the real
+// reason (ENOTFOUND, ECONNRESET, ETIMEDOUT…) is on originalError.cause
+function describeStorageError(error: { message: string; originalError?: unknown }): string {
+  const cause = (error.originalError as { cause?: { code?: string; message?: string } } | undefined)?.cause;
+  const detail = cause?.code ?? cause?.message;
+  return detail ? `${error.message} (${detail})` : error.message;
+}
 
 export interface UploadResult {
   url: string;
@@ -58,7 +67,7 @@ export class StorageService {
 
     if (error) {
       logger.error({ error, path }, 'Supabase upload failed');
-      throw new AppError(`Upload failed: ${error.message}`, 500);
+      throw new AppError(`Upload failed: ${describeStorageError(error)}`, 500);
     }
 
     // 4. Get public URL
@@ -73,6 +82,44 @@ export class StorageService {
       height: processed.height,
       size: processed.size,
     };
+  }
+
+  /**
+   * Upload a video as-is (no transcoding) — used for hero backgrounds.
+   */
+  async uploadVideo(
+    file: Express.Multer.File,
+    folder: UploadFolder,
+    nameHint?: string
+  ): Promise<{ url: string; path: string; size: number; contentType: string }> {
+    if (!file || !file.buffer) {
+      throw new BadRequestError('No file provided');
+    }
+
+    const ext = file.mimetype === 'video/webm' ? 'webm' : 'mp4';
+    const slug = slugify(nameHint || 'video').slice(0, 40) || 'video';
+    const uniqueId = randomUUID().split('-')[0];
+    const path = `${folder}/${slug}-${uniqueId}.${ext}`;
+
+    const supabase = getSupabase();
+    const { error } = await supabase.storage
+      .from(SUPABASE_BUCKET)
+      .upload(path, file.buffer, {
+        contentType: file.mimetype,
+        cacheControl: '31536000', // 1 year
+        upsert: false,
+      });
+
+    if (error) {
+      logger.error({ error, path }, 'Supabase video upload failed');
+      throw new AppError(`Upload failed: ${describeStorageError(error)}`, 500);
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(SUPABASE_BUCKET)
+      .getPublicUrl(path);
+
+    return { url: urlData.publicUrl, path, size: file.size, contentType: file.mimetype };
   }
 
   /**

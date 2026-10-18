@@ -31,10 +31,26 @@ export const upload = multer({
   },
 });
 
+const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm'];
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
+
+const videoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_VIDEO_SIZE, files: 1 },
+  fileFilter: (_req, file, cb) => {
+    if (ALLOWED_VIDEO_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new BadRequestError(`Invalid file type: ${file.mimetype}. Allowed: MP4, WebM`));
+    }
+  },
+});
+
 // Named middlewares for common patterns
 export const uploadSingle: RequestHandler = upload.single('file');
 export const uploadMultiple: RequestHandler = upload.array('files', 10);
 export const uploadGallery: RequestHandler = upload.array('images', 10);
+export const uploadVideo: RequestHandler = videoUpload.single('file');
 
 // Multer error handler (add to global error middleware)
 export const handleMulterError = (err: any): never => {

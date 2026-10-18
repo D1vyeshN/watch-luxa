@@ -53,6 +53,7 @@ export function HeroCarousel({ config, heightClass }: HeroCarouselProps) {
 
   return (
     <section
+      data-hero
       className={cn('relative w-full overflow-hidden bg-forest-900', heightClass)}
       aria-roledescription="carousel"
       aria-label="Featured"

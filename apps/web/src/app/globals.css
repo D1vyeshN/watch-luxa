@@ -157,6 +157,14 @@
     color: #0f2320;
   }
 
+  /* Homepage: no scrollbar strip beside the full-bleed hero (still scrolls) */
+  html:has([data-hero]) {
+    scrollbar-width: none;
+  }
+  html:has([data-hero])::-webkit-scrollbar {
+    display: none;
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

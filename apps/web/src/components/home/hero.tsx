@@ -19,7 +19,7 @@ const FALLBACK_SLIDE: HeroSlide = {
 };
 
 const HEIGHTS: Record<HeroConfig['height'], string> = {
-  full: 'h-[88vh] min-h-[640px]',
+  full: 'h-svh', // exactly the visible screen — the homepage navbar floats over it
   large: 'h-[72vh] min-h-[560px]',
   medium: 'h-[60vh] min-h-[480px]',
 };
@@ -39,7 +39,7 @@ export function Hero({ config }: HeroProps) {
 
   // Carousel off: the first active slide only
   return (
-    <section className={cn('relative w-full overflow-hidden bg-forest-900', heightClass)}>
+    <section data-hero className={cn('relative w-full overflow-hidden bg-forest-900', heightClass)}>
       <HeroSlideView slide={slides[0]} isFirst />
 
       {/* Scroll indicator */}

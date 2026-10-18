@@ -334,7 +334,7 @@ export function HeroForm() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="full">Full (88% of screen)</SelectItem>
+                            <SelectItem value="full">Full screen (100%)</SelectItem>
                             <SelectItem value="large">Large (72%)</SelectItem>
                             <SelectItem value="medium">Medium (60%)</SelectItem>
                           </SelectContent>

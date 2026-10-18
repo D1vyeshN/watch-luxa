@@ -130,7 +130,7 @@ export function HeroSlideView({ slide, isFirst, active = true }: HeroSlideViewPr
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full items-center">
+      <div className="relative z-10 flex h-full items-center pt-20">
         <div className="mx-auto w-full max-w-[1440px] px-6 md:px-10 lg:px-16">
           <div
             className={cn(

@@ -28,6 +28,17 @@ async function fetchList<T>(path: string): Promise<T[]> {
   }
 }
 
+// The API caps a page at 100 items, so walk the pages
+async function fetchAllProducts(): Promise<ProductRef[]> {
+  const all: ProductRef[] = [];
+  for (let page = 1; page <= 50; page++) {
+    const batch = await fetchList<ProductRef>(`/products?limit=100&page=${page}`);
+    all.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return all;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
@@ -54,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic pages
   const [products, brands, categories, collections] = await Promise.all([
-    fetchList<ProductRef>('/products?limit=500'),
+    fetchAllProducts(),
     fetchList<SimpleRef>('/brands?limit=100'),
     fetchList<SimpleRef>('/categories'),
     fetchList<SimpleRef>('/collections'),

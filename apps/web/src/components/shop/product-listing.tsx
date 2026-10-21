@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Container } from '@/components/shared/container';
 import { EmptyState } from '@/components/shared/empty-state';
 import { ProductGrid, ProductGridSkeleton } from '@/components/product';
@@ -34,6 +34,7 @@ interface ProductListingProps {
 
 function ListingBody({ fixedFilters, showSort = true, empty }: ProductListingProps) {
   const pathname = usePathname();
+  const query = useSearchParams().get('q');
   const { filters, activeFilterCount } = useProductFilters();
 
   const { data, isLoading, isFetching, error } = useGetProductsQuery({
@@ -52,7 +53,8 @@ function ListingBody({ fixedFilters, showSort = true, empty }: ProductListingPro
     ? {
         title: 'No watches match these filters',
         description: 'Remove a filter or two to see more of the collection.',
-        action: { label: 'Clear filters', href: pathname },
+        // Clearing filters keeps the search term on /search
+        action: { label: 'Clear filters', href: query ? `${pathname}?q=${encodeURIComponent(query)}` : pathname },
       }
     : (empty ?? {
         title: 'No watches here yet',

@@ -11,6 +11,7 @@ import {
 } from '@utils/storefrontFilters';
 import { NotFoundError, BadRequestError } from '@utils/AppError';
 import { cacheGet, cacheSet } from '@utils/cache';
+import { escapeRegex } from '@utils/regex';
 
 export const storefrontProductController: Record<string, any> = {
   /**
@@ -36,6 +37,31 @@ export const storefrontProductController: Record<string, any> = {
     }
 
     const filter = buildPublicProductFilter(query);
+
+    // Search: every word must match somewhere — product name, description,
+    // tags, category, reference, or the brand's name ("rolex", "pilot",
+    // "royal oak", partial words). Replaces the name-only $text match.
+    if (typeof query.search === 'string' && query.search.trim()) {
+      delete filter.$text;
+      const words = query.search.trim().split(/\s+/).slice(0, 6).map(escapeRegex);
+      const clauses = await Promise.all(
+        words.map(async (word) => {
+          const re = new RegExp(word, 'i');
+          const brands = await Brand.find({ name: re }).select('_id').lean();
+          return {
+            $or: [
+              { name: re },
+              { shortDescription: re },
+              { tags: re },
+              { category: re },
+              { 'specs.referenceNumber': re },
+              ...(brands.length ? [{ brandId: { $in: brands.map((b) => b._id) } }] : []),
+            ],
+          };
+        })
+      );
+      filter.$and = [...((filter.$and as unknown[]) ?? []), ...clauses];
+    }
 
     // Products store the category slug, but older/seeded ones store the
     // display name ("Pilot Watches") — match either for the requested slug

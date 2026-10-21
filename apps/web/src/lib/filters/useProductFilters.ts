@@ -6,6 +6,9 @@ import type { ProductFilters } from '@/types/catalog';
 
 type FilterValue = string | number | string[] | undefined;
 
+// URL params owned by the page rather than the filters (the /search query)
+const PAGE_PARAMS = new Set(['q']);
+
 export interface UseProductFiltersReturn {
   filters: ProductFilters;
   setFilter: (key: string, value: FilterValue) => void;
@@ -26,6 +29,7 @@ export function useProductFilters(): UseProductFiltersReturn {
     const obj: Record<string, unknown> = {};
 
     searchParams.forEach((value, key) => {
+      if (PAGE_PARAMS.has(key)) return;
       // Handle comma-separated multi-select
       if (value.includes(',')) {
         obj[key] = value.split(',');
@@ -99,12 +103,18 @@ export function useProductFilters(): UseProductFiltersReturn {
   );
 
   const clearAll = useCallback(() => {
-    router.push(pathname, { scroll: false });
-  }, [pathname, router]);
+    // Keep page-owned params (the search query) when clearing filters
+    const params = new URLSearchParams();
+    PAGE_PARAMS.forEach((key) => {
+      const value = searchParams.get(key);
+      if (value) params.set(key, value);
+    });
+    updateUrl(params);
+  }, [searchParams, updateUrl]);
 
   const activeFilterCount = useMemo(() => {
-    // Count filter keys, excluding page/limit/sort
-    const exclude = new Set(['page', 'limit', 'sortBy', 'sortOrder']);
+    // Count filter keys, excluding page/limit/sort and page-owned params
+    const exclude = new Set(['page', 'limit', 'sortBy', 'sortOrder', ...PAGE_PARAMS]);
     let count = 0;
     searchParams.forEach((_, key) => {
       if (!exclude.has(key)) count++;

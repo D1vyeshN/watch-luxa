@@ -51,7 +51,7 @@ export function SiteFooter() {
 
           {/* Shop */}
           <div>
-            <h4 className="label-luxe mb-4 text-cream-600">Shop</h4>
+            <h4 className="label-luxe mb-4 text-cream-600!">Shop</h4>
             <ul className="space-y-3">
               {FOOTER_LINKS.shop.map((link) => (
                 <li key={link.href}>
@@ -68,7 +68,7 @@ export function SiteFooter() {
 
           {/* Support */}
           <div>
-            <h4 className="label-luxe mb-4 text-cream-600">Support</h4>
+            <h4 className="label-luxe mb-4 text-cream-600!">Support</h4>
             <ul className="space-y-3">
               {FOOTER_LINKS.support.map((link) => (
                 <li key={link.href}>
@@ -85,7 +85,7 @@ export function SiteFooter() {
 
           {/* Company */}
           <div>
-            <h4 className="label-luxe mb-4 text-cream-600">Company</h4>
+            <h4 className="label-luxe mb-4 text-cream-600!">Company</h4>
             <ul className="space-y-3">
               {FOOTER_LINKS.company.map((link) => (
                 <li key={link.href}>
@@ -100,15 +100,18 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* Concierge */}
           <div className="col-span-2 md:col-span-1">
-            <h4 className="label-luxe mb-4 text-cream-600">Newsletter</h4>
+            <h4 className="label-luxe mb-4 text-cream-600!">Concierge</h4>
             <p className="text-sm text-cream-200/70">
-              Stories, new arrivals, and private events.
+              See a piece in person with a LUXE specialist.
             </p>
-            <p className="mt-4 text-xs text-cream-200/50">
-              Coming soon — subscribe form
-            </p>
+            <Link
+              href={ROUTES.privateViewing}
+              className="mt-4 inline-block border-b border-cream-600 py-1 text-xs uppercase tracking-[0.18em] text-cream-600 transition-colors hover:border-cream-400 hover:text-cream-400"
+            >
+              Book a viewing
+            </Link>
           </div>
         </div>
 
@@ -132,6 +135,13 @@ export function SiteFooter() {
           </ul>
         </div>
       </Container>
+
+      {/* Oversized wordmark, cropped by the page edge */}
+      <div aria-hidden className="select-none overflow-hidden">
+        <p className="-mb-[0.18em] text-center font-serif text-[27vw] leading-none tracking-[0.12em] text-cream-100/[0.07]">
+          LUXE
+        </p>
+      </div>
     </footer>
   );
 }

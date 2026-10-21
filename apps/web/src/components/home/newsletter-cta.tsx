@@ -5,8 +5,7 @@ export function NewsletterCTA() {
     <section className="border-t border-forest-900/10 bg-cream-100">
       <Container className="py-16 md:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="label-luxe">The LUXE Circle</p>
-          <h2 className="heading-luxe mt-4 text-3xl md:text-4xl lg:text-5xl">
+          <h2 className="heading-luxe text-3xl md:text-4xl lg:text-5xl">
             Stories, private events, new arrivals.
           </h2>
           <p className="mt-4 text-sm text-ink-soft md:text-base">

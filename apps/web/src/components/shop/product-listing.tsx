@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { Container } from '@/components/shared/container';
+import { EmptyState } from '@/components/shared/empty-state';
 import { ProductGrid, ProductGridSkeleton } from '@/components/product';
 import { useProductFilters } from '@/lib/filters/useProductFilters';
 import { useGetProductsQuery } from '@/store/api/endpoints/products';
@@ -58,6 +59,15 @@ function ListingBody({ fixedFilters, showSort = true, empty }: ProductListingPro
         description: 'New pieces arrive regularly. In the meantime, explore the full collection.',
         action: { label: 'Browse all watches', href: '/shop' },
       });
+
+  // Nothing on this page at all: filters and sort would only be noise
+  if (!isLoading && !error && !filtered && pagination?.total === 0) {
+    return (
+      <Container className="py-10 md:py-14">
+        <EmptyState {...emptyCopy} />
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-10 md:py-14">

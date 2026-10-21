@@ -6,3 +6,4 @@ export * from './pagination';
 export * from './mobile-filter-button';
 export * from './product-listing';
 export * from './listing-header';
+export * from './collection-card';

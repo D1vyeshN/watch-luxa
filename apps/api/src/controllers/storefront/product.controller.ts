@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Product } from '@models/product.model';
 import { Brand } from '@models/brand.model';
+import { Category } from '@models/category.model';
 import { sendSuccess, sendPaginated } from '@utils/response';
 import { asyncHandler } from '@utils/asyncHandler';
 import { getPagination } from '@utils/pagination';
@@ -25,6 +26,9 @@ export const storefrontProductController: Record<string, any> = {
       const brand = await Brand.findOne({ slug: query.brandSlug }).select('_id').lean();
       if (brand) {
         query.brandId = brand._id.toString();
+        // Resolved — otherwise the filter builder also adds a 'brand.slug'
+        // condition, a field products don't have, and nothing matches
+        delete query.brandSlug;
       } else {
         // Brand doesn't exist — return empty
         return sendPaginated(res, [], 0, page, limit);
@@ -32,6 +36,13 @@ export const storefrontProductController: Record<string, any> = {
     }
 
     const filter = buildPublicProductFilter(query);
+
+    // Products store the category slug, but older/seeded ones store the
+    // display name ("Pilot Watches") — match either for the requested slug
+    if (typeof query.category === 'string') {
+      const category = await Category.findOne({ slug: query.category }).select('name').lean();
+      if (category) filter.category = { $in: [query.category, category.name] };
+    }
 
     // Only admins can sort by soldCount, others by createdAt or price
     const allowedSorts = ['createdAt', 'basePrice', 'rating', 'soldCount'];

@@ -11,7 +11,7 @@ import { SORT_OPTIONS, getSortParams } from '@/lib/filters/constants';
 import { useProductFilters } from '@/lib/filters/useProductFilters';
 
 export function SortDropdown() {
-  const { filters, setFilter } = useProductFilters();
+  const { filters, setFilters } = useProductFilters();
 
   const currentSort = (() => {
     const sortBy = filters.sortBy;
@@ -23,9 +23,7 @@ export function SortDropdown() {
   })();
 
   const handleChange = (value: string) => {
-    const { sortBy, sortOrder } = getSortParams(value);
-    setFilter('sortBy', sortBy);
-    setFilter('sortOrder', sortOrder);
+    setFilters(getSortParams(value));
   };
 
   return (

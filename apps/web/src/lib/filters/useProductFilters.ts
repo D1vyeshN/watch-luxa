@@ -4,9 +4,13 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import type { ProductFilters } from '@/types/catalog';
 
+type FilterValue = string | number | string[] | undefined;
+
 export interface UseProductFiltersReturn {
   filters: ProductFilters;
-  setFilter: (key: string, value: string | number | string[] | undefined) => void;
+  setFilter: (key: string, value: FilterValue) => void;
+  /** Several keys in one navigation — separate setFilter calls would overwrite each other */
+  setFilters: (updates: Record<string, FilterValue>) => void;
   toggleArrayFilter: (key: string, value: string) => void;
   clearFilter: (key: string) => void;
   clearAll: () => void;
@@ -43,25 +47,32 @@ export function useProductFilters(): UseProductFiltersReturn {
     [pathname, router]
   );
 
-  const setFilter = useCallback(
-    (key: string, value: string | number | string[] | undefined) => {
+  const setFilters = useCallback(
+    (updates: Record<string, FilterValue>) => {
       const params = new URLSearchParams(searchParams.toString());
 
-      if (value === undefined || value === '' || value === null) {
-        params.delete(key);
-      } else if (Array.isArray(value)) {
-        if (value.length === 0) params.delete(key);
-        else params.set(key, value.join(','));
-      } else {
-        params.set(key, String(value));
-      }
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === undefined || value === '' || value === null) {
+          params.delete(key);
+        } else if (Array.isArray(value)) {
+          if (value.length === 0) params.delete(key);
+          else params.set(key, value.join(','));
+        } else {
+          params.set(key, String(value));
+        }
+      });
 
       // Reset page when any filter changes
-      if (key !== 'page') params.delete('page');
+      if (!('page' in updates)) params.delete('page');
 
       updateUrl(params);
     },
     [searchParams, updateUrl]
+  );
+
+  const setFilter = useCallback(
+    (key: string, value: FilterValue) => setFilters({ [key]: value }),
+    [setFilters]
   );
 
   const toggleArrayFilter = useCallback(
@@ -104,6 +115,7 @@ export function useProductFilters(): UseProductFiltersReturn {
   return {
     filters,
     setFilter,
+    setFilters,
     toggleArrayFilter,
     clearFilter,
     clearAll,

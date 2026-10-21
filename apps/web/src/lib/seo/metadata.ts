@@ -45,7 +45,8 @@ interface CategorySeoInput {
 }
 
 export function buildCategoryMetadata(category: CategorySeoInput): Metadata {
-  const title = `${category.name} Watches`;
+  // Category names already end in "Watches" (e.g. "Dive Watches")
+  const title = category.name;
   const description =
     category.description ??
     `Explore our curated collection of ${category.name.toLowerCase()}.`;

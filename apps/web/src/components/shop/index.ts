@@ -4,3 +4,5 @@ export * from './sort-dropdown';
 export * from './active-filters';
 export * from './pagination';
 export * from './mobile-filter-button';
+export * from './product-listing';
+export * from './listing-header';

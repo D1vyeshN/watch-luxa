@@ -108,6 +108,7 @@ export interface ProductFilters {
   category?: string;
   brandId?: string;
   brandSlug?: string;
+  collectionId?: string;
   gender?: string;
   movement?: string;
   dialColor?: string;

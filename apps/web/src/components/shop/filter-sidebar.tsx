@@ -13,7 +13,7 @@ import { useProductFilters } from '@/lib/filters/useProductFilters';
 export function FilterSidebar() {
   const {
     filters,
-    setFilter,
+    setFilters,
     toggleArrayFilter,
     clearAll,
     activeFilterCount,
@@ -59,12 +59,7 @@ export function FilterSidebar() {
       <PriceRangeFilter
         minValue={Number(filters.minPrice) || undefined}
         maxValue={Number(filters.maxPrice) || undefined}
-        onApply={(min, max) => {
-          if (min !== undefined) setFilter('minPrice', min);
-          else setFilter('minPrice', undefined);
-          if (max !== undefined) setFilter('maxPrice', max);
-          else setFilter('maxPrice', undefined);
-        }}
+        onApply={(min, max) => setFilters({ minPrice: min, maxPrice: max })}
       />
 
       {/* Accordion filter groups */}

@@ -5,7 +5,7 @@ import { FILTER_CONFIG } from '@/lib/filters/constants';
 import { useProductFilters } from '@/lib/filters/useProductFilters';
 
 export function ActiveFilters() {
-  const { filters, setFilter, clearAll, activeFilterCount } = useProductFilters();
+  const { filters, setFilter, setFilters, clearAll, activeFilterCount } = useProductFilters();
 
   if (activeFilterCount === 0) return null;
 
@@ -38,10 +38,7 @@ export function ActiveFilters() {
     chips.push({
       key: 'price',
       label: `${min} – ${max}`,
-      onRemove: () => {
-        setFilter('minPrice', undefined);
-        setFilter('maxPrice', undefined);
-      },
+      onRemove: () => setFilters({ minPrice: undefined, maxPrice: undefined }),
     });
   }
 

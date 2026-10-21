@@ -1,0 +1,263 @@
+{
+  "defaults": {
+    "model": "google/nano-banana-pro",
+    "aspect_ratio": "16:9",
+    "resolution": "2K",
+    "style": "Style: high-end luxury watch editorial photography, shot on a medium-format camera with a 100mm macro lens, natural soft directional light, shallow depth of field, rich deep forest-green (#0f2320), warm cream (#f9f6ef) and brushed gold (#c9a961) palette, refined and understated, photorealistic, accurate mechanical watch anatomy (correct crown, lugs, bezel, hands and indices). No visible brand names, logos, watermarks or legible text on dials or anywhere in the frame.",
+    "styles": {
+      "product": "Style: professional luxury e-commerce product photograph. A single watch, centred, on a seamless warm cream paper sweep (#f3ede0) with a soft graduated falloff to slightly darker edges. Large diffused softbox key light from the upper left, gentle fill from the right, a soft natural contact shadow beneath the watch. Tack-sharp focus across the whole watch, accurate reflections on the sapphire crystal and polished metal, true-to-life metal colours. The watch fills about 70% of the frame. Photorealistic, catalogue quality, consistent with a matching set of product photos. Accurate mechanical watch anatomy (correct crown, lugs, bezel, hands and indices). No brand names, logos, wordmarks, watermarks or legible text on the dial or anywhere in the frame."
+    }
+  },
+  "images": [
+    {
+      "id": "hero-1",
+      "out": "scripts/krea/out/hero/hero-1.jpg",
+      "aspect_ratio": "21:9",
+      "prompt": "A single 40mm automatic dress watch in polished yellow gold with a deep forest-green sunburst dial, slim gold dauphine hands and applied baton indices, resting at a slight angle on a dark green leather surface. Wide cinematic composition with the watch placed on the right third, generous empty negative space on the left for headline text. Low raking window light, subtle reflections on the sapphire crystal."
+    },
+    {
+      "id": "hero-1-mobile",
+      "out": "scripts/krea/out/hero/hero-1-mobile.jpg",
+      "aspect_ratio": "9:16",
+      "prompt": "Portrait crop of a 40mm automatic dress watch in polished yellow gold with a deep forest-green sunburst dial, slim gold dauphine hands and applied baton indices, standing upright on its leather strap on a dark green leather surface. Watch in the lower half of the frame, calm empty space above for text. Low raking window light."
+    },
+    {
+      "id": "craftsmanship-macro",
+      "out": "apps/web/public/images/craftsmanship-macro.jpg",
+      "aspect_ratio": "16:9",
+      "prompt": "Extreme macro of a hand-finished mechanical watch movement: Côtes de Genève striping, perlage, blued screws and ruby jewels, a gold balance wheel caught mid-swing. Shallow focus plane across the balance wheel."
+    },
+    {
+      "id": "about-workshop",
+      "out": "apps/web/public/images/about-workshop.jpg",
+      "aspect_ratio": "16:9",
+      "prompt": "Interior of a quiet Swiss watchmaking atelier: row of wooden benches by tall windows overlooking misty alpine hills, lamps, loupes and small tools neatly arranged, one watchmaker in a white coat working in the background. Calm morning light."
+    },
+    {
+      "id": "auth-hero",
+      "out": "apps/web/public/images/auth-hero.jpg",
+      "aspect_ratio": "3:4",
+      "prompt": "An open dark-green leather watch box lined with cream suede holding three luxury watches (gold dress watch, steel sports watch, chronograph), photographed from above at a slight angle, moody low-key light with a warm gold rim."
+    },
+    {
+      "id": "journal-1",
+      "out": "apps/web/public/images/journal-1.jpg",
+      "aspect_ratio": "3:2",
+      "prompt": "Vintage 1960s gold manual-wind wristwatch with a patinated cream dial, beside an old leather-bound notebook and a fountain pen on a walnut desk, nostalgic warm light."
+    },
+    {
+      "id": "journal-2",
+      "out": "apps/web/public/images/journal-2.jpg",
+      "aspect_ratio": "3:2",
+      "prompt": "A watch being cared for: a soft microfibre cloth, a small brush and a steel bracelet watch on a cream linen towel, gentle diffused daylight, clean and calm."
+    },
+    {
+      "id": "journal-3",
+      "out": "apps/web/public/images/journal-3.jpg",
+      "aspect_ratio": "3:2",
+      "prompt": "Side-by-side comparison of an automatic watch movement and a manual-wind movement viewed through exhibition casebacks, laid on dark green velvet, even studio light."
+    },
+    {
+      "id": "journal-4",
+      "out": "apps/web/public/images/journal-4.jpg",
+      "aspect_ratio": "3:2",
+      "prompt": "A woman's wrist wearing a petite gold watch with a green dial and a delicate gold bracelet, holding a cup of espresso at a marble café table, Parisian morning light, elegant and candid."
+    },
+    {
+      "id": "category-dress",
+      "out": "apps/web/public/images/home/category-dress.jpg",
+      "aspect_ratio": "1:1",
+      "prompt": "Still life of a thin rose-gold dress watch with a cream enamel dial, slim leaf hands and a black alligator strap, laid on folded cream linen beside a fountain pen, soft window light from the left, calm minimal composition with the watch slightly off-centre."
+    },
+    {
+      "id": "category-dive",
+      "out": "apps/web/public/images/home/category-dive.jpg",
+      "aspect_ratio": "1:1",
+      "prompt": "Stainless-steel dive watch with a green ceramic rotating bezel and steel bracelet resting on wet dark slate with fine water droplets, dramatic side light, a sliver of teal sea reflection."
+    },
+    {
+      "id": "category-pilot",
+      "out": "apps/web/public/images/home/category-pilot.jpg",
+      "aspect_ratio": "1:1",
+      "prompt": "Large steel pilot watch with a matte black dial and oversized luminous numerals on a brown leather strap, resting on a vintage leather flight jacket and an old aviation map, warm low sunlight."
+    },
+    {
+      "id": "category-gmt",
+      "out": "apps/web/public/images/home/category-gmt.jpg",
+      "aspect_ratio": "16:9",
+      "prompt": "Wide composition: a steel GMT travel watch with a two-tone burgundy and blue 24-hour bezel on a five-link steel bracelet, resting on a cream leather passport wallet, airport lounge window light with soft bokeh of an aircraft outside. Watch on the right third, quiet space on the left."
+    },
+    {
+      "id": "category-racing",
+      "out": "apps/web/public/images/home/category-racing.jpg",
+      "aspect_ratio": "1:1",
+      "prompt": "Steel racing chronograph with a panda dial (white dial, black sub-dials) on a perforated black leather rally strap, lying on the wooden rim of a classic racing car steering wheel, polished chrome and racing-green paint softly blurred behind."
+    },
+    {
+      "id": "category-field",
+      "out": "apps/web/public/images/home/category-field.jpg",
+      "aspect_ratio": "1:1",
+      "prompt": "Rugged 38mm steel field watch with a cream dial and black Arabic numerals on an olive canvas strap, resting on moss and weathered wood in a misty pine forest, soft overcast light."
+    },
+    {
+      "id": "category-skeleton",
+      "out": "apps/web/public/images/home/category-skeleton.jpg",
+      "aspect_ratio": "16:9",
+      "prompt": "Wide macro of a skeletonised watch with an openworked dial revealing gears, bridges and a gold balance wheel, white-gold case, against a deep forest-green backdrop, crisp focus on the movement, bokeh elsewhere. Watch on the left third."
+    },
+    {
+      "id": "maison",
+      "out": "apps/web/public/images/home/maison.jpg",
+      "aspect_ratio": "4:5",
+      "prompt": "A master watchmaker's hands, one holding fine steel tweezers, assembling a mechanical movement on a cream leather bench pad at a walnut workbench; a loupe and a brass-handled screwdriver nearby. Close crop on the hands and the open movement with visible gears, ruby jewels and the balance wheel. Warm lamp light, calm and precise."
+    },
+    {
+      "id": "editorial-yacht",
+      "out": "apps/web/public/images/home/editorial-yacht.jpg",
+      "aspect_ratio": "16:9",
+      "prompt": "Lifestyle editorial: a man's wrist in a tailored cream linen shirt cuff wearing a steel sports chronograph with a green dial, hand resting on the varnished wooden wheel of a classic sailing yacht, late-afternoon golden light, sea softly out of focus behind. Watch sharp on the right third; calmer, darker space on the left for overlaid text."
+    },
+    {
+      "id": "services-bg",
+      "out": "apps/web/public/images/home/services-bg.jpg",
+      "aspect_ratio": "16:9",
+      "prompt": "Minimal wide still life: an open presentation box lined with cream suede, a slim gold dress watch resting on its cushion, the lid tied with a loose ivory silk ribbon, on warm cream linen. Soft, even, high-key daylight with gentle shadows; low contrast and a lot of calm empty space around the box, which sits off-centre to the right. The image will sit behind text under a light cream wash, so keep it quiet and uncluttered."
+    },
+    {
+      "id": "product-submariner-date-1",
+      "out": "scripts/krea/out/products/submariner-date-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 41mm Oystersteel dive watch: glossy black dial with round and baton luminous hour markers, Mercedes-style hour hand, black ceramic unidirectional rotating bezel with a 60-minute scale, date window at 3 o'clock under a cyclops magnifier lens, three-link brushed-and-polished steel bracelet with folding clasp, screw-down crown with crown guards. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-submariner-date-2",
+      "out": "scripts/krea/out/products/submariner-date-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/submariner-date-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 41mm Oystersteel dive watch: glossy black dial with round and baton luminous hour markers, Mercedes-style hour hand, black ceramic unidirectional rotating bezel with a 60-minute scale, date window at 3 o'clock under a cyclops magnifier lens, three-link brushed-and-polished steel bracelet with folding clasp, screw-down crown with crown guards. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-navitimer-b01-1",
+      "out": "scripts/krea/out/products/navitimer-b01-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 43mm stainless steel pilot's chronograph: black dial with three silver-toned contrasting sub-dials, polished steel baton hands with luminous fill, a notched circular slide-rule bezel with very fine scale markings, round chronograph pushers either side of the crown, black alligator leather strap. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-navitimer-b01-2",
+      "out": "scripts/krea/out/products/navitimer-b01-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/navitimer-b01-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 43mm stainless steel pilot's chronograph: black dial with three silver-toned contrasting sub-dials, polished steel baton hands with luminous fill, a notched circular slide-rule bezel with very fine scale markings, round chronograph pushers either side of the crown, black alligator leather strap. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-royal-oak-15500-1",
+      "out": "scripts/krea/out/products/royal-oak-15500-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 41mm brushed stainless steel sports watch with an octagonal bezel secured by eight hexagonal screws, blue dial with a fine raised square waffle 'tapisserie' pattern, white-gold baton indices and hands with luminous fill, date window at 3 o'clock, integrated tapering steel bracelet with alternating brushed and polished links. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-royal-oak-15500-2",
+      "out": "scripts/krea/out/products/royal-oak-15500-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/royal-oak-15500-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 41mm brushed stainless steel sports watch with an octagonal bezel secured by eight hexagonal screws, blue dial with a fine raised square waffle 'tapisserie' pattern, white-gold baton indices and hands with luminous fill, date window at 3 o'clock, integrated tapering steel bracelet with alternating brushed and polished links. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-nautilus-5711-1",
+      "out": "scripts/krea/out/products/nautilus-5711-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 40mm stainless steel sports watch with a rounded-octagon porthole-shaped bezel and two hinge-like ears on the case sides, blue dial with a gradient from lighter centre to darker edges and horizontal embossed stripes, luminous baton indices and hands, date window at 3 o'clock, slim integrated steel bracelet with brushed links and polished centre links. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-nautilus-5711-2",
+      "out": "scripts/krea/out/products/nautilus-5711-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/nautilus-5711-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 40mm stainless steel sports watch with a rounded-octagon porthole-shaped bezel and two hinge-like ears on the case sides, blue dial with a gradient from lighter centre to darker edges and horizontal embossed stripes, luminous baton indices and hands, date window at 3 o'clock, slim integrated steel bracelet with brushed links and polished centre links. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-tank-louis-cartier-1",
+      "out": "scripts/krea/out/products/tank-louis-cartier-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a Rectangular 33.7mm by 25.5mm polished yellow-gold dress watch with vertical side bars (brancards) forming the case, silvered opaline dial with black Roman numeral hour markers and a railway minute track, blued steel sword hands, beaded crown set with a blue sapphire cabochon, dark brown alligator leather strap. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-tank-louis-cartier-2",
+      "out": "scripts/krea/out/products/tank-louis-cartier-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/tank-louis-cartier-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): Rectangular 33.7mm by 25.5mm polished yellow-gold dress watch with vertical side bars (brancards) forming the case, silvered opaline dial with black Roman numeral hour markers and a railway minute track, blued steel sword hands, beaded crown set with a blue sapphire cabochon, dark brown alligator leather strap. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-presage-cocktail-time-1",
+      "out": "scripts/krea/out/products/presage-cocktail-time-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 40.5mm stainless steel dress watch with an ice-blue dial that has a radiating textured sunburst pattern catching the light like cut glass, polished dauphine hands, faceted applied indices, date window at 3 o'clock, domed crystal, steel link bracelet. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-presage-cocktail-time-2",
+      "out": "scripts/krea/out/products/presage-cocktail-time-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/presage-cocktail-time-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 40.5mm stainless steel dress watch with an ice-blue dial that has a radiating textured sunburst pattern catching the light like cut glass, polished dauphine hands, faceted applied indices, date window at 3 o'clock, domed crystal, steel link bracelet. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-monaco-calibre-11-1",
+      "out": "scripts/krea/out/products/monaco-calibre-11-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 39mm square stainless steel chronograph case with the crown on the LEFT side and two rectangular pushers on the right, metallic blue sunray dial with two square white sub-dials, horizontal baton indices, red-tipped central chronograph seconds hand, perforated dark blue leather racing strap. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-monaco-calibre-11-2",
+      "out": "scripts/krea/out/products/monaco-calibre-11-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/monaco-calibre-11-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 39mm square stainless steel chronograph case with the crown on the LEFT side and two rectangular pushers on the right, metallic blue sunray dial with two square white sub-dials, horizontal baton indices, red-tipped central chronograph seconds hand, perforated dark blue leather racing strap. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    },
+    {
+      "id": "product-speedmaster-professional-1",
+      "out": "scripts/krea/out/products/speedmaster-professional-1.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "prompt": "Front catalogue shot of a 42mm stainless steel manual-wind chronograph with an asymmetric case and crown guards, matte black dial with three recessed sub-dials, white baton hands and luminous indices, black aluminium tachymeter bezel insert with fine white scale markings, polished and brushed steel bracelet. The watch stands upright with the bracelet or strap looped behind it, dial facing the camera at a very slight three-quarter angle, hands set to 10:10."
+    },
+    {
+      "id": "product-speedmaster-professional-2",
+      "out": "scripts/krea/out/products/speedmaster-professional-2.jpg",
+      "aspect_ratio": "1:1",
+      "style": "product",
+      "references": [
+        "scripts/krea/out/products/speedmaster-professional-1.jpg"
+      ],
+      "prompt": "The exact same watch as in the reference image (identical case, dial, hands, bezel and strap): 42mm stainless steel manual-wind chronograph with an asymmetric case and crown guards, matte black dial with three recessed sub-dials, white baton hands and luminous indices, black aluminium tachymeter bezel insert with fine white scale markings, polished and brushed steel bracelet. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+    }
+  ]
+}

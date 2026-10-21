@@ -14,6 +14,22 @@ import {
 import { cacheGet, cacheSet } from '@utils/cache';
 import { homepageService } from '@services/homepage.service';
 
+// Each rail returns RAIL_SIZE products; fetch extra so duplicates can be skipped
+const RAIL_SIZE = 8;
+const RAIL_FETCH = 16;
+
+/**
+ * Picks up to RAIL_SIZE products, preferring ones not already shown in an
+ * earlier rail. Falls back to repeats rather than leaving a rail short.
+ */
+function pickUnique<T extends { _id: unknown }>(products: T[], seen: Set<string>): T[] {
+  const fresh = products.filter((p) => !seen.has(String(p._id)));
+  const repeats = products.filter((p) => seen.has(String(p._id)));
+  const picked = [...fresh, ...repeats].slice(0, RAIL_SIZE);
+  picked.forEach((p) => seen.add(String(p._id)));
+  return picked;
+}
+
 export const storefrontHomeController: Record<string, any> = {
   /**
    * GET /api/v1/home
@@ -39,7 +55,7 @@ export const storefrontHomeController: Record<string, any> = {
         featured: true,
         'variants.isActive': true,
       })
-        .limit(8)
+        .limit(RAIL_FETCH)
         .sort({ createdAt: -1 })
         .populate('brandId', 'name slug logo')
         .lean(),
@@ -48,7 +64,7 @@ export const storefrontHomeController: Record<string, any> = {
         status: 'active',
         'variants.isActive': true,
       })
-        .limit(8)
+        .limit(RAIL_FETCH)
         .sort({ publishedAt: -1, createdAt: -1 })
         .populate('brandId', 'name slug logo')
         .lean(),
@@ -58,7 +74,7 @@ export const storefrontHomeController: Record<string, any> = {
         soldCount: { $gt: 0 },
         'variants.isActive': true,
       })
-        .limit(8)
+        .limit(RAIL_FETCH)
         .sort({ soldCount: -1 })
         .populate('brandId', 'name slug logo')
         .lean(),
@@ -81,11 +97,17 @@ export const storefrontHomeController: Record<string, any> = {
       homepageService.getStorefrontHero(),
     ]);
 
+    // Rails render top to bottom in this order, so earlier ones win a product
+    const seen = new Set<string>();
+    const featuredPicked = pickUnique(featured, seen);
+    const newArrivalsPicked = pickUnique(newArrivals, seen);
+    const trendingPicked = pickUnique(trending, seen);
+
     const result = {
       hero,
-      featured: featured.map((p) => toStorefrontProduct(p, false)),
-      newArrivals: newArrivals.map((p) => toStorefrontProduct(p, false)),
-      trending: trending.map((p) => toStorefrontProduct(p, false)),
+      featured: featuredPicked.map((p) => toStorefrontProduct(p, false)),
+      newArrivals: newArrivalsPicked.map((p) => toStorefrontProduct(p, false)),
+      trending: trendingPicked.map((p) => toStorefrontProduct(p, false)),
       categories: categories.map(toStorefrontCategory),
       brands: featuredBrands.map((b) => toStorefrontBrand(b, false)),
       collections: featuredCollections.map(toStorefrontCollection),

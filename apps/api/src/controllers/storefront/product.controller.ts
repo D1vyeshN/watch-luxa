@@ -45,7 +45,8 @@ export const storefrontProductController: Record<string, any> = {
     }
 
     // Only admins can sort by soldCount, others by createdAt or price
-    const allowedSorts = ['createdAt', 'basePrice', 'rating', 'soldCount'];
+    // publishedAt is the New Arrivals order (same as the homepage rail)
+    const allowedSorts = ['createdAt', 'publishedAt', 'basePrice', 'rating', 'soldCount'];
     const sortField = allowedSorts.includes(sortBy) ? sortBy : 'createdAt';
 
     // Cache key based on filter + pagination
@@ -59,7 +60,8 @@ export const storefrontProductController: Record<string, any> = {
       Product.find(filter)
         .skip(skip)
         .limit(limit)
-        .sort({ [sortField]: sortOrder })
+        // createdAt breaks ties (and orders products never published)
+        .sort({ [sortField]: sortOrder, ...(sortField === 'createdAt' ? {} : { createdAt: -1 }) })
         .populate('brandId', 'name slug logo')
         .lean(),
       Product.countDocuments(filter),

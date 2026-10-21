@@ -52,7 +52,7 @@ export function PageHero({
           }
         >
           {overline && (
-            <p className={`label-luxe ${isForest ? 'text-cream-600' : ''}`}>
+            <p className={`label-luxe ${isForest ? 'text-cream-600!' : ''}`}>
               {overline}
             </p>
           )}

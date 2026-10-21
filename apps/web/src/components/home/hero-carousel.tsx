@@ -147,7 +147,7 @@ export function HeroCarousel({ config, heightClass }: HeroCarouselProps) {
               >
                 <span
                   className={cn(
-                    'block h-px transition-all duration-500',
+                    'block h-px transition-[width,background-color] duration-500',
                     i === index ? 'w-10 bg-cream-100' : 'w-5 bg-cream-100/40 group-hover:bg-cream-100/70'
                   )}
                 />

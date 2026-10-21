@@ -10,8 +10,12 @@ interface ProductGridProps {
   products: Product[];
   isLoading?: boolean;
   skeletonCount?: number;
+  emptyTitle?: string;
+  emptyDescription?: string;
   emptyAction?: { label: string; href: string };
   columns?: 2 | 3 | 4;
+  /** How many leading images load with priority — 0 for grids below the fold */
+  priorityCount?: number;
   className?: string;
 }
 
@@ -25,8 +29,11 @@ export function ProductGrid({
   products,
   isLoading = false,
   skeletonCount = 8,
+  emptyTitle = 'No products found',
+  emptyDescription = 'Try adjusting your filters or explore our full collection.',
   emptyAction,
   columns = 4,
+  priorityCount = 4,
   className,
 }: ProductGridProps) {
   if (isLoading) {
@@ -36,8 +43,8 @@ export function ProductGrid({
   if (!products || products.length === 0) {
     return (
       <EmptyState
-        title="No products found"
-        description="Try adjusting your filters or explore our full collection."
+        title={emptyTitle}
+        description={emptyDescription}
         action={emptyAction ?? { label: 'Browse all watches', href: '/shop' }}
       />
     );
@@ -51,7 +58,7 @@ export function ProductGrid({
         <ProductCard
           key={product.id}
           product={product}
-          priority={index < 4}
+          priority={index < priorityCount}
         />
       ))}
     </div>

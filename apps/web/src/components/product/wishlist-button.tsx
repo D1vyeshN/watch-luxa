@@ -45,26 +45,29 @@ export function WishlistButton({
 
   const iconSize = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
 
+  // 44px target on touch screens (WCAG 2.5.8)
   const baseClasses = cn(
-    'flex items-center justify-center rounded-full transition-all duration-300',
+    'flex items-center justify-center rounded-full transition-[background-color,border-color] duration-300',
     variant === 'floating' &&
-      'h-9 w-9 bg-cream-50/95 backdrop-blur-sm hover:bg-cream-100 shadow-sm',
-    variant === 'inline' && 'h-10 w-10 border border-forest-900/20 hover:border-forest-900',
+      'h-11 w-11 bg-cream-50/95 backdrop-blur-sm hover:bg-cream-100 shadow-sm',
+    variant === 'inline' && 'h-11 w-11 border border-forest-900/20 hover:border-forest-900',
     className
   );
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+      aria-pressed={isWishlisted}
       className={baseClasses}
     >
       <Heart
         className={cn(
           iconSize,
-          'transition-all duration-300',
+          'transition-[fill,color,transform] duration-300',
           isWishlisted
-            ? 'fill-red-500 text-red-500 scale-110'
+            ? 'fill-forest-900 text-forest-900 scale-110'
             : 'fill-transparent text-forest-900'
         )}
         strokeWidth={1.75}

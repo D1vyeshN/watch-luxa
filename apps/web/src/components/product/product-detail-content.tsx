@@ -44,7 +44,7 @@ export function ProductDetailContent({ product, storeSettings }: ProductDetailCo
 
   return (
     <Container className="py-10 md:py-14">
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
         {/* Left: Gallery */}
         <div>
           <ProductGallery
@@ -112,7 +112,7 @@ export function ProductDetailContent({ product, storeSettings }: ProductDetailCo
 
           {/* Add to cart + wishlist */}
           <div className="flex items-start gap-3">
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <AddToCartButton product={product} variant={currentVariant} />
             </div>
             <div className="pt-1">

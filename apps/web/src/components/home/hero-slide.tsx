@@ -144,7 +144,7 @@ export function HeroSlideView({ slide, isFirst, active = true }: HeroSlideViewPr
             <Heading
               className={cn(
                 // ! — .heading-luxe / .label-luxe set color in the same layer, declared later
-                'heading-luxe text-6xl leading-[1.05] text-cream-100! md:text-7xl lg:text-8xl',
+                'heading-luxe text-[clamp(3rem,9vw,6rem)] leading-[1.05] text-cream-100!',
                 slide.tagline && 'mt-6'
               )}
             >
@@ -167,7 +167,7 @@ export function HeroSlideView({ slide, isFirst, active = true }: HeroSlideViewPr
                 {slide.primaryCta && (
                   <Link
                     href={slide.primaryCta.href}
-                    className="group inline-flex items-center gap-3 bg-cream-600 px-8 py-4 text-xs font-medium uppercase tracking-[0.18em] text-forest-900 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-cream-500"
+                    className="group inline-flex items-center gap-3 bg-cream-600 px-8 py-4 text-xs font-medium uppercase tracking-[0.18em] text-forest-900 transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-cream-500"
                   >
                     {slide.primaryCta.label}
                     <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
@@ -177,7 +177,7 @@ export function HeroSlideView({ slide, isFirst, active = true }: HeroSlideViewPr
                 {slide.secondaryCta && (
                   <Link
                     href={slide.secondaryCta.href}
-                    className="inline-flex items-center border border-cream-100/40 px-8 py-4 text-xs font-medium uppercase tracking-[0.18em] text-cream-100 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-cream-100 hover:text-forest-900"
+                    className="inline-flex items-center border border-cream-100/40 px-8 py-4 text-xs font-medium uppercase tracking-[0.18em] text-cream-100 transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-cream-100 hover:text-forest-900"
                   >
                     {slide.secondaryCta.label}
                   </Link>

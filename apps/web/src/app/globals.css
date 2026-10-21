@@ -25,7 +25,7 @@
 
   /* Muted */
   --muted: #f3ede0;
-  --muted-foreground: #8a8a8a;
+  --muted-foreground: #6b6b6b;           /* 4.9:1 on cream-100 (WCAG AA) */
 
   /* Accent (champagne gold) */
   --accent: #c9a961;
@@ -83,7 +83,7 @@
   /* ─── Ink (text) ─── */
   --color-ink: #1a1a1a;
   --color-ink-soft: #4a4a4a;
-  --color-ink-muted: #8a8a8a;
+  --color-ink-muted: #6b6b6b;  /* was #8a8a8a — 3.2:1, failed AA for small text */
   --color-ink-light: #c4c4c4;
 
   /* ─── shadcn tokens ─── */
@@ -216,6 +216,7 @@
     font-weight: 400;
     letter-spacing: -0.01em;
     color: var(--foreground);
+    text-wrap: balance;
   }
 
   .label-luxe {

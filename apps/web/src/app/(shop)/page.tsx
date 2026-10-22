@@ -135,6 +135,9 @@ export default async function HomePage() {
           },
         ]}
         cta={{ label: 'Our story', href: ROUTES.about }}
+        // Featured (cream-200) normally separates this from the cream-100 bento grid;
+        // without it, switch tone so the two sections don't merge
+        background={data.featured.length > 0 ? 'default' : 'cream'}
       />
 
       <EditorialBanner

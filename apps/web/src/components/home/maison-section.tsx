@@ -15,6 +15,7 @@ interface MaisonSectionProps {
   imageAlt?: string;
   pillars: Pillar[];
   cta: { label: string; href: string };
+  background?: 'default' | 'cream';
 }
 
 // Story beside a tall photo, with the house's commitments underneath —
@@ -26,9 +27,10 @@ export function MaisonSection({
   imageAlt = '',
   pillars,
   cta,
+  background = 'default',
 }: MaisonSectionProps) {
   return (
-    <Section spacing="lg" background="default">
+    <Section spacing="lg" background={background}>
       <Container>
         <div className="grid gap-10 md:gap-16 lg:grid-cols-12 lg:items-center">
           <div className="relative aspect-[4/5] overflow-hidden bg-cream-200 lg:col-span-5">

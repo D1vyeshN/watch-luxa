@@ -34,7 +34,7 @@ const FOOTER_LINKS = {
 export function SiteFooter() {
   return (
     <footer className="bg-forest-900 text-cream-200">
-      <Container className="py-16 md:py-20">
+      <Container className="pb-6 pt-16 md:pb-8 md:pt-20">
         {/* Top: brand + 4 columns */}
         <div className="grid grid-cols-2 gap-10 md:grid-cols-6">
           {/* Brand */}
@@ -147,7 +147,7 @@ export function SiteFooter() {
 
       {/* Oversized wordmark, cropped by the page edge */}
       <div aria-hidden className="select-none overflow-hidden">
-        <p className="-mb-[0.18em] text-center font-serif text-[27vw] leading-none tracking-[0.12em] text-cream-100/[0.07]">
+        <p className="-mb-[0.16em] text-center font-serif text-[length:min(24vw,22rem)] leading-[0.82] tracking-[0.12em] text-cream-100/[0.07]">
           LUXE
         </p>
       </div>

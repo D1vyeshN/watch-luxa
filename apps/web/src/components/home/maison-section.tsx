@@ -14,7 +14,7 @@ interface MaisonSectionProps {
   imageUrl: string;
   imageAlt?: string;
   pillars: Pillar[];
-  cta: { label: string; href: string };
+  cta?: { label: string; href: string };
   background?: 'default' | 'cream';
 }
 
@@ -60,12 +60,14 @@ export function MaisonSection({
               ))}
             </dl>
 
-            <Link
-              href={cta.href}
-              className="mt-10 inline-flex items-center border-b border-forest-900 py-1 text-xs uppercase tracking-[0.18em] text-forest-900 transition-colors hover:border-cream-700 hover:text-cream-700"
-            >
-              {cta.label}
-            </Link>
+            {cta && (
+              <Link
+                href={cta.href}
+                className="mt-10 inline-flex items-center border-b border-forest-900 py-1 text-xs uppercase tracking-[0.18em] text-forest-900 transition-colors hover:border-cream-700 hover:text-cream-700"
+              >
+                {cta.label}
+              </Link>
+            )}
           </div>
         </div>
       </Container>

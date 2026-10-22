@@ -5,3 +5,5 @@ export * from './maison-section';
 export * from './services-stagger';
 export * from './home-faq';
 export * from './section-header';
+export * from './product-rail';
+export * from './home-sections';

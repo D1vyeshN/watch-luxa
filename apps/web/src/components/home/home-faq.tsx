@@ -14,11 +14,12 @@ interface HomeFaqProps {
   title: string;
   description?: string;
   items: FaqItem[];
+  background?: 'default' | 'cream';
 }
 
-export function HomeFaq({ title, description, items }: HomeFaqProps) {
+export function HomeFaq({ title, description, items, background = 'default' }: HomeFaqProps) {
   return (
-    <Section spacing="lg" background="default">
+    <Section spacing="lg" background={background}>
       <Container>
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">

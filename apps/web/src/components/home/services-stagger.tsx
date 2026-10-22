@@ -17,6 +17,7 @@ interface ServicesStaggerProps {
   services: [Service, Service, Service];
   /** Atmospheric photo behind the cards, washed back with cream */
   backgroundImage?: string;
+  background?: 'default' | 'cream';
 }
 
 export function ServicesStagger({
@@ -24,9 +25,16 @@ export function ServicesStagger({
   description,
   services,
   backgroundImage,
+  background = 'cream',
 }: ServicesStaggerProps) {
+  // The photo wash matches the section tone so its edges never show a seam
+  const wash =
+    background === 'cream'
+      ? 'from-cream-200/95 via-cream-200/80 to-cream-200/90'
+      : 'from-cream-100/95 via-cream-100/80 to-cream-100/90';
+
   return (
-    <Section spacing="lg" background="cream" className="relative overflow-hidden md:pb-40">
+    <Section spacing="lg" background={background} className="relative overflow-hidden md:pb-40">
       {backgroundImage && (
         <>
           <Image
@@ -37,7 +45,7 @@ export function ServicesStagger({
             className="object-cover grayscale-[35%]"
           />
           {/* Heavy cream wash: the photo sets the mood, the cards stay the subject */}
-          <div className="absolute inset-0 bg-gradient-to-b from-cream-200/95 via-cream-200/80 to-cream-200/90" />
+          <div className={cn('absolute inset-0 bg-gradient-to-b', wash)} />
         </>
       )}
 

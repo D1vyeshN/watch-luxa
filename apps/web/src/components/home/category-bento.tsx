@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { Container } from '@/components/shared/container';
 import { Section } from '@/components/shared/section';
 import { ROUTES } from '@/constants/routes';
-import { BENTO_CATEGORY_SLUGS, CATEGORY_ART } from '@/constants/home-art';
 import type { Category } from '@/types/catalog';
 import { SectionHeader } from './section-header';
 
@@ -18,15 +17,7 @@ const TILE_COUNT = 7;
 //   ├───┬───┼───┬───┤     ├───┴───┤
 //   │ 4 │ 5 │ 6 │all│     │   3   │ …
 //   └───┴───┴───┴───┘     └───────┘
-const FOOTPRINTS = [
-  'col-span-2 md:row-span-2',
-  '',
-  '',
-  'col-span-2',
-  '',
-  '',
-  '',
-];
+const FOOTPRINTS = ['col-span-2 md:row-span-2', '', '', 'col-span-2', '', '', ''];
 
 const SIZES = [
   '(max-width: 768px) 100vw, 50vw',
@@ -38,37 +29,47 @@ const SIZES = [
   '(max-width: 768px) 50vw, 25vw',
 ];
 
-/** Preferred categories first, then any others, so the grid stays full */
-function pickCategories(categories: Category[]) {
-  const preferred = BENTO_CATEGORY_SLUGS.map((slug) =>
-    categories.find((c) => c.slug === slug)
-  ).filter((c): c is Category => Boolean(c));
-  const rest = categories.filter((c) => !preferred.includes(c));
-  return [...preferred, ...rest].slice(0, TILE_COUNT);
+export interface BentoTile {
+  category: Category;
+  imageUrl?: string;
+}
+
+/**
+ * Tiles as configured (skipping categories that no longer exist), else the
+ * first categories by display order — the grid never renders half-empty.
+ */
+export function resolveBentoTiles(
+  configured: { categorySlug: string; imageUrl?: string }[],
+  categories: Category[]
+): BentoTile[] {
+  const picked = configured
+    .map((t): BentoTile | null => {
+      const category = categories.find((c) => c.slug === t.categorySlug);
+      return category ? { category, imageUrl: t.imageUrl || category.image } : null;
+    })
+    .filter((t): t is BentoTile => t !== null);
+
+  const source = picked.length > 0 ? picked : categories.map((c) => ({ category: c, imageUrl: c.image }));
+  return source.slice(0, TILE_COUNT);
 }
 
 interface CategoryBentoProps {
-  categories: Category[];
-  title?: string;
+  tiles: BentoTile[];
+  title: string;
   description?: string;
+  background?: 'default' | 'cream';
 }
 
-export function CategoryBento({
-  categories,
-  title = 'Explore the Collection',
-  description = 'From slim dress pieces to tool watches built for depth and altitude.',
-}: CategoryBentoProps) {
-  const tiles = pickCategories(categories);
+export function CategoryBento({ tiles, title, description, background = 'default' }: CategoryBentoProps) {
   if (tiles.length === 0) return null;
 
   return (
-    <Section spacing="lg" background="default">
+    <Section spacing="lg" background={background}>
       <Container>
         <SectionHeader title={title} description={description} />
 
         <ul className="grid auto-rows-[46vw] grid-cols-2 gap-2 md:auto-rows-[clamp(200px,21vw,300px)] md:grid-cols-4 md:gap-3">
-          {tiles.map((cat, i) => {
-            const art = CATEGORY_ART[cat.slug] ?? cat.image;
+          {tiles.map(({ category: cat, imageUrl }, i) => {
             const large = i === 0;
             return (
               <li key={cat.id} className={cn('relative', FOOTPRINTS[i])}>
@@ -76,9 +77,9 @@ export function CategoryBento({
                   href={ROUTES.category(cat.slug)}
                   className="group relative flex h-full overflow-hidden bg-forest-800"
                 >
-                  {art && (
+                  {imageUrl && (
                     <Image
-                      src={art}
+                      src={imageUrl}
                       alt=""
                       fill
                       sizes={SIZES[i]}

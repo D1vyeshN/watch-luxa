@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import type { ProductVariant } from '@/types/catalog';
 
@@ -27,13 +27,12 @@ export function ProductGallery({
     return Array.from(set);
   }, [heroImage, images, currentVariant?.images]);
 
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // Reset to first image when variant changes
-  useEffect(() => {
-    setActiveIndex(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentVariant?.id]);
+  // The chosen thumbnail belongs to a variant: switching variant falls back
+  // to the first image without an effect (and its extra render)
+  const variantId = currentVariant?.id;
+  const [selection, setSelection] = useState({ variantId, index: 0 });
+  const activeIndex = selection.variantId === variantId ? selection.index : 0;
+  const setActiveIndex = (index: number) => setSelection({ variantId, index });
 
   const activeImage = allImages[activeIndex] ?? heroImage;
 

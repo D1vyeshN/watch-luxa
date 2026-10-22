@@ -1,6 +1,16 @@
+import type { Metadata } from 'next';
+import { env } from '@/config/env';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Container } from '@/components/shared/container';
 import { AccountSidebar } from '@/components/account/account-sidebar';
+
+// Default for /account; sub-pages set their own titles. Private throughout.
+export const metadata: Metadata = {
+  // A plain string title here would drop the root ' | LUXE' template for
+  // everything below this segment, so pass the template on explicitly
+  title: { default: 'Your Account', template: `%s | ${env.NEXT_PUBLIC_SITE_NAME}` },
+  robots: { index: false, follow: false },
+};
 
 export default function AccountLayout({
   children,

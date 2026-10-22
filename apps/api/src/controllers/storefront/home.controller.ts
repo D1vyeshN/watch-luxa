@@ -13,6 +13,7 @@ import {
 } from '@utils/storefrontFilters';
 import { cacheGet, cacheSet } from '@utils/cache';
 import { homepageService } from '@services/homepage.service';
+import { resolveHomeSections } from '@services/homeRails';
 
 // Each rail returns RAIL_SIZE products; fetch extra so duplicates can be skipped
 const RAIL_SIZE = 8;
@@ -96,7 +97,8 @@ export const storefrontHomeController: Record<string, any> = {
         .lean(),
 
       homepageService.getStorefrontHero(),
-      homepageService.getStorefrontSections(),
+      // Product rails come back filled, in page order
+      homepageService.getStorefrontSections().then(resolveHomeSections),
     ]);
 
     // Rails render top to bottom in this order, so earlier ones win a product

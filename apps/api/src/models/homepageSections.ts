@@ -27,7 +27,7 @@ export interface HomeLink {
   href: string;
 }
 
-interface SectionBase {
+export interface SectionBase {
   id: string;
   enabled: boolean;
 }

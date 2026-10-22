@@ -33,13 +33,7 @@ export function ProductCard({
   return (
     <article className={cn('group relative', className)}>
       <div className="relative aspect-square overflow-hidden bg-cream-200">
-        {/* Image link duplicates the title link below, so keep it out of the tab order */}
-        <Link
-          href={ROUTES.product(product.slug)}
-          className="absolute inset-0"
-          tabIndex={-1}
-          aria-hidden
-        >
+        <div className="absolute inset-0">
           <Image
             src={product.heroImage}
             alt=""
@@ -59,7 +53,7 @@ export function ProductCard({
           )}
 
           {!product.inStock && <div className="absolute inset-0 bg-cream-100/60" />}
-        </Link>
+        </div>
 
         {badges.length > 0 && (
           <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-1.5">
@@ -69,10 +63,10 @@ export function ProductCard({
           </div>
         )}
 
-        {/* Sibling of the link, not inside it — a button can't live in an <a>.
-            Hidden until hover only where hovering is possible. */}
+        {/* Not inside the link (a button can't live in an <a>) and stacked above
+            its stretched hit area. Hidden until hover only where hovering is possible. */}
         {showWishlist && (
-          <div className="absolute right-2 top-2 transition-opacity duration-300 focus-within:opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100">
+          <div className="absolute right-2 top-2 z-10 transition-opacity duration-300 focus-within:opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100">
             <WishlistButton productId={product.id} />
           </div>
         )}
@@ -87,9 +81,11 @@ export function ProductCard({
         )}
 
         <h3 className="font-serif text-lg leading-snug text-forest-900">
+          {/* Stretched link: its ::after covers the whole card, so the photo,
+              name and price are one large target and one tab stop */}
           <Link
             href={ROUTES.product(product.slug)}
-            className="transition-colors hover:text-forest-600"
+            className="transition-colors after:absolute after:inset-0 after:content-[''] group-hover:text-forest-600 focus-visible:shadow-none focus-visible:after:outline-2 focus-visible:after:outline-offset-4 focus-visible:after:outline-cream-600"
           >
             {product.name}
           </Link>
@@ -111,11 +107,9 @@ export function ProductCard({
           )}
         </div>
 
-        {product.availableColors && product.availableColors.length > 0 && (
-          <p className="text-xs text-ink-soft">
-            {product.availableColors.length} dial{' '}
-            {product.availableColors.length === 1 ? 'colour' : 'colours'}
-          </p>
+        {/* Only worth saying when there's a choice */}
+        {product.availableColors && product.availableColors.length > 1 && (
+          <p className="text-xs text-ink-soft">{product.availableColors.length} dial colours</p>
         )}
       </div>
     </article>

@@ -107,7 +107,7 @@ export default function CheckoutPage() {
           <Container className="py-10 md:py-14">
             <Link
               href={ROUTES.shop}
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-forest-900"
+              className="-my-3.5 inline-flex items-center gap-2 py-3.5 text-xs uppercase tracking-[0.14em] text-ink-muted hover:text-forest-900"
             >
               <ChevronLeft className="h-3 w-3" />
               Continue shopping
@@ -283,7 +283,7 @@ export default function CheckoutPage() {
         <Container className="py-10 md:py-12">
           <Link
             href={ROUTES.cart}
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900"
+            className="-my-3.5 inline-flex items-center gap-2 py-3.5 text-xs uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900"
           >
             <ChevronLeft className="h-3 w-3" />
             Back to cart
@@ -488,7 +488,7 @@ export default function CheckoutPage() {
                 {/* Back to address */}
                 <button
                   onClick={() => setAddress(null)}
-                  className="mt-6 w-full text-center text-xs uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900"
+                  className="mt-3 w-full py-3.5 text-center text-xs uppercase tracking-[0.14em] text-ink-muted transition-colors hover:text-forest-900"
                 >
                   Back to shipping
                 </button>

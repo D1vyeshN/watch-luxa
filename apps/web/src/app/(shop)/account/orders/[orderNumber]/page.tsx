@@ -35,7 +35,7 @@ export default function OrderDetailPage() {
         </p>
         <Link
           href={ROUTES.accountOrders}
-          className="mt-8 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-forest-900 underline-offset-4 hover:underline"
+          className="-mb-3.5 mt-[1.125rem] inline-flex items-center gap-2 py-3.5 text-xs uppercase tracking-[0.18em] text-forest-900 underline-offset-4 hover:underline"
         >
           <ChevronLeft className="h-3 w-3" />
           Back to orders

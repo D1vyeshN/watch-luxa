@@ -43,7 +43,8 @@ export function PriceDisplay({
             {formatPrice(compareAtPrice)}
           </span>
           {discount !== null && (
-            <span className="text-xs font-medium text-red-600">
+            // Gold tag rather than sale-red: on-theme, still the eye-catcher
+            <span className="bg-cream-600 px-1.5 py-0.5 text-xs font-medium text-forest-900">
               −{discount}%
             </span>
           )}

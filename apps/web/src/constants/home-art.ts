@@ -1,5 +1,5 @@
 // Homepage imagery in one place. These are temporary stock photos: once the
-// Krea set is generated (scripts/krea/prompts.json → apps/web/public/images/home/)
+// Workers AI set is generated (scripts/images/prompts.json → apps/web/public/images/home/)
 // swap each URL for its local path, e.g. '/images/home/category-dress.jpg'.
 // Later these move into admin → Homepage alongside the hero.
 

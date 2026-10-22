@@ -4,11 +4,11 @@ import { ListingHeader, ProductListing } from '@/components/shop';
 import { JsonLd, buildBreadcrumbJsonLd } from '@/components/seo/json-ld';
 import { serverFetch } from '@/lib/api/server-fetch';
 import { buildCategoryMetadata } from '@/lib/seo/metadata';
-import { CATEGORY_ART } from '@/constants/home-art';
 import { ROUTES } from '@/constants/routes';
 import { env } from '@/config/env';
 import type { ApiResponse } from '@/types/api';
 import type { Category } from '@/types/catalog';
+import type { HomeData } from '@/types/home';
 
 export const revalidate = 300;
 
@@ -24,8 +24,22 @@ async function getCategory(slug: string): Promise<Category | null> {
   return response?.data ?? null;
 }
 
-// Same artwork as the homepage tile, so the click lands somewhere familiar
-const artFor = (category: Category) => CATEGORY_ART[category.slug] ?? category.image;
+/**
+ * Banner photo: the category's own image (admin → Categories), else the photo
+ * on its homepage grid tile (admin → Homepage) so a click from the tile lands
+ * on the same picture, else none (text-only header).
+ */
+async function artFor(category: Category): Promise<string | undefined> {
+  if (category.image) return category.image;
+  // Same request and cache tag as the homepage, so this is usually a cache hit
+  const home = await serverFetch<ApiResponse<HomeData>>('/home', { revalidate: 300, tags: ['homepage'] });
+  for (const section of home?.data?.sections ?? []) {
+    if (section.type !== 'categoryBento') continue;
+    const tile = section.tiles.find((t) => t.categorySlug === category.slug && t.imageUrl);
+    if (tile) return tile.imageUrl;
+  }
+  return undefined;
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -36,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     name: category.name,
     description: category.description,
     slug: category.slug,
-    image: artFor(category),
+    image: await artFor(category),
   });
 }
 
@@ -46,6 +60,7 @@ export default async function CategoryPage({ params }: PageProps) {
   if (!category) notFound();
 
   const site = env.NEXT_PUBLIC_SITE_URL;
+  const imageUrl = await artFor(category);
 
   return (
     <>
@@ -59,7 +74,7 @@ export default async function CategoryPage({ params }: PageProps) {
       <ListingHeader
         title={category.name}
         description={category.description}
-        imageUrl={artFor(category)}
+        imageUrl={imageUrl}
         breadcrumbs={[
           { label: 'All Watches', href: ROUTES.shop },
           { label: category.name },

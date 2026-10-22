@@ -1,7 +1,7 @@
-// Homepage imagery in one place. These are temporary stock photos: once the
-// Workers AI set is generated (scripts/images/prompts.json → apps/web/public/images/home/)
-// swap each URL for its local path, e.g. '/images/home/category-dress.jpg'.
-// Later these move into admin → Homepage alongside the hero.
+// Stock imagery for DEFAULT_HOME_SECTIONS (constants/home-sections.ts), the
+// storefront's fallback when the API serves no sections. Live homepage images
+// are uploaded in admin → Homepage → Sections; the API ships its own copy of
+// these defaults (apps/api/src/models/homepageSections.ts).
 
 const unsplash = (id: string, w = 1600) => `https://images.unsplash.com/photo-${id}?w=${w}&q=80`;
 

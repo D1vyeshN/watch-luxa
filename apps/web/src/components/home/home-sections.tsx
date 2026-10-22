@@ -12,20 +12,8 @@ type Tone = 'default' | 'cream';
 
 const ALL_FAQS = FAQ_GROUPS.flatMap((g) => g.items);
 
-/** API-resolved products, or (until the API serves sections) the legacy rails */
-function railProducts(section: ProductRailSection, data: HomeData): Product[] {
-  if (section.products) return section.products;
-  switch (section.source) {
-    case 'featured':
-      return data.featured;
-    case 'newest':
-      return data.newArrivals;
-    case 'bestselling':
-      return data.trending;
-    default:
-      return [];
-  }
-}
+/** Products the API resolved for this rail (none for the static defaults) */
+const railProducts = (section: ProductRailSection): Product[] => section.products ?? [];
 
 const isFullBleed = (s: HomeSection) => s.type === 'editorial' && s.variant === 'immersive';
 
@@ -52,7 +40,7 @@ function hasContent(section: HomeSection, data: HomeData): boolean {
     case 'categoryBento':
       return resolveBentoTiles(section.tiles, data.categories).length > 0;
     case 'productRail':
-      return railProducts(section, data).length > 0;
+      return railProducts(section).length > 0;
     case 'faq':
       return section.questions.some((q) => ALL_FAQS.some((f) => f.q === q));
     default:
@@ -93,7 +81,7 @@ export function HomeSections({ sections, data }: HomeSectionsProps) {
                 title={section.title}
                 description={section.description}
                 viewAll={section.viewAll}
-                products={railProducts(section, data)}
+                products={railProducts(section)}
                 limit={section.limit}
                 background={background}
               />

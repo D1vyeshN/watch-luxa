@@ -1,4 +1,4 @@
-import type { Product, Brand, Category, Collection } from './catalog';
+import type { Product, Category } from './catalog';
 
 // ─── Homepage hero — managed in admin → Homepage ───
 // Mirrors toStorefrontHero() in apps/api/src/services/homepage.service.ts
@@ -134,14 +134,10 @@ export type HomeSection =
 
 export type HomeSectionType = HomeSection['type'];
 
+/** GET /home — mirrors apps/api/src/controllers/storefront/home.controller.ts */
 export interface HomeData {
   hero?: HeroConfig;
-  /** Absent until the API serves sections; the storefront then uses its defaults */
+  /** Enabled sections in order, product rails already filled */
   sections?: HomeSection[];
-  featured: Product[];
-  newArrivals: Product[];
-  trending: Product[];
   categories: Category[];
-  brands: Brand[];
-  collections: Collection[];
 }

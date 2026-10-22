@@ -4,7 +4,8 @@
     "aspect_ratio": "16:9",
     "style": "Style: high-end luxury watch editorial photography, shot on a medium-format camera with a 100mm macro lens, natural soft directional light, shallow depth of field, rich deep forest-green (#0f2320), warm cream (#f9f6ef) and brushed gold (#c9a961) palette, refined and understated, photorealistic, accurate mechanical watch anatomy (correct crown, lugs, bezel, hands and indices). No visible brand names, logos, watermarks or legible text on dials or anywhere in the frame.",
     "styles": {
-      "product": "Style: professional luxury e-commerce product photograph. A single watch, centred, on a seamless, very pale warm off-white paper sweep (close to #f3ede0: nearly neutral, never yellow, golden or orange) with a soft, even graduated falloff. Large diffused softbox key light from the upper left, gentle fill from the right, a soft natural contact shadow beneath the watch. Tack-sharp focus across the whole watch, accurate reflections on the sapphire crystal and polished metal, true-to-life metal colours. The watch fills about 70% of the frame. Photorealistic, catalogue quality, consistent with a matching set of product photos. Accurate mechanical watch anatomy (correct crown, lugs, bezel, hands and indices). No brand names, logos, wordmarks, watermarks or legible text on the dial or anywhere in the frame."
+      "product": "Style: professional luxury e-commerce product photograph. A single watch, centred, on a seamless, very pale warm off-white paper sweep (close to #f3ede0: nearly neutral, never yellow, golden or orange) with a soft, even graduated falloff. Large diffused softbox key light from the upper left, gentle fill from the right, a soft natural contact shadow beneath the watch. Tack-sharp focus across the whole watch, accurate reflections on the sapphire crystal and polished metal, true-to-life metal colours. The watch fills about 70% of the frame. Photorealistic, catalogue quality, consistent with a matching set of product photos. Accurate mechanical watch anatomy (correct crown, lugs, bezel, hands and indices). No brand names, logos, wordmarks, watermarks or legible text on the dial or anywhere in the frame.",
+      "wrist": "Style: premium watch e-commerce lifestyle photograph, matching a set of studio product shots. Close crop on a wrist and forearm wearing the watch, the watch dial sharp and facing the camera, the rest gently out of focus. Soft natural daylight from a window, warm cream and stone tones (#f3ede0, #e8dfcc) with a hint of deep forest green. Simple, quiet styling: a plain cream knit or linen cuff, relaxed natural hand pose, clean neutral background softly blurred. Photorealistic skin and fabric texture, true-to-life metal colours, accurate watch anatomy. Square composition with the watch slightly above centre. No brand names, logos, wordmarks, watermarks or legible text anywhere; no jewellery other than the watch."
     }
   },
   "images": [
@@ -19,11 +20,11 @@
       "id": "product-submariner-date-2",
       "out": "scripts/images/out/products/submariner-date-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/submariner-date-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 41mm Oystersteel dive watch: glossy black dial with round and baton luminous hour markers, Mercedes-style hour hand, black ceramic unidirectional rotating bezel with a 60-minute scale, date window at 3 o'clock under a cyclops magnifier lens, three-link brushed-and-polished steel bracelet with folding clasp, screw-down crown with crown guards. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 41mm Oystersteel dive watch: glossy black dial with round and baton luminous hour markers, Mercedes-style hour hand, black ceramic unidirectional rotating bezel with a 60-minute scale, date window at 3 o'clock under a cyclops magnifier lens, three-link brushed-and-polished steel bracelet with folding clasp, screw-down crown with crown guards. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-navitimer-b01-1",
@@ -36,11 +37,11 @@
       "id": "product-navitimer-b01-2",
       "out": "scripts/images/out/products/navitimer-b01-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/navitimer-b01-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 43mm stainless steel pilot's chronograph: black dial with three silver-toned contrasting sub-dials, polished steel baton hands with luminous fill, a notched circular slide-rule bezel with very fine scale markings, round chronograph pushers either side of the crown, black alligator leather strap. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 43mm stainless steel pilot's chronograph: black dial with three silver-toned contrasting sub-dials, polished steel baton hands with luminous fill, a notched circular slide-rule bezel with very fine scale markings, round chronograph pushers either side of the crown, black alligator leather strap. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-royal-oak-15500-1",
@@ -53,11 +54,11 @@
       "id": "product-royal-oak-15500-2",
       "out": "scripts/images/out/products/royal-oak-15500-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/royal-oak-15500-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 41mm brushed stainless steel sports watch with an octagonal bezel secured by eight hexagonal screws, blue dial with a fine raised square waffle 'tapisserie' pattern, white-gold baton indices and hands with luminous fill, date window at 3 o'clock, integrated tapering steel bracelet with alternating brushed and polished links. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 41mm brushed stainless steel sports watch with an octagonal bezel secured by eight hexagonal screws, blue dial with a fine raised square waffle 'tapisserie' pattern, white-gold baton indices and hands with luminous fill, date window at 3 o'clock, integrated tapering steel bracelet with alternating brushed and polished links. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-nautilus-5711-1",
@@ -70,11 +71,11 @@
       "id": "product-nautilus-5711-2",
       "out": "scripts/images/out/products/nautilus-5711-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/nautilus-5711-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 40mm stainless steel sports watch with a smooth, screwless rounded-octagon porthole-shaped bezel and two hinge-like ears protruding from the case sides, blue dial with a gradient from lighter centre to darker edges and horizontal embossed stripes, luminous baton indices and hands, date window at 3 o'clock, slim integrated steel bracelet with brushed links and polished centre links. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 40mm stainless steel sports watch with a smooth, screwless rounded-octagon porthole-shaped bezel and two hinge-like ears protruding from the case sides, blue dial with a gradient from lighter centre to darker edges and horizontal embossed stripes, luminous baton indices and hands, date window at 3 o'clock, slim integrated steel bracelet with brushed links and polished centre links. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-tank-louis-cartier-1",
@@ -87,11 +88,11 @@
       "id": "product-tank-louis-cartier-2",
       "out": "scripts/images/out/products/tank-louis-cartier-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/tank-louis-cartier-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): Rectangular 33.7mm by 25.5mm polished yellow-gold dress watch with vertical side bars (brancards) forming the case, silvered opaline dial with black Roman numeral hour markers and a railway minute track, blued steel sword hands, beaded crown set with a blue sapphire cabochon, dark brown alligator leather strap. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: Rectangular 33.7mm by 25.5mm polished yellow-gold dress watch with vertical side bars (brancards) forming the case, silvered opaline dial with black Roman numeral hour markers and a railway minute track, blued steel sword hands, beaded crown set with a blue sapphire cabochon, dark brown alligator leather strap. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-presage-cocktail-time-1",
@@ -104,11 +105,11 @@
       "id": "product-presage-cocktail-time-2",
       "out": "scripts/images/out/products/presage-cocktail-time-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/presage-cocktail-time-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 40.5mm stainless steel dress watch with an ice-blue dial that has a radiating textured sunburst pattern catching the light like cut glass, polished dauphine hands, faceted applied indices, date window at 3 o'clock, domed crystal, steel link bracelet. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 40.5mm stainless steel dress watch with an ice-blue dial that has a radiating textured sunburst pattern catching the light like cut glass, polished dauphine hands, faceted applied indices, date window at 3 o'clock, domed crystal, steel link bracelet. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-monaco-calibre-11-1",
@@ -121,11 +122,11 @@
       "id": "product-monaco-calibre-11-2",
       "out": "scripts/images/out/products/monaco-calibre-11-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/monaco-calibre-11-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 39mm square stainless steel chronograph case with the crown on the LEFT side and two rectangular pushers on the right, metallic blue sunray dial with two square white sub-dials, horizontal baton indices, red-tipped central chronograph seconds hand, perforated dark blue leather racing strap. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 39mm square stainless steel chronograph case with the crown on the LEFT side and two rectangular pushers on the right, metallic blue sunray dial with two square white sub-dials, horizontal baton indices, red-tipped central chronograph seconds hand, perforated dark blue leather racing strap. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "product-speedmaster-professional-1",
@@ -138,11 +139,11 @@
       "id": "product-speedmaster-professional-2",
       "out": "scripts/images/out/products/speedmaster-professional-2.jpg",
       "aspect_ratio": "1:1",
-      "style": "product",
+      "style": "wrist",
       "references": [
         "scripts/images/out/products/speedmaster-professional-1.jpg"
       ],
-      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap): 42mm stainless steel manual-wind chronograph with an asymmetric case and crown guards, matte black dial with three recessed sub-dials, white baton hands and luminous indices, black aluminium tachymeter bezel insert with fine white scale markings, polished and brushed steel bracelet. This time a low three-quarter side view, laid flat at an angle, showing the crown side, case profile and thickness, with the dial still partly visible."
+      "prompt": "The exact same watch as in image 0 (identical case, dial, hands, bezel and strap or bracelet), now worn on a wrist: 42mm stainless steel manual-wind chronograph with an asymmetric case and crown guards, matte black dial with three recessed sub-dials, white baton hands and luminous indices, black aluminium tachymeter bezel insert with fine white scale markings, polished and brushed steel bracelet. The strap or bracelet sits naturally closed around the wrist."
     },
     {
       "id": "category-dress",

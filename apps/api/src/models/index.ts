@@ -8,3 +8,4 @@ export * from './cart.model';
 export * from './wishlist.model';
 export * from './order.model';
 export * from './webhookEvent.model';
+export * from './subscriber.model';

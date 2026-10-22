@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Container } from '@/components/shared/container';
 import { Separator } from '@/components/ui/separator';
+import { NewsletterForm } from '@/components/shared/newsletter-form';
 import { ROUTES } from '@/constants/routes';
 
 const FOOTER_LINKS = {
@@ -47,6 +48,14 @@ export function SiteFooter() {
             <p className="mt-4 max-w-xs text-sm text-cream-200/70">
               Timepieces for those who measure moments, not minutes.
             </p>
+
+            <div className="mt-8 max-w-sm">
+              <p className="font-serif text-xl text-cream-100">New arrivals, first</p>
+              <p className="mt-1 text-sm text-cream-200/70">
+                A short letter when a remarkable piece arrives.
+              </p>
+              <NewsletterForm source="footer" tone="dark" className="mt-4" />
+            </div>
           </div>
 
           {/* Shop */}

@@ -21,3 +21,14 @@ export const authLimiter: RateLimitRequestHandler = rateLimit({
     message: 'Too many auth attempts, try again later',
   },
 });
+// Newsletter sign-ups: a person subscribes once; stop scripted list-bombing
+export const newsletterLimiter: RateLimitRequestHandler = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: env.NODE_ENV === 'development' ? 100 : 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many sign-up attempts. Please try again in an hour.',
+  },
+});

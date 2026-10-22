@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { apiLimiter } from '@middleware/rateLimit.middleware';
+import { apiLimiter, newsletterLimiter } from '@middleware/rateLimit.middleware';
+import { validate } from '@middleware/validate.middleware';
+import { subscribeSchema } from '@validators/newsletter.validator';
 
 import { storefrontProductController } from '@controllers/storefront/product.controller';
 import { storefrontBrandController } from '@controllers/storefront/brand.controller';
@@ -8,6 +10,7 @@ import { storefrontCollectionController } from '@controllers/storefront/collecti
 import { storefrontHomeController } from '@controllers/storefront/home.controller';
 import { storefrontSearchController } from '@controllers/storefront/search.controller';
 import { storefrontSettingsController } from '@controllers/storefront/settings.controller';
+import { storefrontNewsletterController } from '@controllers/storefront/newsletter.controller';
 import cartRoutes from './cart.routes';
 import wishlistRoutes from './wishlist.routes';
 import checkoutRoutes from './checkout.routes';
@@ -64,6 +67,12 @@ storefrontRouter.use('/collections', collectionRouter);
 storefrontRouter.use('/search', searchRouter);
 storefrontRouter.use('/home', homeRouter);
 storefrontRouter.get('/settings', storefrontSettingsController.get);
+storefrontRouter.post(
+  '/newsletter',
+  newsletterLimiter,
+  validate(subscribeSchema),
+  storefrontNewsletterController.subscribe
+);
 storefrontRouter.use('/cart', cartRoutes);
 storefrontRouter.use('/wishlist', wishlistRoutes);
 storefrontRouter.use('/checkout', checkoutRoutes);

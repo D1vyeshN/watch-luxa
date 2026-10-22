@@ -60,8 +60,8 @@ export function useVariantSelection(
       .filter((attr) => attr.values.length > 1); // only show attributes with choices
   }, [variants]);
 
-  // Read selected values from URL
-  const selected = useMemo<
+  // What the visitor explicitly picked (kept in the URL)
+  const explicit = useMemo<
     Partial<Record<VariantAttribute['key'], string>>
   >(() => {
     const result: Partial<Record<VariantAttribute['key'], string>> = {};
@@ -80,16 +80,33 @@ export function useVariantSelection(
 
     // If any attribute is selected, filter variants
     const matches = variants.filter((v) =>
-      Object.entries(selected).every(
+      Object.entries(explicit).every(
         ([key, value]) => String(v[key as keyof ProductVariant]) === value
       )
     );
 
     // Prefer in-stock variant
     return matches.find((v) => v.inStock) ?? matches[0] ?? variants[0];
-  }, [variants, selected]);
+  }, [variants, explicit]);
 
-  // Check if a specific value would have any available variant
+  // What the page shows as chosen: the explicit picks, and for everything else
+  // the variant Add to Cart will actually use — so a visitor never lands on a
+  // page with nothing selected
+  const selected = useMemo<
+    Partial<Record<VariantAttribute['key'], string>>
+  >(() => {
+    const result = { ...explicit };
+    if (currentVariant) {
+      attributes.forEach((attr) => {
+        result[attr.key] ??= String(currentVariant[attr.key as keyof ProductVariant]);
+      });
+    }
+    return result;
+  }, [attributes, explicit, currentVariant]);
+
+  // Check if a specific value would have any available variant. Uses only the
+  // explicit picks: counting the defaults too would disable values that exist
+  // in another combination, leaving them unreachable.
   const isValueAvailable = useCallback(
     (key: VariantAttribute['key'], value: string): boolean => {
       const candidates = variants.filter(
@@ -97,7 +114,7 @@ export function useVariantSelection(
       );
 
       // With no other filters, check if ANY variant exists with this value
-      const otherSelected = Object.entries(selected).filter(
+      const otherSelected = Object.entries(explicit).filter(
         ([k]) => k !== key
       );
 
@@ -109,7 +126,7 @@ export function useVariantSelection(
 
       return filtered.some((v) => v.inStock) || filtered.length > 0;
     },
-    [variants, selected]
+    [variants, explicit]
   );
 
   // Update URL when a value is selected
@@ -117,8 +134,8 @@ export function useVariantSelection(
     (key: VariantAttribute['key'], value: string) => {
       const params = new URLSearchParams(searchParams.toString());
 
-      if (selected[key] === value) {
-        // Clicking the same value deselects it
+      if (explicit[key] === value) {
+        // Clicking an explicit pick again clears it (back to the default)
         params.delete(key);
       } else {
         params.set(key, value);
@@ -127,7 +144,7 @@ export function useVariantSelection(
       const qs = params.toString();
       router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false });
     },
-    [searchParams, pathname, router, selected]
+    [searchParams, pathname, router, explicit]
   );
 
   return {

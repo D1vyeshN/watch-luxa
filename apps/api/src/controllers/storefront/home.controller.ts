@@ -49,6 +49,7 @@ export const storefrontHomeController: Record<string, any> = {
       featuredBrands,
       featuredCollections,
       hero,
+      sections,
     ] = await Promise.all([
       Product.find({
         status: 'active',
@@ -95,6 +96,7 @@ export const storefrontHomeController: Record<string, any> = {
         .lean(),
 
       homepageService.getStorefrontHero(),
+      homepageService.getStorefrontSections(),
     ]);
 
     // Rails render top to bottom in this order, so earlier ones win a product
@@ -105,6 +107,7 @@ export const storefrontHomeController: Record<string, any> = {
 
     const result = {
       hero,
+      sections,
       featured: featuredPicked.map((p) => toStorefrontProduct(p, false)),
       newArrivals: newArrivalsPicked.map((p) => toStorefrontProduct(p, false)),
       trending: trendingPicked.map((p) => toStorefrontProduct(p, false)),

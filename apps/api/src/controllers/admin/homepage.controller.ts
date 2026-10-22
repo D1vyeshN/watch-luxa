@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { homepageService } from '@services/homepage.service';
+import { homepageService, sectionsOf } from '@services/homepage.service';
 import { sendSuccess } from '@utils/response';
 import { asyncHandler } from '@utils/asyncHandler';
 
@@ -9,7 +9,8 @@ export const adminHomepageController: any = {
    */
   get: asyncHandler(async (_req: Request, res: Response) => {
     const homepage = await homepageService.get();
-    return sendSuccess(res, homepage, 'Homepage fetched');
+    // Sections fall back to the defaults so the editor always has a starting point
+    return sendSuccess(res, { ...homepage, sections: sectionsOf(homepage) }, 'Homepage fetched');
   }),
 
   /**
@@ -19,5 +20,14 @@ export const adminHomepageController: any = {
     const { before, after } = await homepageService.updateHero(req.body);
     res.locals.audit = { before: before.hero, after: after.hero }; // see middleware/audit.middleware.ts
     return sendSuccess(res, after, 'Hero updated');
+  }),
+
+  /**
+   * PUT /api/v1/admin/homepage/sections — replaces the whole section list
+   */
+  updateSections: asyncHandler(async (req: Request, res: Response) => {
+    const { before, after } = await homepageService.updateSections(req.body.sections);
+    res.locals.audit = { before, after };
+    return sendSuccess(res, { sections: after }, 'Homepage sections updated');
   }),
 };

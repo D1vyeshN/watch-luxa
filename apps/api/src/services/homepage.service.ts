@@ -2,7 +2,8 @@ import { Homepage, HOMEPAGE_ID, type IHomepage, type IHero } from '@models/homep
 import { env } from '@config/env';
 import { logger } from '@config/logger';
 import { cacheDelete } from '@utils/cache';
-import type { UpdateHeroInput } from '@validators/homepage.validator';
+import { DEFAULT_HOME_SECTIONS, type HomeSection } from '@models/homepageSections';
+import type { UpdateHeroInput, UpdateSectionsInput } from '@validators/homepage.validator';
 
 // The storefront /home aggregate reads this on every cache miss, so keep a
 // short in-process cache (same approach as settings.service.ts).
@@ -44,6 +45,27 @@ export class HomepageService {
     return toStorefrontHero(hero);
   }
 
+  async updateSections(
+    sections: UpdateSectionsInput['sections']
+  ): Promise<{ before: HomeSection[]; after: HomeSection[] }> {
+    const before = sectionsOf(await this.get());
+    const after = await Homepage.findOneAndUpdate(
+      { _id: HOMEPAGE_ID },
+      { $set: { sections } },
+      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
+    ).lean<IHomepage>();
+
+    cache = { value: after!, at: Date.now() };
+    await cacheDelete('home:aggregate');
+    this.revalidateStorefront();
+    return { before, after: sectionsOf(after!) };
+  }
+
+  /** What the storefront renders: enabled sections, in order */
+  async getStorefrontSections(): Promise<HomeSection[]> {
+    return sectionsOf(await this.get()).filter((s) => s.enabled);
+  }
+
   // Next's ISR keeps the homepage for 5 minutes; ask it to rebuild now.
   // Fire-and-forget — a failure only means the change shows up later.
   private revalidateStorefront() {
@@ -60,6 +82,11 @@ export class HomepageService {
       })
       .catch((err) => logger.warn({ err }, 'Storefront revalidation failed'));
   }
+}
+
+/** Saved sections, or the shipped defaults until the first save */
+export function sectionsOf(homepage: IHomepage): HomeSection[] {
+  return homepage.sections ?? DEFAULT_HOME_SECTIONS;
 }
 
 export function toStorefrontHero(hero: IHero) {

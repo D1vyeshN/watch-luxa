@@ -1,4 +1,5 @@
 import mongoose, { Schema, Model, Types } from 'mongoose';
+import type { HomeSection } from './homepageSections';
 
 // Admin-managed homepage content: a single document with _id 'global'
 // (same pattern as settings.model.ts). Defaults reproduce the hero that used
@@ -56,6 +57,8 @@ export interface IHero {
 export interface IHomepage {
   _id: string;
   hero: IHero;
+  /** Below the hero. Unset until first saved — readers fall back to DEFAULT_HOME_SECTIONS */
+  sections?: HomeSection[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -134,6 +137,8 @@ const HomepageSchema = new Schema<IHomepage>(
   {
     _id: { type: String, default: HOMEPAGE_ID },
     hero: { type: HeroSchema, default: () => ({}) },
+    // Shape enforced by updateSectionsSchema (the only writer); see homepageSections.ts
+    sections: { type: [Schema.Types.Mixed], default: undefined },
   },
   { timestamps: true }
 );

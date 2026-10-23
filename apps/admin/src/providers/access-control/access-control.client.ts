@@ -25,6 +25,7 @@ const ADMIN_RESOURCES = new Set([
   'returns',
   'reviews',
   'homepage',
+  'newsletter',
   'uploads',
   'csv-import',
   'analytics',

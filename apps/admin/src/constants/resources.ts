@@ -63,6 +63,13 @@ export const RESOURCES: ResourceProps[] = [
     },
   },
   {
+    name: 'newsletter',
+    list: '/newsletter',
+    meta: {
+      label: 'Newsletter',
+    },
+  },
+  {
     name: 'coupons',
     list: '/coupons',
     create: '/coupons/create',

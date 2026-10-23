@@ -19,6 +19,7 @@ import customerRoutes from './customer.routes';
 import settingsRoutes from './settings.routes';
 import homepageRoutes from './homepage.routes';
 import auditLogRoutes from './auditLog.routes';
+import newsletterRoutes from './newsletter.routes';
 
 const router: RouterType = Router();
 
@@ -45,5 +46,6 @@ router.use('/customers', customerRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/homepage', homepageRoutes);
 router.use('/audit-logs', auditLogRoutes);
+router.use('/newsletter', newsletterRoutes);
 
 export default router;

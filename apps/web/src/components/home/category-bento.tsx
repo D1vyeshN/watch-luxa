@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { isOptimizable } from '@/lib/images';
 import { Container } from '@/components/shared/container';
 import { Section } from '@/components/shared/section';
 import { ROUTES } from '@/constants/routes';
@@ -83,6 +84,7 @@ export function CategoryBento({ tiles, title, description, background = 'default
                       alt=""
                       fill
                       sizes={SIZES[i]}
+                      unoptimized={!isOptimizable(imageUrl)}
                       className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
                     />
                   )}

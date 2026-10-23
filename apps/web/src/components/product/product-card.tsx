@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { isOptimizable } from '@/lib/images';
 import { PriceDisplay } from './price-display';
 import { Rating } from './rating';
 import { StockBadge } from './stock-badge';
@@ -36,6 +37,7 @@ export function ProductCard({
         <div className="absolute inset-0">
           <Image
             src={product.heroImage}
+            unoptimized={!isOptimizable(product.heroImage)}
             alt=""
             fill
             sizes={IMAGE_SIZES}
@@ -45,6 +47,7 @@ export function ProductCard({
           {hoverImage && (
             <Image
               src={hoverImage}
+              unoptimized={!isOptimizable(hoverImage)}
               alt=""
               fill
               sizes={IMAGE_SIZES}

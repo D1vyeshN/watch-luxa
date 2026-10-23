@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { isOptimizable } from '@/lib/images';
 import { Container } from '@/components/shared/container';
 
 interface Crumb {
@@ -54,7 +55,7 @@ export function ListingHeader({
           </nav>
         )}
 
-        <div className={cn('grid gap-8', imageUrl && 'lg:grid-cols-12 lg:items-center lg:gap-12')}>
+        <div className={cn('grid grid-cols-1 gap-8', imageUrl && 'lg:grid-cols-12 lg:items-center lg:gap-12')}>
           <div className={cn(imageUrl && 'lg:col-span-6')}>
             <h1 className="heading-luxe text-4xl leading-tight md:text-5xl lg:text-6xl">{title}</h1>
             {description && (
@@ -79,6 +80,7 @@ export function ListingHeader({
                 alt=""
                 fill
                 priority
+                unoptimized={!isOptimizable(imageUrl)}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />

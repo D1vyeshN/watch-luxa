@@ -2,24 +2,10 @@ import Link from 'next/link';
 import { getImageProps } from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isOptimizable } from '@/lib/images';
 import type { HeroImageFrame, HeroSlide } from '@/types/home';
 import { HeroVideo } from './hero-video';
 
-// Hosts allowed by images.remotePatterns in next.config.ts; anything else an
-// admin points at is served as-is instead of crashing the optimizer.
-function isOptimizable(src: string) {
-  try {
-    const { protocol, hostname, pathname } = new URL(src);
-    if (protocol !== 'https:') return false;
-    return (
-      (hostname.endsWith('.supabase.co') && pathname.startsWith('/storage/v1/object/public/')) ||
-      hostname === 'images.unsplash.com' ||
-      hostname === 'picsum.photos'
-    );
-  } catch {
-    return false;
-  }
-}
 
 const CENTER: HeroImageFrame = { x: 50, y: 50, zoom: 1 };
 

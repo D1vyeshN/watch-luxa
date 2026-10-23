@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ROUTES } from '@/constants/routes';
+import { isOptimizable } from '@/lib/images';
 import type { Collection } from '@/types/catalog';
 
 interface CollectionCardProps {
@@ -25,6 +26,7 @@ export function CollectionCard({ collection, priority = false }: CollectionCardP
             alt=""
             fill
             priority={priority}
+            unoptimized={!isOptimizable(image)}
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
           />

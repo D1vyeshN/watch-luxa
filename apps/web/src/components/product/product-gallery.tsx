@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { isOptimizable } from '@/lib/images';
 import type { ProductVariant } from '@/types/catalog';
 
 interface ProductGalleryProps {
@@ -43,6 +44,7 @@ export function ProductGallery({
         <div className="relative aspect-square overflow-hidden bg-cream-200">
           <Image
             src={activeImage}
+            unoptimized={!isOptimizable(activeImage)}
             alt={productName}
             fill
             priority
@@ -70,6 +72,7 @@ export function ProductGallery({
             >
               <Image
                 src={img}
+                unoptimized={!isOptimizable(img)}
                 alt={`${productName} – view ${index + 1}`}
                 fill
                 sizes="80px"

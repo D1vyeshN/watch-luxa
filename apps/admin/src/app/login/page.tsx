@@ -26,7 +26,7 @@ import { loginSchema, type LoginFormValues } from '@/lib/validation/auth';
 export default function LoginPage() {
   const router = useRouter();
   const { data: auth, isLoading: isCheckingAuth } = useIsAuthenticated();
-  const { mutate: login, data, error, isPending } = useLogin<LoginFormValues>();
+  const { mutate: login, error, isPending } = useLogin<LoginFormValues>();
 
   const [showPassword, setShowPassword] = useState(false);
 

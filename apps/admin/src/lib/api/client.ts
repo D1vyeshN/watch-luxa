@@ -116,6 +116,9 @@ export async function apiRequest<T>(
     } else {
       tokenStorage.clear();
       if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        // A full reload (not router.push) on purpose: this runs outside React and
+        // must drop every cached query and in-memory state of the old session
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = '/login';
       }
       throw new ApiError('Session expired. Please sign in again.', 401);

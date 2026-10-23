@@ -32,9 +32,13 @@ export function StockCell({
     }
   }, [isEditing]);
 
-  useEffect(() => {
+  // When the saved stock changes (e.g. after a save), reset the field to it —
+  // adjusted during render rather than in an effect
+  const [syncedStock, setSyncedStock] = useState(stock);
+  if (syncedStock !== stock) {
+    setSyncedStock(stock);
     setEditValue(String(stock));
-  }, [stock]);
+  }
 
   // Enter, blur and the check button can all fire save — only the first counts.
   // Also stops a blur during Escape/unmount from saving a cancelled edit.

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CanAccess } from '@refinedev/core';
 import { ArrowLeft, Info } from 'lucide-react';
@@ -9,13 +8,14 @@ import { TeamTable } from '@/components/team/team-table';
 import { InviteAdminDialog } from '@/components/team/invite-admin-dialog';
 import { AccessDenied } from '@/components/shared/access-denied';
 import { tokenStorage } from '@/lib/storage/tokenStorage';
+import { useIsClient } from '@/hooks/use-is-client';
 
 export default function TeamPage() {
   // The env super admin (SUPER_ADMIN_EMAIL) has no users-collection record,
   // so it never shows in the table — say so instead of leaving it unexplained
-  // (read after mount: localStorage isn't available during SSR)
-  const [user, setUser] = useState<ReturnType<typeof tokenStorage.getUser>>(null);
-  useEffect(() => setUser(tokenStorage.getUser()), []);
+  // (read on the client only: localStorage isn't available during SSR)
+  const isClient = useIsClient();
+  const user = isClient ? tokenStorage.getUser() : null;
   const isEnvSuperadmin = user?._id === 'superadmin';
 
   return (

@@ -1,26 +1,15 @@
-import type { DataProvider } from '@refinedev/core';
+import type {
+  BaseRecord,
+  CreateParams,
+  CustomParams,
+  DataProvider,
+  DeleteOneParams,
+  GetListParams,
+  GetOneParams,
+  UpdateParams,
+} from '@refinedev/core';
 import { CONFIG } from '@/constants/config';
 import { apiRequest } from '@/lib/api/client';
-
-// ─── Types ───
-interface GetListParams {
-  resource: string;
-  pagination?: {
-    currentPage?: number; // Refine v5 (was `current` in v4)
-    pageSize?: number;
-  };
-  sorters?: Array<{
-    field: string;
-    order: 'asc' | 'desc';
-  }>;
-  filters?: any[];
-  meta?: Record<string, any>;
-}
-
-interface GetListResponse<T> {
-  data: T[];
-  total: number;
-}
 
 // ─── API response shapes ───
 interface ListResponse<T> {
@@ -153,6 +142,7 @@ const RESOURCE_PATH_MAP: Record<string, string> = {
   analytics: '/admin/analytics',
   settings: '/admin/settings',
   homepage: '/admin/homepage',
+  newsletter: '/admin/newsletter',
   team: '/superadmin/admins', // superadmin-only router on the API
   'audit-logs': '/admin/audit-logs',
 };
@@ -166,8 +156,7 @@ export const dataProvider: DataProvider = {
   getApiUrl: () => CONFIG.apiUrl,
 
   // ─── LIST ───
-  // @ts-ignore
-  getList: async <TData>(params: GetListParams): Promise<GetListResponse<TData>> => {
+  getList: async <TData extends BaseRecord = BaseRecord>(params: GetListParams) => {
     const { resource, pagination, sorters, filters, meta } = params;
     const path = getResourcePath(resource);
     const query = buildListQuery({ pagination, sorters, filters, meta });
@@ -181,18 +170,17 @@ export const dataProvider: DataProvider = {
   },
 
   // ─── GET ONE ───
-  // @ts-ignore
-  getOne: async <TData>(params: any) => {
-    const { resource, id } = params;
+  getOne: async <TData extends BaseRecord = BaseRecord>({ resource, id }: GetOneParams) => {
     const path = getResourcePath(resource);
     const response = await apiRequest<SingleResponse<TData>>(`${path}/${encodeURIComponent(String(id))}`);
     return { data: response.data };
   },
 
   // ─── CREATE ───
-  // @ts-ignore
-  create: async <TData, TVariables>(params: any) => {
-    const { resource, variables } = params;
+  create: async <TData extends BaseRecord = BaseRecord, TVariables = object>({
+    resource,
+    variables,
+  }: CreateParams<TVariables>) => {
     const path = getResourcePath(resource);
     const response = await apiRequest<SingleResponse<TData>>(path, {
       method: 'POST',
@@ -202,9 +190,11 @@ export const dataProvider: DataProvider = {
   },
 
   // ─── UPDATE ───
-  // @ts-ignore
-  update: async <TData, TVariables>(params: any) => {
-    const { resource, id, variables } = params;
+  update: async <TData extends BaseRecord = BaseRecord, TVariables = object>({
+    resource,
+    id,
+    variables,
+  }: UpdateParams<TVariables>) => {
     const path = getResourcePath(resource);
     const response = await apiRequest<SingleResponse<TData>>(`${path}/${id}`, {
       method: 'PUT',
@@ -214,9 +204,11 @@ export const dataProvider: DataProvider = {
   },
 
   // ─── DELETE ───
-  // @ts-ignore
-  deleteOne: async <TData>(params: any) => {
-    const { resource, id, variables } = params;
+  deleteOne: async <TData extends BaseRecord = BaseRecord, TVariables = object>({
+    resource,
+    id,
+    variables,
+  }: DeleteOneParams<TVariables>) => {
     const path = getResourcePath(resource);
     const response = await apiRequest<SingleResponse<TData>>(`${path}/${id}`, {
       method: 'DELETE',
@@ -227,8 +219,9 @@ export const dataProvider: DataProvider = {
 
   // ─── CUSTOM — for non-CRUD endpoints ───
   // Used for: stock adjustment, CSV import, order status updates, etc.
-  // @ts-ignore
-  custom: async <TData>(params: any) => {
+  custom: async <TData extends BaseRecord = BaseRecord, TQuery = unknown, TPayload = unknown>(
+    params: CustomParams<TQuery, TPayload>
+  ) => {
     const { url, method, payload, query, headers } = params;
 
     const searchParams = query

@@ -1,5 +1,4 @@
 import type { AuthProvider } from '@refinedev/core';
-import { CONFIG } from '@/constants/config';
 import { apiRequest } from '@/lib/api/client';
 import { tokenStorage } from '@/lib/storage/tokenStorage';
 
@@ -185,7 +184,7 @@ export const authProvider: AuthProvider = {
   },
 
   // ─── ON ERROR (global error interceptor) ───
-  onError: async (error: any) => {
+  onError: async (error: { status?: number } | null | undefined) => {
     // 401 — session expired
     if (error?.status === 401) {
       tokenStorage.clear();

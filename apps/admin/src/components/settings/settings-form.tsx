@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCustom, useCustomMutation } from '@refinedev/core';
 import { Loader2, Save } from 'lucide-react';
@@ -81,7 +81,7 @@ export function SettingsForm() {
     if (settings) reset(toFormValues(settings));
   }, [settings, reset]);
 
-  const [threshold, fee] = form.watch(['freeShippingThreshold', 'flatShippingFee']);
+  const [threshold, fee] = useWatch({ control: form.control, name: ['freeShippingThreshold', 'flatShippingFee'] });
 
   const onSubmit = (values: SettingsFormSchema) => {
     saveSettings(

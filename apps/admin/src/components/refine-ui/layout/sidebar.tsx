@@ -3,7 +3,8 @@
 import React from "react";
 import {
   useMenu,
-  useLink,
+  // A static component (not useLink()) so none is created during render
+  Link,
   useRefineOptions,
   type TreeMenuItem,
 } from "@refinedev/core";
@@ -169,7 +170,6 @@ function SidebarItemCollapsible({ item, selectedKey }: MenuItemProps) {
 
 function SidebarItemDropdown({ item, selectedKey }: MenuItemProps) {
   const { children } = item;
-  const Link = useLink();
 
   return (
     <DropdownMenu>
@@ -311,7 +311,6 @@ function SidebarButton({
   onClick,
   ...props
 }: SidebarButtonProps) {
-  const Link = useLink();
 
   const buttonContent = (
     <>

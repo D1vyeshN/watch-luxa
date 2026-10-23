@@ -1,17 +1,14 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useIsClient } from '@/hooks/use-is-client';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // The resolved theme is only known in the browser
+  const mounted = useIsClient();
 
   if (!mounted) {
     return (

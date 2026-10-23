@@ -7,8 +7,6 @@ export const notificationProvider: NotificationProvider = {
     message,
     description,
     type,
-    undoableTimeout,
-    cancelMutation,
   }) => {
     // ─── Loading (progress) ───
     if (type === 'progress') {

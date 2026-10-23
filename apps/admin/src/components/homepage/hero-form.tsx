@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useFieldArray, useForm, type FieldErrors } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCustom, useCustomMutation } from '@refinedev/core';
 import { Loader2, Monitor, Plus, Save, Smartphone } from 'lucide-react';
@@ -175,9 +175,10 @@ export function HeroForm() {
     setOpenKeys(new Set(indices.map((i) => fields[i]?.id).filter((id): id is string => !!id)));
   }, [fields]);
 
-  const carouselEnabled = form.watch('carouselEnabled');
+  // useWatch (not form.watch) so the React Compiler can still optimise this component
+  const carouselEnabled = useWatch({ control: form.control, name: 'carouselEnabled' });
   const safePreviewIndex = Math.min(previewIndex, Math.max(fields.length - 1, 0));
-  const previewSlide = form.watch(`slides.${safePreviewIndex}`);
+  const previewSlide = useWatch({ control: form.control, name: `slides.${safePreviewIndex}` });
 
   const setOpen = (key: string, open: boolean) =>
     setOpenKeys((prev) => {
@@ -245,7 +246,8 @@ export function HeroForm() {
 
   return (
     <Form {...form}>
-      <form noValidate onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+      {/* handleSubmit runs inside the event, so onSubmit's ref writes happen on submit, not during render */}
+      <form noValidate onSubmit={(e) => form.handleSubmit(onSubmit, onInvalid)(e)} className="space-y-6">
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-6">
             {/* ─── Display ─── */}

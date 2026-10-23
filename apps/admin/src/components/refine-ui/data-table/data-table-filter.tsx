@@ -482,15 +482,22 @@ export function DataTableFilterDropdownDateSinglePicker<TData>({
   );
 
   useEffect(() => {
+    // refine's useTable reads the operator from columnDef.meta.filterOperator;
+    // writing it there is the documented integration, not stray prop mutation
+    // eslint-disable-next-line react-hooks/immutability
     column.columnDef.meta = {
       ...column.columnDef.meta,
       filterOperator: defaultOperator,
     };
   }, [defaultOperator, column]);
 
-  useEffect(() => {
+  // Follow the table's filter value when it changes from outside (e.g. reset),
+  // adjusted during render rather than in an effect
+  const [syncedFilter, setSyncedFilter] = useState(columnFilterValue);
+  if (syncedFilter !== columnFilterValue) {
+    setSyncedFilter(columnFilterValue);
     setFilterValue(parseDate(columnFilterValue));
-  }, [columnFilterValue]);
+  }
 
   const hasDate = !!filterValue;
 
@@ -586,16 +593,22 @@ export function DataTableFilterDropdownDateRangePicker<TData>({
   );
 
   useEffect(() => {
+    // refine's useTable reads the operator from columnDef.meta.filterOperator
+    // eslint-disable-next-line react-hooks/immutability
     column.columnDef.meta = {
       ...column.columnDef.meta,
       filterOperator: defaultOperator,
     };
   }, [defaultOperator, column]);
 
-  useEffect(() => {
+  // Follow the table's filter value when it changes from outside. The range is
+  // a new array each render, so compare by content.
+  const filterKey = JSON.stringify(columnFilterValue);
+  const [syncedKey, setSyncedKey] = useState(filterKey);
+  if (syncedKey !== filterKey) {
+    setSyncedKey(filterKey);
     setFilterValue(parseDateRange(columnFilterValue));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- objects are always different
-  }, [JSON.stringify(columnFilterValue)]);
+  }
 
   const hasDateRange = filterValue?.from && filterValue?.to;
 
@@ -713,6 +726,8 @@ export function DataTableFilterInput<TData>({
 
   const handleOperatorChange = (value: CrudOperators) => {
     setOperator(value);
+    // refine's useTable reads the operator from columnDef.meta.filterOperator
+    // eslint-disable-next-line react-hooks/immutability
     columnFromProps.columnDef.meta = {
       ...columnFromProps.columnDef.meta,
       filterOperator: value,

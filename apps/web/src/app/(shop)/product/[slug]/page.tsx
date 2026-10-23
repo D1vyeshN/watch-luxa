@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { ProductDetailContent } from '@/components/product/product-detail-content';
+import { ProductDetailSkeleton } from '@/components/product/product-detail-skeleton';
 import { RelatedProducts } from '@/components/product/related-products';
 import { JsonLd, buildProductJsonLd, buildBreadcrumbJsonLd } from '@/components/seo/json-ld';
 import { serverFetch } from '@/lib/api/server-fetch';
@@ -89,7 +91,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
     <>
       <JsonLd data={productJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <ProductDetailContent product={product} storeSettings={storeSettings} />
+      <Suspense fallback={<ProductDetailSkeleton />}>
+        <ProductDetailContent product={product} storeSettings={storeSettings} />
+      </Suspense>
       <RelatedProducts products={related} />
     </>
   );

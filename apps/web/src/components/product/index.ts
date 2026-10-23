@@ -10,4 +10,5 @@ export * from './add-to-cart-button';
 export * from './quantity-selector';
 export * from './specs-table';
 export * from './product-detail-content';
+export * from './product-detail-skeleton';
 export * from './related-products';

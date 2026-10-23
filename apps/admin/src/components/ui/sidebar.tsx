@@ -311,7 +311,10 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sidebar-inset"
       className={cn(
-        "relative flex w-full flex-1 flex-col bg-background",
+        // min-w-0: without it a wide table stretches this flex item past the
+        // viewport and the whole page scrolls sideways; with it the table
+        // scrolls inside its own overflow container
+        "relative flex w-full min-w-0 flex-1 flex-col bg-background",
         "md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
         className
       )}
@@ -608,10 +611,10 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean
 }) {
-  // Random width between 50 to 90%.
-  const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  }, [])
+  // Varied width between 50 and 90%, stable per instance: derived from useId
+  // (Math.random in render is impure and differs between server and client)
+  const id = React.useId()
+  const width = `${50 + ([...id].reduce((sum, c) => sum + c.charCodeAt(0), 0) % 40)}%`
 
   return (
     <div

@@ -32,7 +32,7 @@ export function AppSidebar() {
           className="flex items-center justify-center py-3"
         >
           <span
-            className="font-serif tracking-[0.25em] text-cream-100 transition-all duration-300"
+            className="font-serif tracking-[0.25em] text-sidebar-foreground transition-all duration-300"
             style={{
               fontSize: isCollapsed ? 18 : 22,
               letterSpacing: isCollapsed ? '0.15em' : '0.25em',

@@ -72,12 +72,13 @@ export function SiteHeader() {
       className={cn(
         'top-0 z-40 border-b',
         overlay
-          ? 'fixed inset-x-0'
+          ? 'fixed inset-x-0 bg-transparent'
           : 'sticky border-forest-900/10 bg-cream-100/95 backdrop-blur-sm'
       )}
       style={
         overlay
           ? {
+              transition: 'background-color 0.3s ease, border-bottom-color 0.3s ease',
               // --nav-solid: 0 at the top of the page → 1 once scrolled
               backgroundColor: 'rgb(249 246 239 / calc(var(--nav-solid, 0) * 0.95))',
               borderBottomColor: 'rgb(15 35 32 / calc(var(--nav-solid, 0) * 0.1))',
@@ -90,8 +91,8 @@ export function SiteHeader() {
       {overlay && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-forest-900/45 to-transparent"
-          style={{ opacity: 'calc(1 - var(--nav-solid, 0))' }}
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-forest-900/20 to-transparent"
+          style={{ opacity: 'calc(0.5 - var(--nav-solid, 0) * 0.5)' }}
         />
       )}
 

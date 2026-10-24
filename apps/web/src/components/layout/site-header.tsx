@@ -92,7 +92,7 @@ export function SiteHeader() {
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-forest-900/20 to-transparent"
-          style={{ opacity: 'calc(0.5 - var(--nav-solid, 0) * 0.5)' }}
+          style={{ opacity: 'calc(var(--nav-solid, 0) * 0.5)' }}
         />
       )}
 
